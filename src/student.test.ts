@@ -76,7 +76,7 @@ describe('Hongqiao student chapter',()=>{
    expect(s.phase).toBe('station');
    for(let i=0;i<5000&&s.phase!=='result';i++){
     if(s.event){s=tick(s,.8);if(s.event!.id==='identity-search')s=reducer(s,{type:'POCKET_PICK',pocket:s.student!.pocket});else {let index=s.event!.id==='vertical-choice'?1:s.event!.id==='gates'?3:0;if(s.event!.id==='security-queue')index=s.event!.choices.findIndex(c=>c.seconds===24);s=select(s,index);}}
-    else{const w=runnerWave(s);if(w&&s.student!.runner.lane===w.lane)s=reducer(s,{type:'CHANGE_LANE',direction:w.lane===2?-1:1});s=reducer(s,{type:s.student!.exhausted?'RUN_INPUT':'SPRINT_INPUT',held:true});s=tick(s,.1);}
+    else{const w=runnerWave(s);if(w&&s.student!.runner.lane===w.lane)s=reducer(s,{type:'CHANGE_LANE',direction:w.lane===2?-1:1});const sprint=!s.student!.exhausted&&s.student!.stamina>30&&s.student!.sprintStrain<4.8;s=reducer(s,{type:sprint?'SPRINT_INPUT':'RUN_INPUT',held:true});s=tick(s,.1);}
    }
    expect(s.success,`route ${routeIndex} remaining ${s.remaining}`).toBe(true);expect(s.seen).toContain('gate-scan');
   }
