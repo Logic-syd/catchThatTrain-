@@ -14,9 +14,10 @@ export const STATIONS:StationChapter[]=[
  {id:'zhengzhou',name:'郑州东站',short:'对称大厅找号',accent:'#ad8b45',paper:'#f1e5bf',playstyle:'navigation',gate:'21A',walking:336,obstaclePattern:[0,2,2,0,1],feeling:'两边长得一样，21A 可不是 12A。',personality:'中央大厅里的老乡太热情，停下聊两句就会误事。',strategy:'先核对车票编号，再选大厅翼区，少一次折返。',nodes:[node('metro',245,215,'地铁','metro'),node('entry',245,172,'入口','entry'),node('security',245,130,'安检','security'),node('hall',245,85,'中央大厅','hall'),node('west',80,85,'01–15 区','hall'),node('east',410,85,'16–30 区','hall'),node('wrong',80,30,'12A','gate'),node('gate',410,30,'21A','gate')],edges:[['metro','entry'],['entry','security'],['security','hall'],['hall','west'],['hall','east'],['west','wrong'],['east','gate']],routes:[{id:'east',label:'右侧 16–30 区',points:['metro','entry','security','hall','east','gate']},{id:'west',label:'左侧折返',points:['metro','entry','security','hall','west','hall','east','gate']}]}
 ];
 // Draw once per round; choosing a card or difficulty must keep this pair.
-export function drawStationPair(rng=Math.random):StationChapter[]{
+export function drawStationPair(rng=Math.random,featuredId?:string):StationChapter[]{
  const pool=[...STATIONS];
- const first=pool.splice(Math.floor(rng()*pool.length),1)[0];
+ const featured=pool.findIndex(st=>st.id===featuredId);
+ const first=pool.splice(featured>=0?featured:Math.floor(rng()*pool.length),1)[0];
  const second=pool[Math.floor(rng()*pool.length)];
  return [first,second];
 }

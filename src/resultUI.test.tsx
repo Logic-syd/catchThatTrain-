@@ -41,7 +41,7 @@ describe('result UI rendering',()=>{
  it('result identity and key causes precede collapsed detail and replay remains present',()=>{
   const run={...createStationRun(),phase:'result' as const,success:true,gateRemaining:2};const progress=awardRun(freshProgress(),run);
   const html=renderToStaticMarkup(<Results run={run} progress={progress} saved replay={noop} share={noop} selectStation={noop}/>);
-  expect(html).toContain('最后一秒选手');expect(html).toContain('这局你为什么赶上了');expect(html).toContain('再赶一趟！');
+  expect(html).toContain('最后一秒选手');expect(html).toContain('分享称号，叫朋友来挑战');expect(html).toContain('留下战绩');expect(html).toContain('这局你为什么赶上了');expect(html).toContain('再赶一趟！');
   expect(html.indexOf('reason-card')).toBeLessThan(html.indexOf('result-details'));expect(html).not.toContain('<details open');
   expect(html.match(/class="achievement-feature /g)).toHaveLength(1);
  });
