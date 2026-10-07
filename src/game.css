@@ -176,6 +176,11 @@
 .results-v3 .chapter-sticker {font-size:14px; padding:7px 15px;}
 .result-margin {margin:8px 0;font-size:15px;}.result-margin strong {font-size:24px;}.result-margin>small {display:block;margin-top:5px;font-size:12px;}
 .results-v3 .result-summary {font-size:13px;line-height:1.7;margin:10px auto 18px;max-width:34em;}
+.share-result-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:10px 18px;margin:0 0 21px;border:1px solid var(--station-accent);border-radius:999px;background:var(--station-paper);color:var(--station-accent);font:inherit;font-size:14px;font-weight:700;cursor:pointer;}
+.share-result-button:focus-visible{outline:3px solid var(--station-accent);outline-offset:3px;}
+.shared-invite{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:3px 15px 12px;padding:9px 12px;border:1px solid #d8b985;border-radius:15px;background:#fff8e9;color:#755d3f;text-align:left;}
+.shared-invite div{min-width:0;}.shared-invite small,.shared-invite span{display:block;font-size:11px;line-height:1.4;}.shared-invite b{display:block;font-size:14px;line-height:1.35;margin:2px 0;}.shared-invite button{flex-shrink:0;display:grid;place-items:center;width:36px;height:36px;border:0;background:transparent;color:inherit;cursor:pointer;}
+.share-fallback{padding:8px 4px 16px;}.share-fallback p{font-size:14px;line-height:1.6;}.share-fallback input{box-sizing:border-box;width:100%;min-height:46px;padding:10px;border:1px solid #c9b48d;border-radius:10px;background:#fffaf0;color:#654e33;font:inherit;font-size:13px;}
 .results-v3 .result-tags {gap:6px;margin:12px 0;flex-wrap:wrap;}.results-v3 .result-tags span {font-size:12px;padding:5px 9px;}
 .results-v3 .reason-card {padding:19px 18px;margin:0 0 18px;border-radius:22px;text-align:left;}.results-v3 .reason-card h2{font-size:19px;margin:0 0 10px;}
 .results-v3 .factor-list {list-style:none;padding:0;margin:0;}.results-v3 .factor-list li {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;margin:0;border-bottom:1px solid #d9cba955;line-height:1.5;}.results-v3 .factor-list li:last-child{border-bottom:0;}
