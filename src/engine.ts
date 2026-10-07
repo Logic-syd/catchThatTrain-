@@ -9,13 +9,14 @@ import { identityPrompt, stationPrompt, createStationPlan, type Encounter } from
 import { planMetroIncident, transferStopIndex, METRO_INCIDENT_CHANCE } from './metroFlow';
 import { createStationLuck, elderPrompt, elderOutcome, escalatorPrompt, escalatorRide, type StationLuck } from './stationEncounters';
 import {buildStationJourney,journeyPrompt,type StationBeat} from './stationJourney';
+import {applyParentChoice,applyParentPreparation,createParentState,isParentBlock,parentBlockPrompt,parentMovementFactor,tickParent,type ParentState} from './parent';
 export const TIME_SCALE = 4;
 export const METRO_SECONDS = 7;
 export const DOOR_SECONDS = 4;
 export const STOP_BEFORE = 180;
 export type Phase='preparation'|'lobby'|'route'|'direction'|'wrong'|'metro'|'arrival'|'transfer'|'metro-recovery'|'station'|'result';
 export type Log={title:string;seconds:number;eventId?:string};
-export type Run={metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
+export type Run={metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
 export function pick<T>(array:T[],rng=Math.random):T{return array[Math.floor(rng()*array.length)]!;}
 export function routeSeconds(route:MetroRoute,character:CharacterConfig){return route.minutes*60+route.walk/1.5/character.speed+route.transfers*(character.stroller?90:character.luggage?45:20);}
 export function createRun(cityId?:string,characterId?:string,hard=false,first=false,rng=Math.random):Run{
@@ -40,9 +41,15 @@ export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):R
  const initial=Math.ceil((best+chapter.walking+240)/30)*30+STOP_BEFORE-(hard?HONGQIAO.studentHardReduction:0);
  return {...s,city,gate:chapter.gate,initial,remaining:initial,student:studentState(rng)};
 }
-export function createCharacterStationRun(cityId='shanghai',characterId:'student'|'worker'|'tourist'='student',hard=false,rng=Math.random):Run{
+export function createCharacterStationRun(cityId='shanghai',characterId:'student'|'worker'|'tourist'|'mom'='student',hard=false,rng=Math.random):Run{
  if(characterId==='student')return createStationRun(cityId,hard,rng);
  const base=createStationRun(cityId,hard,rng),character=characters.find(c=>c.id===characterId)!;const chapter=STATIONS.find(c=>c.id===cityId)!;
+ if(characterId==='mom'){
+  const parent=createParentState(rng);
+  const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
+  const initial=Math.ceil((best+chapter.walking/parentMovementFactor(parent)+200)/30)*30+STOP_BEFORE-(hard?105:0);
+  return {...base,character,student:undefined,parent,initial,remaining:initial,stamina:parent.energy,phase:'lobby'};
+ }
  const characterTime=createCharacterTimeState(characterId,rng);
  const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
  const initial=(cityId==='shanghai'?HONGQIAO.initial:Math.ceil((best+chapter.walking+480)/30)*30)+STOP_BEFORE-(hard?HONGQIAO.hardReduction:0);
@@ -53,7 +60,7 @@ export function createShanghaiRun(hard=false,rng=Math.random):Run{return createS
 function shuffle<T>(items:T[],rng:()=>number){for(let i=items.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[items[i],items[j]]=[items[j],items[i]];}return items;}
 export function formatTime(seconds:number){const s=Math.max(0,Math.ceil(seconds));return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
 export function clockTime(seconds:number){return String(Math.floor(seconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(seconds/60)%60).padStart(2,'0');}
-export function journeyRouteSeconds(s:Run,route:MetroRoute){return route.minutes*60+route.walk/1.5/characterMovementFactor(s,false)+route.transfers*(s.character.stroller?90:s.character.luggage?45:20);}
+export function journeyRouteSeconds(s:Run,route:MetroRoute){return route.minutes*60+route.walk/1.5/(s.parent?parentMovementFactor(s.parent):characterMovementFactor(s,false))+route.transfers*(s.character.stroller?90:s.character.luggage?45:20);}
 export function projectedTime(s:Run,route=s.route){
  const cost=route?journeyRouteSeconds(s,route):Math.min(...s.city.spawnStations[s.spawn].routes.map(r=>journeyRouteSeconds(s,r)));
  return Math.max(0,s.remaining-STOP_BEFORE-cost*(['metro','arrival','transfer','metro-recovery'].includes(s.phase)?1-s.metroProgress:['station','result'].includes(s.phase)?0:1));
@@ -62,7 +69,7 @@ export function randomEvent(s:Run,phase:'metro'|'station'):EventConfig{
  const pool=events.filter(e=>!s.seen.includes(e.id)&&(!e.character||e.character.includes(s.character.id))&&(e.phase===phase||e.phase==='both')&&!e.id.includes('-'));
  return pick(pool.length?pool:[events[0]]);
 }
-export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'DROP_TEA'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
+export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'DROP_TEA'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
 function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??null,phase:'result',event:null,success};}
 function deadline(s:Run):Run{return s.remaining<=(s.gatePassed?0:STOP_BEFORE)?finish(s):s;}
 function choice(s:Run,c:Choice,title=s.event?.title||'途中耽误'):Run{
@@ -93,6 +100,7 @@ function completeStationBeat(s:Run):Run{
  if(beat.id==='vertical-choice'&&vertical&&vertical!=='escalator'){const name=vertical==='stairs'?'楼梯':'直达电梯';s={...s,stationJourney:s.stationJourney.filter(b=>b.id!=='escalator-choice').map(b=>b.id==='escalator-ride'?{...b,label:'走向选中的'+name}:b)};}
  if(s.student)s={...s,student:{...s.student,sprinting:false,observed:false,runner:{...s.student.runner,wave:0,blocked:false}}};
  if(s.characterTime)s={...s,characterTime:{...s.characterTime,sprinting:false,runner:{...s.characterTime.runner,wave:0,blocked:false}}};
+ if(s.parent)s={...s,parent:{...s.parent,sprinting:false,runner:{...s.parent.runner,wave:0,blocked:false}}};
  return {...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationProgress:0,stationRunning:false,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
 }
 function recoverMetro(s:Run,title:string,seconds:number,target:'metro'|'arrival'):Run{
@@ -107,6 +115,13 @@ function continueMetro(s:Run):Run{
 function reduceCore(s:Run,a:Action):Run{
  if(a.type==='NEW')return a.run;
  if(s.phase==='result')return s;
+ if(a.type==='PARENT_PREP'&&s.parent&&s.phase==='preparation'&&a.step===s.parent.prepStep){
+  const parent=applyParentPreparation(s.parent,a.option);if(!parent)return s;
+  const seconds=a.option==='toilet-first'?60:0;
+  return deadline({...s,parent,remaining:s.remaining-seconds,phase:parent.prepStep>=2?'route':'preparation',logs:[...s.logs,{title:a.option==='toilet-first'?'出门前带孩子上厕所':a.option==='toilet-skip'?'先赶车，没上厕所':a.option==='snacks-pack'?'带了两份零食':'轻装出门，没带零食',seconds,eventId:'parent-prep-'+a.option}]});
+ }
+ if(a.type==='PARENT_SYNC'&&s.parent&&s.phase==='station'&&!s.event&&!s.parent.syncUsed&&s.remaining-STOP_BEFORE<=120&&s.remaining-STOP_BEFORE>0)return {...s,parent:{...s.parent,syncUsed:true,syncRemaining:12,gap:0}};
+ if(a.type==='PARENT_RELEASE'&&s.parent&&s.phase==='station'&&s.parent.carrying&&s.city.id!=='guangzhou')return {...s,parent:{...s.parent,carrying:false,gap:0}};
  if(a.type==='READ_MAP'&&s.characterTime)return {...s,characterTime:{...s.characterTime,mapChecked:true}};
  if(a.type==='PERSON_PICK'&&s.characterTime&&s.phase==='preparation'&&s.characterTime.prepStep===a.step)return deadline(applyTimedChoice(s,a.option));
  if(s.student){
@@ -139,9 +154,11 @@ function reduceCore(s:Run,a:Action):Run{
   }
  }
  if(a.type==='CHANGE_LANE'&&s.characterTime&&s.phase==='station'&&!s.event){const r=s.characterTime.runner,w=runnerWave(s),lane=Math.max(0,Math.min(2,r.lane+a.direction)),cleared=r.blocked&&w&&lane!==w.lane;return {...s,characterTime:{...s.characterTime,runner:{...r,lane,blocked:cleared?false:r.blocked,wave:r.wave+(cleared?1:0)}}};}
+ if(a.type==='CHANGE_LANE'&&s.parent&&s.phase==='station'&&!s.event){const r=s.parent.runner,w=runnerWave(s),lane=Math.max(0,Math.min(2,r.lane+a.direction)),cleared=r.blocked&&w&&lane!==w.lane;return {...s,parent:{...s.parent,runner:{...r,lane,blocked:cleared?false:r.blocked,wave:r.wave+(cleared?1:0)}}};}
  if(a.type==='SPRINT_INPUT'&&s.characterTime&&s.phase==='station'&&!s.event)return {...s,stationRunning:a.held||s.stationRunning,characterTime:{...s.characterTime,sprinting:a.held&&!s.characterTime.exhausted&&!s.characterTime.runner.blocked}};
- if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined}:s;
- if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime?'preparation':'route',phaseElapsed:0}:s;
+ if(a.type==='SPRINT_INPUT'&&s.parent&&s.phase==='station'&&!s.event)return {...s,stationRunning:a.held||s.stationRunning,parent:{...s.parent,sprinting:a.held&&!s.parent.exhausted&&!s.parent.runner.blocked}};
+ if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
+ if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime||s.parent?'preparation':'route',phaseElapsed:0}:s;
  if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
  if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return s.characterTime?.characterId==='tourist'?{...s,phase:'metro',phaseElapsed:0,event:characterEventPrompt(s,'tourist-sleep')??null,eventElapsed:0}:{...s,phase:'metro',phaseElapsed:0};}
  if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro(s):s;
@@ -163,6 +180,11 @@ function reduceCore(s:Run,a:Action):Run{
  }
  if(a.type==='CHOICE'){
   if(!s.event||s.event.id==='identity-search')return s;
+  if(s.parent&&isParentBlock(s.event.id)){
+   const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   const parent=applyParentChoice(s.parent,s.event.id,selected.label,selected.seconds);
+   return deadline({...s,parent,remaining:s.remaining-selected.seconds,event:null,eventElapsed:0,eventOverdue:false,stationRunning:false,logs:[...s.logs,{title:selected.label,seconds:selected.seconds,eventId:s.event.id}]});
+  }
   if(s.student&&s.event.id==='transfer-run'){if(!s.event.choices.some(c=>c.label===a.choice.label))return s;return {...s,phase:'metro',event:null,phaseElapsed:0,student:{...s.student,doorReady:false}};}
 
   if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
@@ -172,21 +194,22 @@ function reduceCore(s:Run,a:Action):Run{
   if(!s.event)return s;
   let chosen=a.choice;
   if(s.stationJourney.length){const selected=s.event.choices.find(c=>c.label===chosen.label);if(!selected)return s;chosen=selected;}
-  if(s.event.id==='zz-number'&&chosen.stationDecision&&!chosen.stationDecision.optimal){return deadline({...s,remaining:s.remaining-chosen.seconds,eventElapsed:0,stationDecisions:[...s.stationDecisions,chosen.stationDecision],student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+1,decisionLoss:s.student.decisionLoss+chosen.seconds}:undefined,logs:[...s.logs,{title:'看成 '+chosen.label+'，折返重新核对',seconds:chosen.seconds,eventId:'zz-number'}]});}
-  if(s.stationJourney.length&&s.event.id==='elder-block'){
-   const selected=s.event.choices.find(c=>c.effect===chosen.effect);if(!selected)return s;
+  if(s.parent)s={...s,parent:applyParentChoice(s.parent,s.event.id,chosen.label,chosen.seconds)};
+  if(s.event!.id==='zz-number'&&chosen.stationDecision&&!chosen.stationDecision.optimal){return deadline({...s,remaining:s.remaining-chosen.seconds,eventElapsed:0,stationDecisions:[...s.stationDecisions,chosen.stationDecision],student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+1,decisionLoss:s.student.decisionLoss+chosen.seconds}:undefined,logs:[...s.logs,{title:'看成 '+chosen.label+'，折返重新核对',seconds:chosen.seconds,eventId:'zz-number'}]});}
+  if(s.stationJourney.length&&s.event!.id==='elder-block'){
+   const selected=s.event!.choices.find(c=>c.effect===chosen.effect);if(!selected)return s;
    if(selected.effect==='elder-detour')return {...s,event:{id:'elder-detour-action',title:'侧面有空隙，侧身挤过去！',description:'向上滑动小人，收好背包，从旁边绕开。',phase:'station',interaction:{kind:'swipe',seconds:7,penalty:15},choices:[{label:'侧身通过',detail:'绕开老人 · −10 秒',seconds:10}]},eventElapsed:0,eventOverdue:false};
    const scam=s.stationLuck.elderScam,seconds=scam?60:2;
    if(s.student)s={...s,student:{...s.student,decisionLoss:s.student.decisionLoss+seconds}};
    return deadline({...s,event:elderOutcome(scam),eventElapsed:0,eventOverdue:false,remaining:s.remaining-seconds,logs:[...s.logs,{title:scam?'推了一下，被碰瓷耽误了':'推了一下，挤过通道',seconds}]});
   }
-  if(s.stationJourney.length&&s.event.id==='escalator-ride'&&(!s.student||s.student.vertical==='escalator')){
-   const selected=s.event.choices.find(c=>c.label===chosen.label);if(!selected)return s;
+  if(s.stationJourney.length&&s.event!.id==='escalator-ride'&&(!s.student||s.student.vertical==='escalator')){
+   const selected=s.event!.choices.find(c=>c.label===chosen.label);if(!selected)return s;
    const fast=!!selected.boost,blocked=s.stationLuck.escalators[s.escalatorLane!]==='blocked';
    return {...s,event:{id:'escalator-operation',phase:'station',title:fast?(s.student?.tea?'一手奶茶，腾出手再快走！':'前面让开了，快走四步！'):blocked?'被堵住了，先等前面的人走。':'站稳扶手，跟着扶梯上楼。',description:fast?(s.student?.tea?'多点一下整理手里的奶茶，再沿扶梯快步上楼。':'连续点击四次，沿扶梯快步上楼。'):'按住扶手，等这一段走完才能继续。',interaction:{kind:fast?'tap':'hold',required:fast?4+(s.student?.tea?1:0):blocked?3:1.5,seconds:9,penalty:15},choices:[{...selected,boost:undefined,detour:undefined,label:fast?'快走上楼':'按住扶手'}]},eventElapsed:0,eventOverdue:false};
   }
-  if(s.event.id==='elder-block'){
-   const selected=s.event.choices.find(c=>c.effect===chosen.effect);
+  if(s.event!.id==='elder-block'){
+   const selected=s.event!.choices.find(c=>c.effect===chosen.effect);
    if(!selected)return s;
    if(selected.effect==='elder-push'){
     const scam=s.stationLuck.elderScam;
@@ -195,8 +218,8 @@ function reduceCore(s:Run,a:Action):Run{
    }
    return choice(s,selected,'绕开挡路的老人');
   }
-  if(s.event.id==='escalator-choice'){
-   const selected=s.event.choices.find(c=>c.escalator===chosen.escalator);
+  if(s.event!.id==='escalator-choice'){
+   const selected=s.event!.choices.find(c=>c.escalator===chosen.escalator);
    return selected?choice(s,selected,'选择了'+selected.label):s;
   }
   return choice(s,chosen);
@@ -233,6 +256,12 @@ function reduceCore(s:Run,a:Action):Run{
    n.student=u;
   }
   if(s.characterTime){const t={...s.characterTime};const running=s.phase==='station'&&s.stationRunning&&!s.event;const factor=characterMovementFactor(s,t.sprinting&&!t.exhausted);const profile=t.characterId==='worker'?{drain:5,recover:1.15,rest:3.5,fatigue:.001}:{drain:6,recover:.35,rest:2.5,fatigue:.003};const fatigueRecovery=t.fatigue>=80?.75:t.fatigue>=60?.85:1;t.energy=Math.max(0,Math.min(t.maxEnergy,t.energy+(t.sprinting&&!t.exhausted?-profile.drain:running?profile.recover:profile.rest)*dt*(t.characterId==='tourist'?fatigueRecovery:1)));if(t.energy<=.01){t.exhausted=true;t.sprinting=false;}else if(t.energy>=10)t.exhausted=false;t.fatigue=Math.max(0,Math.min(100,t.fatigue+(running?profile.fatigue*dt:-profile.fatigue*.25*dt)));n={...n,characterTime:t,stamina:t.energy};}
+  if(s.parent){
+   const running=s.phase==='station'&&s.stationRunning&&!s.event&&!s.parent.runner.blocked;
+   n.parent=tickParent(s.parent,s.phase,dt,s.phase==='metro'?0:dt*clockRate(s),running);
+   n.stamina=n.parent.energy;
+   if(s.phase==='station'&&!s.event){const block=parentBlockPrompt(n.parent);if(block)return deadline({...n,event:block,eventElapsed:0,eventOverdue:false,stationRunning:false,parent:{...n.parent,sprinting:false}});}
+  }
   if(s.event){
    n.eventElapsed+=dt;
    if(s.student){n.eventOverdue=n.eventElapsed>=(s.event.interaction?.seconds??12)*focusWindow(s.student.stats.focus);return deadline(n);}
@@ -261,15 +290,15 @@ function reduceCore(s:Run,a:Action):Run{
   }
   if(s.phase==='station'&&s.stationJourney.length){
    const beat=s.stationJourney[s.stationBeat];
-   if(beat&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.characterTime?.exhausted){
-    n.stationProgress=Math.min(1,s.stationProgress+Math.min(dt,.25)*characterMovementFactor(s,s.student?s.student.sprinting:!!s.characterTime?.sprinting)/beat.seconds);
+   if(beat&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked&&!s.characterTime?.exhausted){
+    n.stationProgress=Math.min(1,s.stationProgress+Math.min(dt,.25)*(s.parent?parentMovementFactor(s.parent,s.parent.sprinting):characterMovementFactor(s,s.student?s.student.sprinting:!!s.characterTime?.sprinting))/beat.seconds);
     const wave=runnerWave(s);
-    if(wave&&n.stationProgress>=wave.at&&(n.student||n.characterTime)){
-     const runner=n.student?.runner??n.characterTime!.runner;
-     if(runner.lane===wave.lane){n.stationProgress=wave.at;if(n.student)n.student={...n.student,sprinting:false,runner:{...n.student.runner,blocked:true,collisions:n.student.runner.collisions+1}};else if(n.characterTime)n.characterTime={...n.characterTime,sprinting:false,runner:{...n.characterTime.runner,blocked:true,collisions:n.characterTime.runner.collisions+1}};}
-     else if(n.student)n.student={...n.student,runner:{...n.student.runner,wave:n.student.runner.wave+1,dodges:n.student.runner.dodges+1}};else n.characterTime={...n.characterTime!,runner:{...n.characterTime!.runner,wave:n.characterTime!.runner.wave+1,dodges:n.characterTime!.runner.dodges+1}};
+    if(wave&&n.stationProgress>=wave.at&&(n.student||n.characterTime||n.parent)){
+     const runner=n.student?.runner??n.characterTime?.runner??n.parent!.runner;
+     if(runner.lane===wave.lane){n.stationProgress=wave.at;if(n.student)n.student={...n.student,sprinting:false,runner:{...n.student.runner,blocked:true,collisions:n.student.runner.collisions+1}};else if(n.characterTime)n.characterTime={...n.characterTime,sprinting:false,runner:{...n.characterTime.runner,blocked:true,collisions:n.characterTime.runner.collisions+1}};else n.parent={...n.parent!,sprinting:false,runner:{...n.parent!.runner,blocked:true,collisions:n.parent!.runner.collisions+1}};}
+     else if(n.student)n.student={...n.student,runner:{...n.student.runner,wave:n.student.runner.wave+1,dodges:n.student.runner.dodges+1}};else if(n.characterTime)n.characterTime={...n.characterTime,runner:{...n.characterTime.runner,wave:n.characterTime.runner.wave+1,dodges:n.characterTime.runner.dodges+1}};else n.parent={...n.parent!,runner:{...n.parent!.runner,wave:n.parent!.runner.wave+1,dodges:n.parent!.runner.dodges+1}};
     }
-    if(n.stationProgress>=1){n.event=journeyPrompt(n);n.eventElapsed=0;n.eventOverdue=false;n.stationRunning=false;if(n.student)n.student={...n.student,sprinting:false};}
+    if(n.stationProgress>=1){n.event=journeyPrompt(n);n.eventElapsed=0;n.eventOverdue=false;n.stationRunning=false;if(n.student)n.student={...n.student,sprinting:false};if(n.parent)n.parent={...n.parent,sprinting:false};}
    }
    return deadline(n);
   }
@@ -290,6 +319,7 @@ function reduceCore(s:Run,a:Action):Run{
    const movingSeconds=(next-old)*METRO_SECONDS;
    n.remaining=s.remaining-(next-old)*s.metroDuration-Math.max(0,dt-movingSeconds)*clockRate(s);
    n.metroProgress=next;
+   if(n.parent)n.parent=tickParent(n.parent,'metro',0,(next-old)*s.metroDuration,false);
    if(n.student&&s.student)n.student.elapsedGame=s.student.elapsedGame+s.remaining-n.remaining;
    if(checkpoint){n.event=incident;n.eventElapsed=0;}
    if(next>=stopProgress){n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;if(s.characterTime?.sleeping&&n.metroStopIndex>=Math.max(1,s.route!.stops.length-1-s.characterTime.alarmStops)){n.event=characterEventPrompt(n,'tourist-wake')??null;n.eventElapsed=0;}}
@@ -306,7 +336,7 @@ export function readRecords():RecordEntry[]{try{const v=JSON.parse(localStorage.
 export function saveRecord(run:Run){const records=readRecords();if(!records.some(r=>r.id===run.id)){records.unshift({title:summarizeRun(run).title,stationPlaystyle:summarizeRun(run).stationPlaystyle,reason:summarizeRun(run).summary,id:run.id,city:run.city.name,character:run.character.name,success:run.success,extreme:run.success&&run.gateRemaining<30,margin:run.gateRemaining,elapsed:run.elapsed,date:new Date().toLocaleDateString('zh-CN')});try{localStorage.setItem('catch-train-records',JSON.stringify(records.slice(0,30)));}catch{/* optional storage */}}}
 
 // Reading and choosing run at real time; travel keeps its compressed game clock.
-export function clockRate(s:Run){return !s.event&&s.phase==='station'&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.characterTime?.exhausted?TIME_SCALE:1;}
+export function clockRate(s:Run){return !s.event&&s.phase==='station'&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked&&!s.characterTime?.exhausted?TIME_SCALE:1;}
 export function reducer(s:Run,a:Action):Run{
  let n=reduceCore(s,a);
  if(n.logs.length>s.logs.length){const eventId=s.event?.id??(a.type==='PREP_PICK'?'prepare-'+PREPARATIONS[s.student?.prep??0]?.id:a.type==='ALIGHT'?'metro-door':'metro-route');n={...n,logs:n.logs.map((l,i)=>i<s.logs.length?l:{...l,eventId:l.eventId??eventId})};}

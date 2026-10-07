@@ -1,13 +1,14 @@
 import type {Run,Action} from './engine';
 import {movementFactor} from './studentConfig';
 import {stationFor} from './stations';
+import {parentMovementFactor} from './parent';
 export type CharacterId='student'|'worker'|'tourist'|'mother'|'family';
 export type ImpactCategory='decision'|'navigation'|'movement'|'character'|'environment'|'operation'|'resource';
 export interface TimeImpact{id:string;source:string;category:ImpactCategory;deltaSeconds:number;avoidable:boolean;positive:boolean;decisive?:boolean;estimated?:boolean;characterId?:string;eventId?:string;decisionId?:string;phase?:string;tag?:string;baseline?:string}
 export interface RunMetrics{impacts:TimeImpact[];characterStats:Record<string,number|boolean>;choiceResults:{judgment:boolean[];accessibility:boolean[];sleep:boolean[]};pendingRisk:{beat:number;collisions:number}|null;wrongDirections:number;mapViews:number;bagAttempts:number;earlySprintSeconds:number;lowEnergySeconds:number;minEnergyRatio:number;lateFar:boolean;lateGateEntry:boolean;projectedRiskNode:string|null;wasProjectedToFail:boolean;initialMarginRatio:number|null;routeEfficiency:number;highRiskResults:boolean[];stableChoices:number;endPhase:string|null;estimatedSecondsToGoal:number|null}
 export const freshMetrics=():RunMetrics=>({impacts:[],characterStats:{},choiceResults:{judgment:[],accessibility:[],sleep:[]},pendingRisk:null,wrongDirections:0,mapViews:0,bagAttempts:0,earlySprintSeconds:0,lowEnergySeconds:0,minEnergyRatio:1,lateFar:false,lateGateEntry:false,projectedRiskNode:null,wasProjectedToFail:false,initialMarginRatio:null,routeEfficiency:100,highRiskResults:[],stableChoices:0,endPhase:null,estimatedSecondsToGoal:null});
 export const normalizeCharacter=(id:string):CharacterId=>id==='mom'?'mother':id as CharacterId;
-const routeCost=(s:Run,r= s.route)=>r?r.minutes*60+r.walk/1.5/(s.student?movementFactor({...s.student,sprinting:false,exhausted:false}):s.character.speed)+r.transfers*20:0;
+const routeCost=(s:Run,r= s.route)=>r?r.minutes*60+r.walk/1.5/(s.student?movementFactor({...s.student,sprinting:false,exhausted:false}):s.parent?parentMovementFactor(s.parent):s.character.speed)+r.transfers*20:0;
 export function remainingEstimate(s:Run):number{
  if(s.stationJourney.length){const end=s.gatePassed?s.stationJourney.length-1:s.stationJourney.findIndex(b=>b.id==='gate-scan');
   return s.stationJourney.slice(s.stationBeat,end+1).reduce((sum,b,i)=>sum+b.seconds*4*(i===0?1-s.stationProgress:1)+(i===0&&s.event?Math.max(0,(s.event.interaction?.required??2)-s.eventElapsed):2),0);
@@ -65,6 +66,12 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
   if(a.type==='CHOICE'&&(a.choice.stationDecision?.density??0)>=3)m.pendingRisk={beat:n.stationBeat,collisions:v.runner.collisions};
   if(m.pendingRisk&&(n.event&&n.stationBeat===m.pendingRisk.beat||n.phase==='result')){m.highRiskResults.push(n.phase!=='result'&&v.runner.collisions===m.pendingRisk.collisions);m.pendingRisk=null;}
   m.characterStats={...m.characterStats,tea:v.choices.tea==='buy',breakfast:v.breakfast,checkedID:v.checkedID,idFound:n.identityReady,bagAttempts:m.bagAttempts,bagMistakes:v.bagMistakes,bagSeconds:v.bagSeconds,lateSprintSaved:v.lateSprintSaved,earlySprintSeconds:m.earlySprintSeconds,lowEnergySeconds:m.lowEnergySeconds,finalEnergy:v.stamina,exhaustedLateSeconds:v.exhaustedLateSeconds,otherDelay:n.logs.some(l=>l.seconds>0&&l.eventId!=='prepare-tea'&&l.eventId!=='prepare-breakfast'&&l.eventId?.startsWith('prepare-')),extraPreparationSeconds:n.logs.filter(l=>l.eventId?.startsWith('prepare-')).reduce((t,l)=>t+l.seconds,0)};
+ }
+ if(s.parent&&n.parent){
+  const gain=n.parent.syncSprintSaved-s.parent.syncSprintSaved;
+  add('parent-sync','最后牵着孩子同步冲刺',gain,'movement',true,{tag:'牵手冲刺',estimated:true,baseline:'同路段普通牵手前进'});
+  if(a.type==='CHOICE'&&a.choice.stationDecision){m.choiceResults.judgment.push(a.choice.stationDecision.optimal);if(a.choice.stationDecision.category==='vertical')m.choiceResults.accessibility.push(a.choice.stationDecision.optimal);if(a.choice.stationDecision.optimal)m.stableChoices++;}
+  if(a.type==='TICK'){m.minEnergyRatio=Math.min(m.minEnergyRatio,n.parent.energy/n.parent.maxEnergy);if(n.parent.energy<=7)m.lowEnergySeconds+=a.dt;}
  }
  const node=n.phase+':'+n.stationBeat+':'+n.metroStopIndex;
  if(n.phase!=='lobby'&&n.phase!=='result'&&n.route){const risk=n.remaining-(n.gatePassed?0:180)-remainingEstimate(n)<-30;

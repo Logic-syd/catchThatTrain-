@@ -1,7 +1,10 @@
 import type {Run} from './engine';
 import {characters} from './data';
 import {characterTimeProfiles} from './characterTime';
+import {parentProfile} from './parent';
+import {LittleYou} from './Scenes';
 import {isCharacterUnlocked,type Progress,type PlayableCharacterId} from './achievements';
+import {useRef} from 'react';
 
 function StudentPortrait(){
  return <svg className="student-portrait" viewBox="0 0 100 118" role="img" aria-label="背着黄色双肩包、举拳给自己打气的大学生">
@@ -31,22 +34,27 @@ function StudentPortrait(){
 }
 
 const characterIntro={
- student:{quote:'“来得及。”',scene:'朋友家 / 咖啡厅 · 手机满电',card:'精力满格 · 书包容易乱'},
+ student:{quote:'“来得及。”',scene:'朋友家的沙发好舒服',card:'精力满格 · 书包容易乱'},
  worker:{quote:'“真的不想回去上班。”',scene:'家里玄关 · 妈妈还在往箱子里塞东西',card:'路线熟 · 行李越来越重'},
  tourist:{quote:'“我知道要走，但我真的走不动了。”',scene:'陌生城市 · 已退房 · 今日 23,487 步',card:'精力低 · 需要休息和认路'},
+ mom:{quote:'“行，还是我自己带。”',scene:'家门口 · 孩子鞋穿好了，厕所还没上',card:'认路快 · 孩子会累、会尿急'},
 } as const;
+export function studentLobbyScene(runId:string,variant?:number){const pick=variant??[...runId].reduce((sum,char)=>sum+char.charCodeAt(0),0)%2;return pick?'咖啡店的小猫太可爱了':'朋友家的沙发好舒服';}
 
-export default function LobbyIntro({run,progress,onSelect}:{run:Run;progress:Progress;onSelect:(id:PlayableCharacterId)=>void}){
- const stats=run.student?.stats;const t=run.characterTime;const id=run.character.id as 'student'|'worker'|'tourist';const intro=characterIntro[id],profile=characterTimeProfiles[id];
- const values=stats?{agility:stats.agility,energy:stats.energy,focus:stats.focus,load:stats.load}:{agility:profile.agility,energy:t?.energy??profile.energy,focus:t?.focus??profile.focus,load:t?.load??profile.load};
+export default function LobbyIntro({run,progress,onSelect,studentSceneVariant}:{run:Run;progress:Progress;onSelect:(id:PlayableCharacterId)=>void;studentSceneVariant?:number}){
+ const characterTrack=useRef<HTMLDivElement>(null);
+ const difficultyNames=['','简单','普通','困难','高难','极限'];
+ const stats=run.student?.stats;const t=run.characterTime;const id=run.character.id as PlayableCharacterId;const intro=characterIntro[id],profile=id==='mom'?parentProfile:characterTimeProfiles[id];
+ const values=stats?{agility:stats.agility,energy:stats.energy,focus:stats.focus,load:stats.load}:{agility:profile.agility,energy:run.parent?.energy??t?.energy??profile.energy,focus:profile.focus,load:run.parent?.load??t?.load??profile.load};
+ const scene=id==='student'?studentLobbyScene(run.id,studentSceneVariant):intro.scene;
  return <div className="lobby-intro">
-  <div className="lobby-person">{id==='student'?<StudentPortrait/>:<span className="character-portrait-emoji" role="img" aria-label={run.character.name}>{run.character.emoji}</span>}<b>{run.character.name}</b></div>
+  <div className="lobby-person">{id==='student'?<StudentPortrait/>:id==='mom'?<LittleYou characterId="mom" parentAppearance={run.parent?.appearance}/>:<span className="character-portrait-emoji" role="img" aria-label={run.character.name}>{run.character.emoji}</span>}<b>{run.character.name}</b></div>
   <div className="lobby-person-copy">
-   <div className={'student-speech speech-'+id}><h1>我一定会<span>赶上这趟车！</span></h1><p>{intro.quote}</p><small className="lobby-scene">{intro.scene}</small></div>
+   <div className={'student-speech speech-'+id}><h1>我一定会<span>赶上这趟车！</span></h1><p>{intro.quote}</p><small className="lobby-scene">{scene}{id==='student'?' · 高电量 · 高精力':''}</small></div>
    <dl className="lobby-attributes" aria-label="人物属性，满分 100">
     {(['agility','energy','focus','load'] as const).map((key,i)=><div key={key}><dt>{['敏捷','精力','专注','负重'][i]}</dt><dd>{values[key]}</dd></div>)}
    </dl>
   </div>
-  <div className="character-picker" aria-label="选择赶车人物">{characters.filter(c=>['student','worker','tourist'].includes(c.id)).map(c=>{const characterId=c.id as PlayableCharacterId,unlocked=isCharacterUnlocked(progress,characterId);return <button key={c.id} className={(id===c.id?'selected ':'')+(!unlocked?'locked':'')} aria-pressed={id===c.id} disabled={!unlocked} onClick={()=>onSelect(characterId)}><span>{unlocked?c.emoji:'🔒'}</span><b>{c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':'大学生'}</b><small>{unlocked?characterIntro[characterId].card:characterId==='worker'?'大学生赶上一次后解锁':'打工人赶上一次后解锁'}</small></button>;})}</div>
+  <div className="character-picker-shell"><div className="character-picker-heading"><b>选择人物</b><small>左右滑动查看 · 通关逐个解锁 →</small></div><div className="character-picker" ref={characterTrack} tabIndex={0} role="group" aria-label="选择赶车人物，左右滑动查看更多" onKeyDown={e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();characterTrack.current?.scrollBy({left:(e.key==='ArrowRight'?1:-1)*210,behavior:'smooth'});}}}>{characters.filter(c=>['student','worker','tourist','mom'].includes(c.id)).map(c=>{const characterId=c.id as PlayableCharacterId,unlocked=isCharacterUnlocked(progress,characterId);return <button key={c.id} className={(id===c.id?'selected ':'')+(!unlocked?'locked':'')} aria-pressed={id===c.id} disabled={!unlocked} onClick={()=>onSelect(characterId)}><span className="character-icon">{unlocked?c.emoji:'🔒'}</span><span className="difficulty-badge">{difficultyNames[c.difficulty]} <b>{c.difficulty}星</b></span><b>{c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':c.id==='mom'?'带娃家长':'大学生'}</b><small>{unlocked?characterIntro[characterId].card:characterId==='worker'?'大学生赶上一次后解锁':characterId==='tourist'?'打工人赶上一次后解锁':'游客赶上一次后解锁'}</small></button>;})}</div></div>
  </div>;
 }

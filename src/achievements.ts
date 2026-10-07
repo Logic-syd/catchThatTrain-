@@ -4,7 +4,7 @@ import {analyzeFactors,type GameResult} from './gameResult';
 import {ACHIEVEMENTS,matches,getField} from './achievementConfig';
 export {ACHIEVEMENTS} from './achievementConfig';
 export const PROFILE_KEY='train-rush:profile:v1';
-export type PlayableCharacterId='student'|'worker'|'tourist';
+export type PlayableCharacterId='student'|'worker'|'tourist'|'mom';
 export type Stat={runs:number;wins:number;streak:number;bestStreak:number;goodRouteStreak:number;failuresBeforeFirstWin:number};
 export type Progress={schemaVersion:1;totalRuns:number;totalWins:number;currentWinStreak:number;bestWinStreak:number;characterStats:Record<string,Stat>;stationStats:Record<string,Stat>;achievementProgress:Record<string,{current:number;target:number;unlocked:boolean}>;unlocked:Record<string,{at:string;runId:string}>;processedRunIds:string[];lastRunId:string|null;lastUnlocks:string[];legacyMigrated:boolean;conqueredStations:number;
  // Kept for existing record/UI consumers.
@@ -14,12 +14,14 @@ export const freshProgress=():Progress=>({schemaVersion:1,totalRuns:0,totalWins:
 export function isCharacterUnlocked(progress:Progress,id:PlayableCharacterId){
  if(id==='student')return true;
  if(id==='worker')return (progress.characterStats.student?.wins??0)>0||(progress.characterStats.worker?.runs??0)>0||(progress.characterStats.tourist?.runs??0)>0;
- return (progress.characterStats.worker?.wins??0)>0||(progress.characterStats.tourist?.runs??0)>0;
+ if(id==='tourist')return (progress.characterStats.worker?.wins??0)>0||(progress.characterStats.tourist?.runs??0)>0;
+ return (progress.characterStats.tourist?.wins??0)>0||(progress.characterStats.mother?.runs??0)>0;
 }
 export function newlyUnlockedCharacter(progress:Progress,run:Run):PlayableCharacterId|null{
  if(!run.success||progress.lastRunId!==run.id)return null;
  if(run.character.id==='student'&&progress.characterStats.student?.wins===1&&(progress.characterStats.worker?.runs??0)===0)return 'worker';
  if(run.character.id==='worker'&&progress.characterStats.worker?.wins===1&&(progress.characterStats.tourist?.runs??0)===0)return 'tourist';
+ if(run.character.id==='tourist'&&progress.characterStats.tourist?.wins===1&&(progress.characterStats.mother?.runs??0)===0)return 'mom';
  return null;
 }
 const count=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)&&v>=0?Math.floor(v):0;

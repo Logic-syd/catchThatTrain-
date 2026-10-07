@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, MapPin, ArrowRight, TrainFront } from 'lucide-react';
 import type { Run } from './engine';
-export function LittleYou({motion='idle',characterId='student'}:{motion?:'idle'|'running'|'sprinting'|'waiting'|'panic';characterId?:string}){
+export function LittleYou({motion='idle',characterId='student',parentAppearance='mom',childGap=0,carrying=false}:{motion?:'idle'|'running'|'sprinting'|'waiting'|'panic';characterId?:string;parentAppearance?:'mom'|'dad';childGap?:number;carrying?:boolean}){
+ if(characterId==='mom')return <svg viewBox="0 0 102 68" className={'little-you '+motion+' character-mom'} role="img" aria-label={`${parentAppearance==='mom'?'妈妈':'爸爸'}${carrying?'抱着':'牵着'}孩子赶车`}>
+  <ellipse cx="50" cy="58" rx="37" ry="6" fill="#75664c22"/>
+  <g className="little-body"><path d="M25 50l-3 12m21-12 3 12" stroke="#695443" strokeWidth="6" strokeLinecap="round"/><path d="M22 27q13-7 25 0l3 25H20z" fill={parentAppearance==='mom'?'#cd8f72':'#829e91'} stroke="#6d6650" strokeWidth="2"/><path d="M21 32l-8 13m35-12 13 11" fill="none" stroke="#ecc29d" strokeWidth="5" strokeLinecap="round"/><circle cx="35" cy="17" r="13" fill="#e9bd98"/><path d={parentAppearance==='mom'?'M21 18q0-18 14-18 17 0 14 20l-3 7-2-12Q33 6 25 21z':'M22 15q1-16 14-15 15 0 13 18-12-8-27-3z'} fill="#604c3c"/><circle cx="31" cy="19" r="1" fill="#55463a"/><circle cx="39" cy="19" r="1" fill="#55463a"/><path d="M31 25q4 3 8 0" fill="none" stroke="#aa735a" strokeWidth="1.4"/></g>
+  <g className="little-child" transform={`translate(${Math.min(15,childGap*1.6)} ${carrying?-17:8})`}><path d="M67 49l-3 10m13-10 3 10" stroke="#766149" strokeWidth="4" strokeLinecap="round"/><path d="M62 31q9-6 18 0l2 20H60z" fill="#e3b869" stroke="#90714d" strokeWidth="1.5"/><path d="M62 36l-8 8m27-8 5 8" stroke="#eac19e" strokeWidth="4" strokeLinecap="round"/><circle cx="71" cy="25" r="9" fill="#edc29d"/><path d="M62 24q0-12 9-12 10 0 9 12-8-7-18 0z" fill="#634e3d"/><circle cx="68" cy="26" r=".8" fill="#554638"/><circle cx="74" cy="26" r=".8" fill="#554638"/></g>
+  {!carrying&&<path d="M59 43q3 8 6 2" fill="none" stroke="#eac19e" strokeWidth="3" strokeLinecap="round"/>}<path className="sweat" d="M53 6q6 9 0 9t0-9" fill="#9ac8cc"/></svg>;
  const body=characterId==='tourist'?'#8ca6a0':characterId==='worker'?'#8a9b86':'#91ae92';
  const bag=characterId==='tourist'?'#b6a884':characterId==='worker'?'#8b725f':'#d1b071';
  const aria=characterId==='worker'?'拉着妈妈塞满东西的大箱子':characterId==='tourist'?'拉着小号行李箱、背着背包的疲惫游客':'背着小书包的大学生';

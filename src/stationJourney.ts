@@ -5,6 +5,7 @@ import type { EventConfig } from './data';
 import { elderPrompt, escalatorPrompt, escalatorRide } from './stationEncounters';
 import { identityPrompt, stationPrompt } from './flow';
 import {characterEventPrompt} from './characterTime';
+import {parentStationPrompt} from './parent';
 export type StationBeat={id:string;stage:number;label:string;seconds:number};
 export function buildStationJourney(s:Run):StationBeat[]{
  let beats:StationBeat[]=s.encounters.filter(e=>e.stage===0).map(e=>({id:e.id,stage:0,label:e.id==='bag-snag'?'背好包，冲出地铁':'穿过出站通道',seconds:2}));
@@ -28,6 +29,15 @@ export function buildStationJourney(s:Run):StationBeat[]{
   case 'wuhan':beats=[add('wh-floor',0,'在 B1 中庭先认楼层'),...beats.filter(b=>b.id.startsWith('escalator')||b.id==='vertical-choice'),add('wh-landing',1,'到达平台，确认 2F 出发'),queue,sign,...tail];break;
   case 'zhengzhou':beats=[...intro.slice(0,1),queue,add('zz-hometown',3,'老乡在中央大厅拦住你',3),add('zz-wing',3,'中央大厅，选择东西翼',6),add('zz-number',4,'核对相似的检票口编号',4),...tail];break;
  }
+ if(s.parent){
+  const insertAfter=(target:string,beat:StationBeat)=>{const i=beats.findIndex(b=>b.id===target);if(i>=0)beats.splice(i+1,0,beat);};
+  if(s.city.id==='shanghai')insertAfter('sh-corridor',add('sh-parent-shop',2,'孩子在长廊商店前停下',3));
+  if(s.city.id==='beijing')insertAfter('bj-tray',add('bj-parent-strict',2,'严格安检：孩子的水壶、零食分开检查',3));
+  if(s.city.id==='guangzhou')insertAfter('gz-route',add('gz-parent-carry',0,'路上都抱着孩子，你家孩子也要抱',3));
+  if(s.city.id==='hangzhou')insertAfter('hz-fork',add('hz-parent-lift',1,'左边近电梯维修，右边远电梯可靠',3));
+  if(s.city.id==='wuhan'){insertAfter('wh-floor',add('wh-parent-duck',0,'孩子盯上了周黑鸭',3));insertAfter('wh-landing',add('wh-parent-duck-repeat',1,'“周黑鸭呢？”又停了一次',3));}
+  if(s.city.id==='zhengzhou')insertAfter('zz-hometown',add('zz-parent-child',3,'在对称大厅牵好孩子',3));
+ }
  if(s.characterTime?.characterId==='worker'&&s.characterTime.bossUnread&&s.characterTime.bossCallsLeft>0){let i=Math.min(2,beats.length-1);beats.splice(i,0,add('worker-boss-call',beats[i].stage,'老板又发来工作消息',1));if(s.characterTime.bossCallsLeft>1){i=Math.max(4,Math.floor(beats.length*.65));beats.splice(i,0,add('worker-boss-call',beats[i].stage,'老板又催一次，还得处理',1));}}
  if(s.characterTime?.characterId==='tourist'&&['shanghai','guangzhou'].includes(s.city.id)){const i=Math.max(2,beats.findIndex(b=>b.stage>=3));beats.splice(i,0,add('tourist-wheel',3,'拖着走了一天的行李箱',1));}
  beats=beats.map(b=>b.id==='gates'?{...b,label:'赶到 '+s.gate+' 检票口'}:b);
@@ -36,6 +46,7 @@ export function buildStationJourney(s:Run):StationBeat[]{
 }
 export function journeyPrompt(s:Run):EventConfig{
  const id=s.stationJourney[s.stationBeat].id;
+ const parent=parentStationPrompt(s,id);if(parent)return parent;
  const challenge=stationChallenge(s,id);if(challenge)return challenge;
  if(s.student){const prompt=studentPrompt(id,s.student,s.gate);if(prompt){if(id==='vertical-choice'&&s.city.id==='wuhan')return {...prompt,title:'后面的人催着上楼，先选对换层方式',description:'这一班大家都赶时间。'+prompt.description,choices:prompt.choices.map(c=>({...c,stationDecision:{group:id,value:c.studentEffect??'escalator',category:'vertical',optimal:c.studentEffect==='stairs'?s.student!.stamina>=22:c.studentEffect==='lift'?s.student!.stamina<22:true}}))};if(id==='security-queue'&&s.city.id==='beijing')return {...prompt,title:'安检员催着摆托盘，先判断哪队快',description:'工作人员严格按流程放行。'+prompt.description};return prompt;}}
  if(s.characterTime){

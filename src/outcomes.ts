@@ -7,7 +7,7 @@ export {targetDistance} from './gameResult';
 export type LossSource='preparation'|'security'|'navigation'|'vertical'|'identity'|'environment'|'waiting'|'other';
 export type Outcome={title:string;titleId:string;tags:string[];summary:string;reasons:string[];factors:TimeImpact[];advice?:string;result:GameResult;lesson:string;stationPlaystyle:Playstyle;largestLoss:{source:LossSource;seconds:number};largestRecovery:{source:string;seconds:number};wrongTurns:number;characterEvents:string[];bottleneck:string;distanceToTarget:number|null;securityGood:boolean;stationMastery:boolean;comeback:boolean;losses:Record<LossSource,number>};
 export const lossLabels:Record<LossSource,string>={preparation:'出门准备',security:'安检与排队',navigation:'方向与折返',vertical:'换层等待',identity:'身份证搜索',environment:'随机延误',waiting:'停留与操作',other:'其他处理'};
-export function lossSource(id:string):LossSource{if(id.startsWith('prepare-'))return 'preparation';if(id.includes('identity'))return 'identity';if(/security|bj-entry|bj-tray|gates/.test(id))return 'security';if(/escalator|vertical|lift|wh-/.test(id))return 'vertical';if(/sign|hz-|zz-|metro-route|route-choice/.test(id))return 'navigation';if(/metro-stop|snag|crowded/.test(id))return 'environment';if(/idle|handling/.test(id))return 'waiting';return 'other';}
+export function lossSource(id:string):LossSource{if(id.startsWith('prepare-')||id.startsWith('parent-prep-'))return 'preparation';if(id.includes('identity'))return 'identity';if(/security|bj-entry|bj-tray|bj-parent-strict|gates/.test(id))return 'security';if(/escalator|vertical|lift|wh-floor|wh-landing/.test(id))return 'vertical';if(/sign|hz-|zz-|metro-route|route-choice/.test(id))return 'navigation';if(/metro-stop|snag|crowded/.test(id))return 'environment';if(/idle|handling/.test(id))return 'waiting';return 'other';}
 export const factorText=(i:TimeImpact)=>`${i.source}，${i.positive?'省下':'花费'}${i.estimated?'约 ':''}${Math.round(Math.abs(i.deltaSeconds))} 秒${!i.avoidable?'（随机事件）':''}。`;
 export function resultTags(r:GameResult,factors:TimeImpact[]):string[]{
  const tags:string[]=[],groups=new Set<string>();const add=(t:string,g:string)=>{const dynamic=/\d/.test(t);if(t&&!groups.has(g)&&!(dynamic&&groups.has('dynamic'))&&tags.length<3){groups.add(g);if(dynamic)groups.add('dynamic');tags.push(t);}};
@@ -20,7 +20,7 @@ export function resultTags(r:GameResult,factors:TimeImpact[]):string[]{
  else if(c.childNeverSeparated)add('孩子没掉队','character');else if(c.slept&&r.missedStops===0)add('睡醒刚好到','character');else if(c.tea)add('奶茶党','character');
  if(r.securityGood)add('安检选对了','queue');if(r.stableChoices>=2)add('稳定路线','stable');
  }else{if(r.finalEnergy<=0)add('体力见底','energy');if(r.wrongDirections)add('坐反了','navigation');else if(r.missedStops)add('坐过站','navigation');else if(r.wrongTurns)add('路线判断失误','navigation');
- if(Number(c.bagSeconds)>10)add('翻包 '+Math.round(Number(c.bagSeconds))+' 秒','character');else if(c.childToilet)add('孩子尿急','character');else if(c.loadDecisive)add('土特产太重','character');else if(c.fatigueDecisive)add('困倦拉满','character');
+ if(Number(c.bagSeconds)>10)add('翻包 '+Math.round(Number(c.bagSeconds))+' 秒','character');else if(c.childToiletDuringRun||c.wetPants)add('孩子尿急','character');else if(c.loadDecisive)add('土特产太重','character');else if(c.fatigueDecisive)add('困倦拉满','character');
  if(r.position.distanceToGoalMeters!==undefined&&r.position.distanceToGoalMeters<50)add('距终点约 '+r.position.distanceToGoalMeters+' 米','distance');}
  return [...new Set(tags)].slice(0,3);
 }
@@ -31,7 +31,12 @@ export function summarizeRun(s:Run):Outcome{
  const max=Object.entries(losses).sort((a,b)=>b[1]-a[1])[0] as [LossSource,number];
  const recovery=[...r.timeImpacts].filter(i=>i.positive).sort((a,b)=>b.deltaSeconds-a.deltaSeconds)[0];
  const reasons=analysis.factors.map(factorText);
- if(reasons.length<2)reasons.push(s.success?(r.errors===0?'没有走错方向、坐过站或翻错书包。':'经历波折，仍在截止前完成了登车。'):'截止时仍未完成最后的通行与检票操作。');
+ if(s.parent&&s.success){
+  if(s.logs.some(l=>l.eventId==='parent-prep-toilet-first')&&!s.parent.wetPants&&reasons.length<3)reasons.push('出门前带孩子上了厕所，站内没有发生尿急意外。');
+  if(s.parent.carriedSeconds>0&&s.parent.separationCount===0&&reasons.length<3)reasons.push('抱起孩子后没有掉队，保持了前进节奏。');
+  if(s.parent.syncSprintSaved>0&&reasons.length<3)reasons.push(`最后牵手冲刺追回约 ${Math.round(s.parent.syncSprintSaved)} 秒。`);
+ }
+ if(reasons.length<2)reasons.push(s.success?(r.errors===0?(s.parent?'没有走错方向、坐过站或把孩子落在后面。':'没有走错方向、坐过站或翻错书包。'):'经历波折，仍在截止前完成了登车。'):'截止时仍未完成最后的通行与检票操作。');
  if(reasons.length<2)reasons.push(s.success?`检票时还剩 ${Math.ceil(r.resultMarginSeconds)} 秒。`:`按剩余路段估算，还需要约 ${Math.ceil(-r.resultMarginSeconds)} 秒。`);
  const comeback=s.success&&(r.dramaScore>=80||r.wasProjectedToFail);
  const summary=comeback?`这局波折不断，${recovery?'靠'+recovery.source+'追回'+(recovery.estimated?'约 ':' ')+Math.round(recovery.deltaSeconds)+' 秒，':''}还是赶上了。`:s.success?`在${st.name}，你把最后一段路跑完了。`:analysis.advice?'差距有迹可循，下次把时间留给关键路段。':'这一局没赶上，先看看时间花在哪里。';
