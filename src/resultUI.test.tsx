@@ -1,10 +1,29 @@
 import {describe,it,expect} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {createStationRun} from './engine';
+import {createStationRun,createCharacterStationRun} from './engine';
+import LobbyIntro from './LobbyIntro';
 import Results,{AchievementShelf} from './Results';
-import {awardRun,freshProgress,ACHIEVEMENTS} from './achievements';
+import {awardRun,freshProgress,ACHIEVEMENTS,isCharacterUnlocked,parseProfile} from './achievements';
 const noop=()=>{};
 describe('result UI rendering',()=>{
+ it('starts with only student, then unlocks worker and tourist after their wins',()=>{
+  const fresh=freshProgress();const lobby=(progress:typeof fresh)=>renderToStaticMarkup(<LobbyIntro run={createStationRun()} progress={progress} onSelect={noop}/>);
+  expect(lobby(fresh)).toContain('大学生赶上一次后解锁');
+  expect(lobby(fresh)).toContain('打工人赶上一次后解锁');
+  expect(lobby(fresh).match(/disabled=""/g)).toHaveLength(2);
+  const loss=awardRun(fresh,{...createStationRun(),phase:'result',success:false});
+  expect(isCharacterUnlocked(loss,'worker')).toBe(false);
+  const student={...createStationRun(),phase:'result' as const,success:true};
+  const afterStudent=parseProfile(JSON.parse(JSON.stringify(awardRun(loss,student))));
+  expect(isCharacterUnlocked(afterStudent,'worker')).toBe(true);
+  expect(isCharacterUnlocked(afterStudent,'tourist')).toBe(false);
+  expect(lobby(afterStudent).match(/disabled=""/g)).toHaveLength(1);
+  expect(renderToStaticMarkup(<Results run={student} progress={afterStudent} saved replay={noop} share={noop} selectStation={noop}/>)).toContain('新人物解锁');
+  const worker={...createCharacterStationRun('shanghai','worker'),phase:'result' as const,success:true};
+  const afterWorker=parseProfile(JSON.parse(JSON.stringify(awardRun(afterStudent,worker))));
+  expect(isCharacterUnlocked(afterWorker,'tourist')).toBe(true);
+  expect(lobby(afterWorker)).not.toContain('disabled=""');
+ });
  it('result identity and key causes precede collapsed detail and replay remains present',()=>{
   const run={...createStationRun(),phase:'result' as const,success:true,gateRemaining:2};const progress=awardRun(freshProgress(),run);
   const html=renderToStaticMarkup(<Results run={run} progress={progress} saved replay={noop} share={noop} selectStation={noop}/>);

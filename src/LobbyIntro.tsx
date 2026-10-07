@@ -1,6 +1,7 @@
 import type {Run} from './engine';
 import {characters} from './data';
 import {characterTimeProfiles} from './characterTime';
+import {isCharacterUnlocked,type Progress,type PlayableCharacterId} from './achievements';
 
 function StudentPortrait(){
  return <svg className="student-portrait" viewBox="0 0 100 118" role="img" aria-label="背着黄色双肩包、举拳给自己打气的大学生">
@@ -35,7 +36,7 @@ const characterIntro={
  tourist:{quote:'“我知道要走，但我真的走不动了。”',scene:'陌生城市 · 已退房 · 今日 23,487 步',card:'精力低 · 需要休息和认路'},
 } as const;
 
-export default function LobbyIntro({run,onSelect}:{run:Run;onSelect:(id:'student'|'worker'|'tourist')=>void}){
+export default function LobbyIntro({run,progress,onSelect}:{run:Run;progress:Progress;onSelect:(id:PlayableCharacterId)=>void}){
  const stats=run.student?.stats;const t=run.characterTime;const id=run.character.id as 'student'|'worker'|'tourist';const intro=characterIntro[id],profile=characterTimeProfiles[id];
  const values=stats?{agility:stats.agility,energy:stats.energy,focus:stats.focus,load:stats.load}:{agility:profile.agility,energy:t?.energy??profile.energy,focus:t?.focus??profile.focus,load:t?.load??profile.load};
  return <div className="lobby-intro">
@@ -46,6 +47,6 @@ export default function LobbyIntro({run,onSelect}:{run:Run;onSelect:(id:'student
     {(['agility','energy','focus','load'] as const).map((key,i)=><div key={key}><dt>{['敏捷','精力','专注','负重'][i]}</dt><dd>{values[key]}</dd></div>)}
    </dl>
   </div>
-  <div className="character-picker" aria-label="选择赶车人物">{characters.filter(c=>['student','worker','tourist'].includes(c.id)).map(c=><button key={c.id} className={id===c.id?'selected':''} aria-pressed={id===c.id} onClick={()=>onSelect(c.id as 'student'|'worker'|'tourist')}><span>{c.emoji}</span><b>{c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':'大学生'}</b><small>{characterIntro[c.id as keyof typeof characterIntro].card}</small></button>)}</div>
+  <div className="character-picker" aria-label="选择赶车人物">{characters.filter(c=>['student','worker','tourist'].includes(c.id)).map(c=>{const characterId=c.id as PlayableCharacterId,unlocked=isCharacterUnlocked(progress,characterId);return <button key={c.id} className={(id===c.id?'selected ':'')+(!unlocked?'locked':'')} aria-pressed={id===c.id} disabled={!unlocked} onClick={()=>onSelect(characterId)}><span>{unlocked?c.emoji:'🔒'}</span><b>{c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':'大学生'}</b><small>{unlocked?characterIntro[characterId].card:characterId==='worker'?'大学生赶上一次后解锁':'打工人赶上一次后解锁'}</small></button>;})}</div>
  </div>;
 }
