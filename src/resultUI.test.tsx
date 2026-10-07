@@ -6,23 +6,37 @@ import Results,{AchievementShelf} from './Results';
 import {awardRun,freshProgress,ACHIEVEMENTS,isCharacterUnlocked,parseProfile} from './achievements';
 const noop=()=>{};
 describe('result UI rendering',()=>{
- it('starts with only student, then unlocks worker and tourist after their wins',()=>{
+ it('starts with only student, then unlocks worker, tourist and parent after their wins',()=>{
   const fresh=freshProgress();const lobby=(progress:typeof fresh)=>renderToStaticMarkup(<LobbyIntro run={createStationRun()} progress={progress} onSelect={noop}/>);
   expect(lobby(fresh)).toContain('大学生赶上一次后解锁');
   expect(lobby(fresh)).toContain('打工人赶上一次后解锁');
-  expect(lobby(fresh).match(/disabled=""/g)).toHaveLength(2);
+  expect(lobby(fresh)).toContain('左右滑动查看');
+  expect(lobby(fresh)).toContain('简单 <b>1星</b>');
+  expect(lobby(fresh)).toContain('高难 <b>4星</b>');
+  expect(lobby(fresh).match(/disabled=""/g)).toHaveLength(3);
   const loss=awardRun(fresh,{...createStationRun(),phase:'result',success:false});
   expect(isCharacterUnlocked(loss,'worker')).toBe(false);
   const student={...createStationRun(),phase:'result' as const,success:true};
   const afterStudent=parseProfile(JSON.parse(JSON.stringify(awardRun(loss,student))));
   expect(isCharacterUnlocked(afterStudent,'worker')).toBe(true);
   expect(isCharacterUnlocked(afterStudent,'tourist')).toBe(false);
-  expect(lobby(afterStudent).match(/disabled=""/g)).toHaveLength(1);
+  expect(lobby(afterStudent).match(/disabled=""/g)).toHaveLength(2);
   expect(renderToStaticMarkup(<Results run={student} progress={afterStudent} saved replay={noop} share={noop} selectStation={noop}/>)).toContain('新人物解锁');
   const worker={...createCharacterStationRun('shanghai','worker'),phase:'result' as const,success:true};
   const afterWorker=parseProfile(JSON.parse(JSON.stringify(awardRun(afterStudent,worker))));
   expect(isCharacterUnlocked(afterWorker,'tourist')).toBe(true);
-  expect(lobby(afterWorker)).not.toContain('disabled=""');
+  expect(lobby(afterWorker).match(/disabled=""/g)).toHaveLength(1);
+  const tourist={...createCharacterStationRun('shanghai','tourist'),phase:'result' as const,success:true};
+  const afterTourist=parseProfile(JSON.parse(JSON.stringify(awardRun(afterWorker,tourist))));
+  expect(isCharacterUnlocked(afterTourist,'mom')).toBe(true);
+  expect(lobby(afterTourist)).not.toContain('disabled=""');
+ });
+ it('student lobby story has two stable scene lines for one round',()=>{
+  const run=createStationRun(),props={run,progress:freshProgress(),onSelect:noop};
+  expect(renderToStaticMarkup(<LobbyIntro {...props} studentSceneVariant={0}/>)).toContain('朋友家的沙发好舒服');
+  expect(renderToStaticMarkup(<LobbyIntro {...props} studentSceneVariant={1}/>)).toContain('咖啡店的小猫太可爱了');
+  expect(renderToStaticMarkup(<LobbyIntro {...props} studentSceneVariant={0}/>)).toContain('高电量 · 高精力');
+  expect(renderToStaticMarkup(<LobbyIntro {...props} studentSceneVariant={1}/>)).toContain('高电量 · 高精力');
  });
  it('result identity and key causes precede collapsed detail and replay remains present',()=>{
   const run={...createStationRun(),phase:'result' as const,success:true,gateRemaining:2};const progress=awardRun(freshProgress(),run);

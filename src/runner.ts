@@ -2,7 +2,7 @@ import {stationFor} from './stations';
 import type {Run} from './engine';
 export type RunnerState={lane:number;wave:number;blocked:boolean;collisions:number;dodges:number;seed:number};
 export function runnerWave(s:Run){
- const beat=s.stationJourney[s.stationBeat],r=s.student?.runner??s.characterTime?.runner;
+ const beat=s.stationJourney[s.stationBeat],r=s.student?.runner??s.characterTime?.runner??s.parent?.runner;
  if(!r||!beat||s.event)return null;
  const st=stationFor(s);const density=s.stationDecisions?.filter(d=>d.density).at(-1)?.density;
  const count=Math.min(3,Math.max(1,Math.floor(beat.seconds/4)),density??(s.city.id==='beijing'||s.city.id==='guangzhou'?3:s.city.id==='hangzhou'?1:beat.seconds>=9?2:1));
