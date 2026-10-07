@@ -50,6 +50,20 @@ export function characterEventPrompt(s:Run,id:string){
 }
 export function applyCharacterEvent(s:Run,eventId:string,choiceLabel:string):Run{
  const t=s.characterTime;if(!t)return s;let n={...t};
+ if(eventId==='zz-hometown-answer'){
+  if(choiceLabel==='说真话')n.focus=Math.max(0,n.focus-10);
+  if(choiceLabel==='说工资 5000'){n.focus=Math.max(0,n.focus-5);n.maxEnergy=Math.max(n.maxEnergy,n.energy+5);n.energy+=5;}
+ }
+ if(eventId==='zz-hometown'&&choiceLabel==='停下来聊两句')n.focus=Math.max(0,n.focus-2);
+ if(eventId==='sh-corridor'&&choiceLabel.includes('挤进商店'))n.focus=Math.max(0,n.focus-3);
+ if(eventId==='vertical-choice'){
+  if(choiceLabel==='走楼梯')n.energy=Math.max(0,n.energy-22);
+  if(choiceLabel==='等直达电梯')n.energy=Math.min(n.maxEnergy,n.energy+15);
+ }
+ if(eventId==='gz-lift'){
+  if(choiceLabel==='改走楼梯')n.energy=Math.max(0,n.energy-22);
+  if(choiceLabel==='等电梯，恢复体力')n.energy=Math.min(n.maxEnergy,n.energy+25);
+ }
  if(eventId==='worker-boss-call'){n.bossCalls++;
   if(choiceLabel.startsWith('接起来')){n.focus=Math.min(100,n.focus+5);n.bossCallsLeft=0;n.bossUnread=false;}
   else {n.bossCallsLeft=Math.max(0,n.bossCallsLeft-1);n.bossUnread=n.bossCallsLeft>0;}

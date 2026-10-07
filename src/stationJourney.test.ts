@@ -9,7 +9,7 @@ function start():Run{
  return reducer({...r,phase:'arrival',route,metroStopIndex:route.stops.length-1,metroProgress:1,remaining:900,identityReady:false},{type:'ALIGHT'});
 }
 function reach(s:Run):Run{
- s=reducer(s,{type:'RUN_INPUT',held:true});for(let i=0;i<80&&!s.event;i++)s=reducer(s,{type:'TICK',dt:.1});
+ s=reducer(s,{type:'RUN_INPUT',held:true});for(let i=0;i<240&&!s.event&&s.phase!=='result';i++)s=reducer(s,{type:'TICK',dt:.1});
  expect(s.event).not.toBeNull();return s;
 }
 function at(id:string):Run{const s=start();return reach({...s,stationBeat:s.stationJourney.findIndex(b=>b.id===id),escalatorLane:id==='escalator-ride'?0:null});}

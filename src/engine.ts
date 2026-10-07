@@ -1,7 +1,7 @@
 import {freshMetrics,trackTransition,type RunMetrics} from './resultMetrics';
 import {applyCharacterEvent,applyTimedChoice,characterEventPrompt,characterMovementFactor,createCharacterTimeState,type CharacterTimeState} from './characterTime';
 import {summarizeRun} from './outcomes';
-import {stationFor,STATIONS,type StationDecision} from './stations';
+import {stationFor,stationChallenge,STATIONS,type StationDecision} from './stations';
 import {runnerWave} from './runner';
 import {STUDENT,HONGQIAO,PREPARATIONS,studentState,gameShanghai,movementFactor,focusWindow,studentPrompt,type StudentState} from './studentConfig';
 import { cities, characters, events, type CityConfig, type CharacterConfig, type MetroRoute, type EventConfig, type Choice } from './data';
@@ -66,8 +66,8 @@ export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'CHANGE_
 function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??null,phase:'result',event:null,success};}
 function deadline(s:Run):Run{return s.remaining<=(s.gatePassed?0:STOP_BEFORE)?finish(s):s;}
 function choice(s:Run,c:Choice,title=s.event?.title||'途中耽误'):Run{
- if(c.stationDecision&&s.student){const d=c.stationDecision;let beats=s.stationJourney.filter(b=>!d.skip?.includes(b.id));if(d.travelScale&&beats[s.stationBeat+1])beats=beats.map((b,i)=>i===s.stationBeat+1?{...b,seconds:b.seconds*(d.travelScale??1)}:b);
-  s={...s,stationJourney:beats,stationDecisions:[...s.stationDecisions,d],student:{...s.student,wrongTurns:s.student.wrongTurns+(d.category==='navigation'&&!d.optimal?1:0),stamina:d.group==='gz-lift'?Math.max(0,Math.min(s.student.stats.energy,s.student.stamina+(d.value==='stairs'?-22:25))):s.student.stamina}};
+ if(c.stationDecision){const d=c.stationDecision;let beats=s.stationJourney.filter(b=>!d.skip?.includes(b.id));if(d.travelScale&&beats[s.stationBeat+1])beats=beats.map((b,i)=>i===s.stationBeat+1?{...b,seconds:b.seconds*(d.travelScale??1)}:b);
+  s={...s,stationJourney:beats,stationDecisions:[...s.stationDecisions,d],student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+(d.category==='navigation'&&!d.optimal?1:0),stamina:d.group==='gz-lift'?Math.max(0,Math.min(s.student.stats.energy,s.student.stamina+(d.value==='stairs'?-22:25))):s.student.stamina}:undefined};
  }
 
  if(s.student){let u={...s.student,decisionLoss:s.student.decisionLoss+c.seconds};
@@ -89,8 +89,10 @@ function completeStationBeat(s:Run):Run{
  const gate=beat.id==='gate-scan';
  let index=s.stationBeat+1;
  if(s.characterTime?.characterId==='worker'&&beat.id==='worker-boss-call'&&s.characterTime.bossCallsLeft===0){s={...s,stationJourney:s.stationJourney.filter((b,i)=>i<=s.stationBeat||b.id!=='worker-boss-call')};}
- if(s.student&&beat.id==='vertical-choice'&&s.student.vertical!=='escalator'){const name=s.student.vertical==='stairs'?'楼梯':'直达电梯';s={...s,stationJourney:s.stationJourney.filter(b=>b.id!=='escalator-choice').map(b=>b.id==='escalator-ride'?{...b,label:'走向选中的'+name}:b)};}
+ const vertical=s.student?.vertical??[...s.stationDecisions].reverse().find(d=>d.group==='vertical-choice')?.value;
+ if(beat.id==='vertical-choice'&&vertical&&vertical!=='escalator'){const name=vertical==='stairs'?'楼梯':'直达电梯';s={...s,stationJourney:s.stationJourney.filter(b=>b.id!=='escalator-choice').map(b=>b.id==='escalator-ride'?{...b,label:'走向选中的'+name}:b)};}
  if(s.student)s={...s,student:{...s.student,sprinting:false,observed:false,runner:{...s.student.runner,wave:0,blocked:false}}};
+ if(s.characterTime)s={...s,characterTime:{...s.characterTime,sprinting:false,runner:{...s.characterTime.runner,wave:0,blocked:false}}};
  return {...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationProgress:0,stationRunning:false,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
 }
 function recoverMetro(s:Run,title:string,seconds:number,target:'metro'|'arrival'):Run{
@@ -138,7 +140,7 @@ function reduceCore(s:Run,a:Action):Run{
  }
  if(a.type==='CHANGE_LANE'&&s.characterTime&&s.phase==='station'&&!s.event){const r=s.characterTime.runner,w=runnerWave(s),lane=Math.max(0,Math.min(2,r.lane+a.direction)),cleared=r.blocked&&w&&lane!==w.lane;return {...s,characterTime:{...s.characterTime,runner:{...r,lane,blocked:cleared?false:r.blocked,wave:r.wave+(cleared?1:0)}}};}
  if(a.type==='SPRINT_INPUT'&&s.characterTime&&s.phase==='station'&&!s.event)return {...s,stationRunning:a.held||s.stationRunning,characterTime:{...s.characterTime,sprinting:a.held&&!s.characterTime.exhausted&&!s.characterTime.runner.blocked}};
- if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false,runner:{...s.characterTime.runner,wave:0,blocked:false}}:undefined}:s;
+ if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined}:s;
  if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime?'preparation':'route',phaseElapsed:0}:s;
  if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
  if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return s.characterTime?.characterId==='tourist'?{...s,phase:'metro',phaseElapsed:0,event:characterEventPrompt(s,'tourist-sleep')??null,eventElapsed:0}:{...s,phase:'metro',phaseElapsed:0};}
@@ -163,10 +165,14 @@ function reduceCore(s:Run,a:Action):Run{
   if(!s.event||s.event.id==='identity-search')return s;
   if(s.student&&s.event.id==='transfer-run'){if(!s.event.choices.some(c=>c.label===a.choice.label))return s;return {...s,phase:'metro',event:null,phaseElapsed:0,student:{...s.student,doorReady:false}};}
 
-  if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;return choice(applyCharacterEvent(s,s.event.id,selected.label),selected,selected.label);}
+  if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   if(s.event.id==='zz-hometown'&&selected.label==='告诉他')return {...s,event:stationChallenge(s,'zz-hometown-answer')??s.event,eventElapsed:0,eventOverdue:false};
+   s=applyCharacterEvent(s,s.event.id,selected.label);
+  }
+  if(!s.event)return s;
   let chosen=a.choice;
   if(s.stationJourney.length){const selected=s.event.choices.find(c=>c.label===chosen.label);if(!selected)return s;chosen=selected;}
-  if(s.student&&s.event.id==='zz-number'&&chosen.stationDecision&&!chosen.stationDecision.optimal){return deadline({...s,remaining:s.remaining-chosen.seconds,eventElapsed:0,stationDecisions:[...s.stationDecisions,chosen.stationDecision],student:{...s.student,wrongTurns:s.student.wrongTurns+1,decisionLoss:s.student.decisionLoss+chosen.seconds},logs:[...s.logs,{title:'看成 '+chosen.label+'，折返重新核对',seconds:chosen.seconds,eventId:'zz-number'}]});}
+  if(s.event.id==='zz-number'&&chosen.stationDecision&&!chosen.stationDecision.optimal){return deadline({...s,remaining:s.remaining-chosen.seconds,eventElapsed:0,stationDecisions:[...s.stationDecisions,chosen.stationDecision],student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+1,decisionLoss:s.student.decisionLoss+chosen.seconds}:undefined,logs:[...s.logs,{title:'看成 '+chosen.label+'，折返重新核对',seconds:chosen.seconds,eventId:'zz-number'}]});}
   if(s.stationJourney.length&&s.event.id==='elder-block'){
    const selected=s.event.choices.find(c=>c.effect===chosen.effect);if(!selected)return s;
    if(selected.effect==='elder-detour')return {...s,event:{id:'elder-detour-action',title:'侧面有空隙，侧身挤过去！',description:'向上滑动小人，收好背包，从旁边绕开。',phase:'station',interaction:{kind:'swipe',seconds:7,penalty:15},choices:[{label:'侧身通过',detail:'绕开老人 · −10 秒',seconds:10}]},eventElapsed:0,eventOverdue:false};
