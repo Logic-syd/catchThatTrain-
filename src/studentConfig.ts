@@ -2,7 +2,7 @@ import type {RunnerState} from './runner';
 import type {CityConfig, EventConfig} from './data';
 export type Stats={agility:number;energy:number;focus:number;load:number};
 export const STUDENT={id:'student',baseStats:{agility:80,energy:90,focus:55,load:15} as Stats,badLuckBudget:180,lateThreshold:120,sprintMultiplier:1.9,lateSprint:1.15,lateRecovery:1.25,drain:8,recover:5,walkRecover:2.2};
-export const HONGQIAO={id:'shanghai-hongqiao',modifiers:{distance:1.2,crowd:1.1,security:1,navigation:1.05,verticalMovement:1},initial:35*60+30,hardReduction:360,normalStationTime:600,baseWalkingTime:360,metroTimeRatio:.42,transferWalkRatio:.65};
+export const HONGQIAO={id:'shanghai-hongqiao',modifiers:{distance:1.2,crowd:1.1,security:1,navigation:1.05,verticalMovement:1},initial:35*60+30,hardReduction:360,studentHardReduction:120,normalStationTime:600,baseWalkingTime:360,metroTimeRatio:.42,transferWalkRatio:.65};
 export type Preparation={id:string;title:string;story:string;options:{id:string;label:string;detail:string;seconds:number;stats?:Partial<Stats>}[]};
 export const PREPARATIONS:Preparation[]=[
  {id:'tea',title:'路口的奶茶店，要不要买？',story:'“带杯奶茶路上喝，应该耽误不了多久。”',options:[{id:'buy',label:'买一杯，提提神',detail:'−120 秒 · 敏捷 +5、精力 +10；前 3 分钟恢复 +20%，占着一只手',seconds:120,stats:{agility:5,energy:10}},{id:'skip',label:'不买了，赶车要紧',detail:'不花时间，双手空出来',seconds:0}]},

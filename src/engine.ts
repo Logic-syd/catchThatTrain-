@@ -33,8 +33,11 @@ export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):R
  const chapter=STATIONS.find(c=>c.id===original.id)!;const city=gameShanghai(original);
  city.stationConfig={...city.stationConfig,gate:chapter.gate};
  city.spawnStations=city.spawnStations.map(p=>({...p,routes:p.routes.map(r=>r.lines.length>2?{...r,lines:[r.lines[0],r.lines.at(-1)!],transfers:1,via:r.via?.split(' / ')[0]}:r)}));
- const worst=Math.max(...city.spawnStations[0].routes.map(r=>r.minutes*60+r.walk/1.5+r.transfers*20));
- const initial=(cityId==='shanghai'?HONGQIAO.initial:Math.ceil((worst+chapter.walking+480)/30)*30)+STOP_BEFORE-(hard?HONGQIAO.hardReduction:0);
+ const best=Math.min(...city.spawnStations[0].routes.map(r=>r.minutes*60+r.walk/1.5+r.transfers*20));
+ // Student runs budget for a viable route, the station's walking distance,
+ // and a short decision buffer. Pricing from the slowest route made every other
+ // route finish with many unused minutes and removed the stakes from route choice.
+ const initial=Math.ceil((best+chapter.walking+240)/30)*30+STOP_BEFORE-(hard?HONGQIAO.studentHardReduction:0);
  return {...s,city,gate:chapter.gate,initial,remaining:initial,student:studentState(rng)};
 }
 export function createCharacterStationRun(cityId='shanghai',characterId:'student'|'worker'|'tourist'='student',hard=false,rng=Math.random):Run{

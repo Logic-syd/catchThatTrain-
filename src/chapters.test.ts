@@ -32,9 +32,11 @@ describe('six actual station chapters',()=>{
   const wrong=choose(at('wuhan','wh-floor'),1);expect(wrong.remaining).toBe(1150);expect(wrong.stationDecisions[0].optimal).toBe(false);
   const stairs=choose(at('wuhan','vertical-choice'),1);expect(stairs.stationJourney.some(b=>b.id==='escalator-choice')).toBe(false);expect(stairs.student!.vertical).toBe('stairs');expect(stairs.stationDecisions[0].value).toBe('stairs');
  });
- it('all metro routes at all six stations reach the right station and win without sprinting',()=>{
+ it('all routes reach their station, while the careful fast route clears without sprinting',()=>{
+  let slowerRouteLosses=0;
   for(const st of STATIONS)for(let routeIndex=0;routeIndex<createStationRun(st.id).city.spawnStations[0].routes.length;routeIndex++){
    let s=reducer(createStationRun(st.id,false,rng(921+routeIndex)),{type:'START'});
+   const fastest=s.city.spawnStations[0].routes.reduce((best,route)=>route.minutes*60+route.walk/1.5+route.transfers*20<best.minutes*60+best.walk/1.5+best.transfers*20?route:best);
    for(const option of ['skip','check','eat']){s=tick(s,5);s=reducer(s,{type:'PREP_PICK',option,step:s.student!.prep});}
    s=reducer(s,{type:'ROUTE',route:s.city.spawnStations[0].routes[routeIndex]});s=reducer(s,{type:'DIRECTION',correct:true});
    for(let i=0;i<9000&&s.phase!=='result';i++){
@@ -46,9 +48,13 @@ describe('six actual station chapters',()=>{
     else if(s.phase==='station'){const w=runnerWave(s);if(w&&w.lane===s.student!.runner.lane)s=reducer(s,{type:'CHANGE_LANE',direction:w.lane===2?-1:1});s=reducer(s,{type:'RUN_INPUT',held:true});s=tick(s,.1);}
     else{s=reducer(s,{type:'PREPARE_DOOR'});s=tick(s,.1);}
    }
-   expect(s.success,st.id+' route '+routeIndex+' '+s.phase+' '+s.event?.id).toBe(true);expect(s.gate).toBe(st.gate);expect(s.metroTransferred).toBe(!!s.route!.transfers);
+   expect(s.student!.stationStart,st.id+' route '+routeIndex+' reached station').toBeGreaterThan(0);
+   if(s.route!.id===fastest.id)expect(s.success,st.id+' fast route '+routeIndex+' '+s.phase+' '+s.event?.id).toBe(true);
+   else if(!s.success)slowerRouteLosses++;
+   expect(s.gate).toBe(st.gate);expect(s.metroTransferred).toBe(!!s.route!.transfers);
    const o=summarizeRun(s);expect(o.stationPlaystyle).toBe(st.playstyle);expect(o.reasons.length).toBeGreaterThanOrEqual(2);expect(o.tags.length).toBeLessThanOrEqual(3);
   }
+  expect(slowerRouteLosses).toBeGreaterThan(0);
  });
 });
 describe('evidence based awards and outcomes',()=>{
