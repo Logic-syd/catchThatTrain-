@@ -4,12 +4,24 @@ import {analyzeFactors,type GameResult} from './gameResult';
 import {ACHIEVEMENTS,matches,getField} from './achievementConfig';
 export {ACHIEVEMENTS} from './achievementConfig';
 export const PROFILE_KEY='train-rush:profile:v1';
+export type PlayableCharacterId='student'|'worker'|'tourist';
 export type Stat={runs:number;wins:number;streak:number;bestStreak:number;goodRouteStreak:number;failuresBeforeFirstWin:number};
 export type Progress={schemaVersion:1;totalRuns:number;totalWins:number;currentWinStreak:number;bestWinStreak:number;characterStats:Record<string,Stat>;stationStats:Record<string,Stat>;achievementProgress:Record<string,{current:number;target:number;unlocked:boolean}>;unlocked:Record<string,{at:string;runId:string}>;processedRunIds:string[];lastRunId:string|null;lastUnlocks:string[];legacyMigrated:boolean;conqueredStations:number;
  // Kept for existing record/UI consumers.
  wins:number;streak:number;clutchStreak:number;stationWins:Record<string,number>};
 const stat=():Stat=>({runs:0,wins:0,streak:0,bestStreak:0,goodRouteStreak:0,failuresBeforeFirstWin:0});
 export const freshProgress=():Progress=>({schemaVersion:1,totalRuns:0,totalWins:0,currentWinStreak:0,bestWinStreak:0,characterStats:{},stationStats:{},achievementProgress:{},unlocked:{},processedRunIds:[],lastRunId:null,lastUnlocks:[],legacyMigrated:false,conqueredStations:0,wins:0,streak:0,clutchStreak:0,stationWins:{}});
+export function isCharacterUnlocked(progress:Progress,id:PlayableCharacterId){
+ if(id==='student')return true;
+ if(id==='worker')return (progress.characterStats.student?.wins??0)>0||(progress.characterStats.worker?.runs??0)>0||(progress.characterStats.tourist?.runs??0)>0;
+ return (progress.characterStats.worker?.wins??0)>0||(progress.characterStats.tourist?.runs??0)>0;
+}
+export function newlyUnlockedCharacter(progress:Progress,run:Run):PlayableCharacterId|null{
+ if(!run.success||progress.lastRunId!==run.id)return null;
+ if(run.character.id==='student'&&progress.characterStats.student?.wins===1&&(progress.characterStats.worker?.runs??0)===0)return 'worker';
+ if(run.character.id==='worker'&&progress.characterStats.worker?.wins===1&&(progress.characterStats.tourist?.runs??0)===0)return 'tourist';
+ return null;
+}
 const count=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)&&v>=0?Math.floor(v):0;
 const object=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
 function unlocks(raw:unknown):Progress['unlocked']{return Object.fromEntries(Object.entries(object(raw)).filter(([id,v])=>ACHIEVEMENTS.some(a=>a.id===id)&&typeof object(v).at==='string'&&typeof object(v).runId==='string').map(([id,v])=>[id,{at:String(object(v).at),runId:String(object(v).runId)}]));}
