@@ -77,7 +77,7 @@ export const TITLE_CONFIGS:TitleConfig[]=[
  title('security_loss','栽在安检口','failure',760,r=>mainLoss(r,/security|gates|bj-tray/),undefined,r=>decisiveEvent(r,/security|gates/)),
  title('short_queue','短队不一定快','failure',770,r=>flag(r,'shortSlowQueue')&&decisiveEvent(r,/security-queue/)),
  title('lift_loss','电梯害人','failure',750,r=>mainLoss(r,/lift|vertical-choice/)||decisiveEvent(r,/lift|vertical-choice/)),
- title('early_sprint','前面冲太猛了','failure',740,r=>r.finalEnergy===0&&value(r,'earlySprintSeconds')>=20),
+ title('early_sprint','前面冲太猛了','failure',975,r=>value(r,'breathStops')>=2||r.finalEnergy===0&&value(r,'earlySprintSeconds')>=20),
  title('low_energy','腿已经不是自己的了','failure',730,r=>value(r,'lowEnergySeconds')>=30),
  title('map_loss','地图还是得看','failure',720,r=>r.wrongTurns>=2&&r.mapViews===0),
  title('hesitation','犹豫就会败北','failure',710,r=>r.timeImpacts.some(i=>i.id.startsWith('handling-')&&i.deltaSeconds<=-60)),

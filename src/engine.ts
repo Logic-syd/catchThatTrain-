@@ -186,6 +186,10 @@ function reduceCore(s:Run,a:Action):Run{
    return deadline({...s,parent,remaining:s.remaining-selected.seconds,event:null,eventElapsed:0,eventOverdue:false,stationRunning:false,logs:[...s.logs,{title:selected.label,seconds:selected.seconds,eventId:s.event.id}]});
   }
   if(s.student&&s.event.id==='transfer-run'){if(!s.event.choices.some(c=>c.label===a.choice.label))return s;return {...s,phase:'metro',event:null,phaseElapsed:0,student:{...s.student,doorReady:false}};}
+  if(s.student&&s.event.id==='student-breath'){
+   const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   return deadline({...s,event:null,eventElapsed:0,eventOverdue:false,stationRunning:false,student:{...s.student,stamina:Math.max(s.student.stamina,65),sprinting:false,decisionLoss:s.student.decisionLoss+selected.seconds},remaining:s.remaining-selected.seconds,logs:[...s.logs,{title:'连续冲刺岔气，停下调整呼吸',seconds:selected.seconds,eventId:'student-breath'}]});
+  }
 
   if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
    if(s.event.id==='zz-hometown'&&selected.label==='告诉他')return {...s,event:stationChallenge(s,'zz-hometown-answer')??s.event,eventElapsed:0,eventOverdue:false};
@@ -246,6 +250,8 @@ function reduceCore(s:Run,a:Action):Run{
    const sprint=running&&u.sprinting&&!u.exhausted;
    const recovery=(running?STUDENT.walkRecover:STUDENT.recover)*(.65+u.stats.energy/100*.4667)*(1-u.stats.load/250)*(u.late?STUDENT.lateRecovery:1)*(u.choices.tea==='buy'&&u.elapsedGame<180?1.2:1);
    u.stamina=Math.max(0,Math.min(u.stats.energy,u.stamina+(sprint?-STUDENT.drain:recovery)*dt));
+   if(sprint)u.sprintStrain+=dt;
+   else if(s.phase==='station'&&!s.event&&!u.runner.blocked&&(!running||!u.exhausted))u.sprintStrain=Math.max(0,u.sprintStrain-(running?1.5:2)*dt);
    if(u.stamina===0){u.exhausted=true;u.sprinting=false;}else if(u.exhausted&&u.stamina>=15)u.exhausted=false;
    if(running){u.movingSeconds+=dt;if(sprint){u.sprintSeconds+=dt;u.sprintSaved+=dt*TIME_SCALE*(movementFactor(s.student)/movementFactor({...s.student,sprinting:false,exhausted:false})-1);}}
    if(s.event){u.eventTime={...u.eventTime,[s.event.id]:(u.eventTime[s.event.id]??0)+dt*clockRate(s)};}
@@ -254,6 +260,10 @@ function reduceCore(s:Run,a:Action):Run{
    if(u.late&&u.exhausted)u.exhaustedLateSeconds+=dt;
    if(s.phase==='transfer')u.transferSeconds+=dt*clockRate(s);
    n.student=u;
+   if(sprint&&u.sprintStrain>=STUDENT.breathLimit){
+    n={...n,student:{...u,sprinting:false,sprintStrain:0,breathStops:u.breathStops+1},stationRunning:false,event:{id:'student-breath',phase:'station',title:'冲太猛，岔气了！',description:`你一直在冲，呼吸乱了。这次停步要花 ${STUDENT.breathPenalty} 秒；走路或主动停下能提前缓解冲刺负荷。`,interaction:{kind:'hold',required:1.5,seconds:10,penalty:0},choices:[{label:'按住调整呼吸',detail:`耽误 ${STUDENT.breathPenalty} 秒 · 恢复体力`,seconds:STUDENT.breathPenalty}]},eventElapsed:0,eventOverdue:false};
+    return deadline(n);
+   }
   }
   if(s.characterTime){const t={...s.characterTime};const running=s.phase==='station'&&s.stationRunning&&!s.event;const factor=characterMovementFactor(s,t.sprinting&&!t.exhausted);const profile=t.characterId==='worker'?{drain:5,recover:1.15,rest:3.5,fatigue:.001}:{drain:6,recover:.35,rest:2.5,fatigue:.003};const fatigueRecovery=t.fatigue>=80?.75:t.fatigue>=60?.85:1;t.energy=Math.max(0,Math.min(t.maxEnergy,t.energy+(t.sprinting&&!t.exhausted?-profile.drain:running?profile.recover:profile.rest)*dt*(t.characterId==='tourist'?fatigueRecovery:1)));if(t.energy<=.01){t.exhausted=true;t.sprinting=false;}else if(t.energy>=10)t.exhausted=false;t.fatigue=Math.max(0,Math.min(100,t.fatigue+(running?profile.fatigue*dt:-profile.fatigue*.25*dt)));n={...n,characterTime:t,stamina:t.energy};}
   if(s.parent){
