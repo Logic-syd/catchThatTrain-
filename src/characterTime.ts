@@ -1,6 +1,7 @@
 import type {Run} from './engine';
 import {movementFactor} from './studentConfig';
 import type {RunnerState} from './runner';
+import {transferStopIndex} from './metroFlow';
 export interface CharacterTimeState {
  characterId:'worker'|'tourist';
  prepStep:number;
@@ -10,6 +11,7 @@ export interface CharacterTimeState {
  load:number;
  focus:number;
  bossUnread:boolean;
+ bossMayCall:boolean;
  ignoredWork:boolean;
  bossCalls:number;
  motherStayed:boolean;
@@ -27,23 +29,28 @@ export const characterTimeProfiles={
  worker:{label:'打工人',agility:60,maxEnergy:60,energy:60,fatigue:0,load:35,focus:85,baseSpeed:.9,sprintSpeed:1.65,walkRecovery:1.15,restRecovery:3.5,fatigueRecovery:0,description:'从家里返工，妈妈不断往箱子里塞东西；路线熟，负重是麻烦。'},
  tourist:{label:'疲惫游客',agility:55,maxEnergy:35,energy:35,fatigue:70,load:30,focus:50,baseSpeed:.86,sprintSpeed:1.55,walkRecovery:.9,restRecovery:4.5,fatigueRecovery:-.015,description:'已退房，在陌生城市走了两万多步；必须赶回家上班。'},
 } as const;
-export function createCharacterTimeState(id:'worker'|'tourist',rng:()=>number=Math.random):CharacterTimeState{const p=characterTimeProfiles[id];return {characterId:id,prepStep:0,energy:p.energy,maxEnergy:p.maxEnergy,fatigue:p.fatigue,load:p.load,focus:p.focus,bossUnread:false,ignoredWork:false,bossCalls:0,bossCallsLeft:0,motherStayed:false,souvenirs:false,coffee:false,slept:false,sleeping:false,alarmStops:2,mapChecked:false,actualDelay:0,wrongWayRisk:rng()<.35,sprinting:false,exhausted:false,runner:{lane:1,wave:0,blocked:false,collisions:0,dodges:0,seed:Math.floor(rng()*3)}};}
+export function createCharacterTimeState(id:'worker'|'tourist',rng:()=>number=Math.random):CharacterTimeState{const p=characterTimeProfiles[id];return {characterId:id,prepStep:0,energy:p.energy,maxEnergy:p.maxEnergy,fatigue:p.fatigue,load:p.load,focus:p.focus,bossUnread:false,ignoredWork:false,bossCalls:0,bossCallsLeft:0,motherStayed:false,souvenirs:false,coffee:false,slept:false,sleeping:false,alarmStops:2,mapChecked:false,actualDelay:0,wrongWayRisk:rng()<.35,sprinting:false,exhausted:false,runner:{lane:1,wave:0,blocked:false,collisions:0,dodges:0,seed:Math.floor(rng()*3)},bossMayCall:rng()<.65};}
 export function timedPrompt(s:Run):TimedPrompt|undefined{
  const t=s.characterTime;if(!t)return;
  if(t.characterId==='worker'){
   if(t.prepStep===0)return {eyebrow:'出门前 · 家门口',title:'妈把一袋土特产放进箱子：“这个也带上。”',story:'行李已经收好了，明早九点还得回去上班。',choices:[{id:'take-gifts',label:'带上，妈特地准备的',detail:'负重 +15 · 解锁妈妈的土特产',seconds:0,load:15,set:{souvenirs:true}},{id:'leave-gifts',label:'先不带了，轻装赶车',detail:'不增加负重 · 妈妈嘴上说好，还是有点舍不得',seconds:0}]};
-  if(t.prepStep===1)return {eyebrow:'出门前 · 再吃两口',title:'妈：“吃完再走，路上就不用找东西了。”',story:'厨房里还热着饭菜，行李箱旁边已经多了两袋吃的。',choices:[{id:'eat',label:'再吃两口，马上走',detail:'−60 秒 · 精力 +10',seconds:60,energy:10},{id:'leave',label:'真得走了，到了发消息',detail:'不花时间 · 妈妈送你到门口',seconds:0}]};
-  return {eyebrow:'出门前 · 工作群',title:'老板又发来消息：“明早九点，别迟到。”',story:'假期结束了，你不得不回去上班。老板还在催，箱子里全是妈妈塞的东西。',choices:[{id:'reply',label:'回一句“知道了”，关掉手机',detail:'−20 秒 · 专注 +5 · 不再追着问',seconds:20,focus:5,set:{bossUnread:false,bossCallsLeft:0}},{id:'ignore',label:'先静音，赶车要紧',detail:'现在不花时间 · 路上老板还可能打来',seconds:0,focus:-3,set:{bossUnread:true,bossCalls:2,bossCallsLeft:2}}]};
+  if(t.prepStep===1)return {eyebrow:'出门前 · 再吃两口',title:'妈：“吃完再走，路上就不用找东西了。”',story:'厨房里还热着饭菜，行李箱旁边已经多了两袋吃的。',choices:[{id:'eat',label:'再吃两口，马上走',detail:'−60 秒 · 体力 +10',seconds:60,energy:10},{id:'leave',label:'真得走了，到了发消息',detail:'不花时间 · 妈妈送你到门口',seconds:0}]};
+  const task=['设计稿','测试版本','报价'][Array.from(s.id).reduce((sum,char)=>sum+char.charCodeAt(0),0)%3];
+  return {eyebrow:'出门前 · 工作群',title:`老板又发来消息：“之前那个${task}，今晚能发吗？”`,story:'假期刚结束，老板已经催起今晚的活；你还得拖着妈妈塞满的箱子赶回去。',choices:[{id:'reply',label:'今晚一定发',detail:'体力 −10 · 回复后暂时清静了',seconds:0,energy:-10,set:{bossUnread:false,bossCallsLeft:0}},{id:'ignore',label:'不理',detail:'现在不耽误时间 · 一会儿老板可能会打电话',seconds:0,set:{bossUnread:true}}]};
  }
  if(t.prepStep===0)return {eyebrow:'出门前 · 已退房',title:'今日步数 23,487。你真的不想再动了。',story:'酒店已经退房，今晚只有这趟车能赶回家上班。要不要先缓口气？',choices:[{id:'coffee',label:'买杯咖啡提神',detail:'−50 秒 · 精力 +10 · 疲劳 −15',seconds:50,energy:10,fatigue:-15,set:{coffee:true}},{id:'rest',label:'靠着小箱子坐一会',detail:'−30 秒 · 精力 +10 · 疲劳 −5',seconds:30,energy:10,fatigue:-5},{id:'go',label:'起来就走，车上再休息',detail:'不花时间 · 保留地铁补觉机会',seconds:0}]};
  if(t.prepStep===1)return {eyebrow:'出门前 · 小号行李箱',title:'一个小箱子，一个背包。纪念品要不要留下？',story:'不是行李太多，是你已经走了一整天，腿有点发沉。',choices:[{id:'keep',label:'纪念品带回家',detail:'负重 +5 · 旅行没白逛',seconds:0,load:5,set:{souvenirs:true}},{id:'light',label:'先放下，轻装赶车',detail:'负重 −5 · 陌生站里更好走',seconds:0,load:-5}]};
- return {eyebrow:'出门前 · 眼皮打架',title:'还有几站到家？你要不要在地铁上眯一会？',story:'你已经很累。睡得越久，恢复越多，但闹钟定晚了就可能坐过站。',choices:[{id:'alarm-3',label:'提前 3 站叫醒',detail:'休息 25 秒 · 精力 +8 · 疲劳 −6 · 最稳',seconds:25,energy:8,fatigue:-6,set:{slept:true,sleeping:true,alarmStops:3}},{id:'alarm-2',label:'提前 2 站叫醒',detail:'休息 45 秒 · 精力 +14 · 疲劳 −12',seconds:45,energy:14,fatigue:-12,set:{slept:true,sleeping:true,alarmStops:2}},{id:'alarm-1',label:'提前 1 站叫醒',detail:'休息 65 秒 · 精力 +20 · 疲劳 −20 · 睡过站风险高',seconds:65,energy:20,fatigue:-20,set:{slept:true,sleeping:true,alarmStops:1}},{id:'awake',label:'撑着，盯紧站名',detail:'不额外花时间 · 保持清醒和方向感',seconds:0,focus:8}]};
+ return undefined;
 }
 export function characterEventPrompt(s:Run,id:string){
  const t=s.characterTime;if(!t)return undefined;
- if(id==='worker-boss-call'&&t.bossCallsLeft>0)return {id,phase:'station' as const,title:t.bossCallsLeft===1?'老板又打来了：“你到底看没看消息？”':'手机又震了：老板发来一条语音',description:'你已经在赶车，工作群还在持续催。接电话会占用赶路时间。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'接起来，说明正在回程',detail:'花 35 秒 · 专注 +5',seconds:35},{label:'挂掉，继续赶车',detail:'不花时间 · 老板可能再打来',seconds:0}]};
- if(id==='tourist-sleep')return {id,phase:'metro' as const,title:'车厢晃得人睁不开眼，要睡一会吗？',description:'你很疲惫。恢复精力可以让站内走得更快，但要设好闹钟。',interaction:{kind:'choice' as const,seconds:12,penalty:20},choices:[{label:'提前 3 站叫醒',detail:'睡 25 秒 · 精力 +8 · 疲劳 −6 · 最稳',seconds:25},{label:'提前 2 站叫醒',detail:'睡 45 秒 · 精力 +14 · 疲劳 −12',seconds:45},{label:'提前 1 站叫醒',detail:'睡 65 秒 · 精力 +20 · 疲劳 −20 · 睡过站风险高',seconds:65},{label:'撑着，盯紧站名',detail:'不额外花时间 · 保持清醒和方向感',seconds:0}]};
- if(id==='tourist-wake')return {id,phase:'metro' as const,title:'到站了！闹钟响了，醒醒！',description:'按住按钮快速确认站名。反应慢了会被带过站，再花时间折返。',interaction:{kind:'tap' as const,seconds:3,penalty:80,required:1},choices:[{label:'醒醒！',detail:'立刻下车，抓住开门时间',seconds:0},{label:'再睡一下',detail:'闹钟没叫醒你 · 坐过站并折返',seconds:80}]};
+ if(id==='worker-boss-call'&&t.bossCallsLeft>0)return {id,phase:'station' as const,title:t.bossCallsLeft===1?'老板又打来了：“你到底看没看消息？”':'老板来电：“今晚到底能不能发？”',description:'你已经在赶车，老板的电话却追了过来。接电话会占用赶路时间。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'接起来，说明正在回程',detail:'花 35 秒 · 专注 +5',seconds:35},{label:'挂掉，继续赶车',detail:'不花时间 · 老板可能再打来',seconds:0}]};
+ if(id==='tourist-sleep'){
+  const last=(s.route?.stops.length??4)-1,transfer=s.route?transferStopIndex(s.route):-1;
+  const alarms=[{stops:3,energy:8,fatigue:6},{stops:2,energy:14,fatigue:12},{stops:1,energy:20,fatigue:20}].filter(option=>last-option.stops>=1&&(transfer<1||s.metroTransferred||last-option.stops<=transfer));
+  return {id,phase:'metro' as const,title:'列车开起来了，眼皮也撑不住了',description:'设好闹钟就睡一会儿。睡着后会直接到叫醒的那站；需要换乘时，会先在换乘站叫醒你。',interaction:{kind:'choice' as const,seconds:12,penalty:20},choices:[...alarms.map(option=>({label:`提前 ${option.stops} 站叫醒`,detail:`睡到那站 · 精力 +${option.energy} · 疲劳 −${option.fatigue}`,seconds:0})),{label:'撑着，盯紧站名',detail:'保持清醒，逐站决定下不下车',seconds:0}]};
+ }
+ if(id==='tourist-wake')return {id,phase:'metro' as const,title:`闹钟响了：${s.route?.stops[s.metroStopIndex]??'到站了'}！`,description:'点一下醒来，先认清站名；接下来由你决定下车、换乘，还是继续坐。',interaction:{kind:'tap' as const,seconds:3,penalty:80,required:1},choices:[{label:'醒醒！',detail:'确认站名，再决定要不要下车',seconds:0},{label:'再睡一下',detail:'闹钟没叫醒你 · 坐过站并折返',seconds:80}]};
  if(id==='tourist-wheel')return {id,phase:'station' as const,title:'行李箱轮子卡住了！',description:'坏掉的轮子一直往旁边偏。停下来调整会花时间，硬拖会更耗精力。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停下来调整轮子',detail:'多花 20 秒 · 负重减少 5',seconds:20},{label:'先硬拖着赶路',detail:'不花时间 · 精力额外消耗',seconds:0}]};
  if(id==='tourist-wayfinding')return {id,phase:'station' as const,title:t.mapChecked?'这里的指示牌怎么又变了？':'出口好多，哪个才是铁路出发？',description:t.focus<35?'走了一整天，字都看花了。陌生车站里人流也可能带错方向。':'先看清铁路出发标识，跟着人群不一定对。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停一下，看楼层地图',detail:'花 12 秒确认方向 · 记住路线',seconds:12},{label:'跟着人流先走',detail:t.wrongWayRisk?'看着像近路，可能要折返':'顺着人流，不花确认时间',seconds:t.wrongWayRisk?42:0}]};
  return undefined;
@@ -81,7 +88,7 @@ export function applyTimedChoice(s:Run,id:string):Run{
  const t=s.characterTime,p=timedPrompt(s),choice=p?.choices.find(c=>c.id===id);if(!t||!choice)return s;
  const nextState:CharacterTimeState={...t,prepStep:t.prepStep+1,energy:Math.max(0,Math.min(t.maxEnergy,t.energy+(choice.energy??0))),fatigue:Math.max(0,Math.min(100,t.fatigue+(choice.fatigue??0))),load:Math.max(0,Math.min(100,t.load+(choice.load??0))),focus:Math.max(0,Math.min(100,t.focus+(choice.focus??0))),actualDelay:t.actualDelay+choice.seconds,...choice.set};
  const next={...s,characterTime:nextState,stamina:nextState.energy,remaining:s.remaining-choice.seconds,logs:[...s.logs,{title:choice.label,seconds:choice.seconds,eventId:`${t.characterId}-prep-${t.prepStep}`}]};
- if(choice.id==='ignore'){nextState.bossCallsLeft=2;nextState.ignoredWork=true;}
+ if(choice.id==='ignore'){nextState.bossCallsLeft=nextState.bossMayCall?2:0;nextState.ignoredWork=true;}
  const complete=nextState.prepStep>=(t.characterId==='worker'?3:2);
  return {...next,phase:complete?'route':'preparation'};
 }

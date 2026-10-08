@@ -54,7 +54,7 @@ export function awardResult(previous:Progress,input:GameResult,at=new Date().toI
  if(previous.processedRunIds.includes(input.runId))return previous;
  const analysis=analyzeFactors(input),r={...input,timeImpacts:analysis.impacts,characterStats:{...input.characterStats}};
  const decisive=(pattern:RegExp)=>r.timeImpacts.some(i=>pattern.test(i.eventId??i.id)&&i.decisive&&(r.success?i.deltaSeconds>r.resultMarginSeconds:-i.deltaSeconds>=-r.resultMarginSeconds));
- Object.assign(r.characterStats,{teaDecisive:decisive(/prepare-tea/),liftDecisive:decisive(/lift|vertical-choice/),lateSprintDecisive:decisive(/sprint-late/)});
+ Object.assign(r.characterStats,{cakeDecisive:decisive(/prepare-cake/),liftDecisive:decisive(/lift|vertical-choice/),lateSprintDecisive:decisive(/sprint-late/)});
  const p:Progress={...previous,totalRuns:previous.totalRuns+1,totalWins:previous.totalWins+(r.success?1:0),currentWinStreak:r.success?previous.currentWinStreak+1:0,characterStats:{...previous.characterStats},stationStats:{...previous.stationStats},achievementProgress:{...previous.achievementProgress},unlocked:{...previous.unlocked},processedRunIds:[...previous.processedRunIds,r.runId].slice(-512),lastRunId:r.runId,lastUnlocks:[],clutchStreak:r.success&&r.resultMarginSeconds<=15?previous.clutchStreak+1:0};
  p.bestWinStreak=Math.max(p.bestWinStreak,p.currentWinStreak);p.characterStats[r.characterId]=updateStat(p.characterStats[r.characterId],r);p.stationStats[r.stationId]=updateStat(p.stationStats[r.stationId],r);aliases(p);
  const context={r,p,station:p.stationStats[r.stationId],character:p.characterStats[r.characterId]};

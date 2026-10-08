@@ -69,7 +69,7 @@ export function randomEvent(s:Run,phase:'metro'|'station'):EventConfig{
  const pool=events.filter(e=>!s.seen.includes(e.id)&&(!e.character||e.character.includes(s.character.id))&&(e.phase===phase||e.phase==='both')&&!e.id.includes('-'));
  return pick(pool.length?pool:[events[0]]);
 }
-export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'DROP_TEA'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
+export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
 function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??null,phase:'result',event:null,success};}
 function deadline(s:Run):Run{return s.remaining<=(s.gatePassed?0:STOP_BEFORE)?finish(s):s;}
 function choice(s:Run,c:Choice,title=s.event?.title||'途中耽误'):Run{
@@ -129,7 +129,7 @@ function reduceCore(s:Run,a:Action):Run{
   if(a.type==='PREP_PICK'){
    if(s.phase!=='preparation'||a.step!==u.prep)return s;const prep=PREPARATIONS[u.prep],option=prep?.options.find(o=>o.id===a.option);if(!option)return s;
    const stats={...u.stats};for(const [key,value] of Object.entries(option.stats??{}))stats[key as keyof typeof stats]=Math.min(100,stats[key as keyof typeof stats]+value!);
-   u={...u,stats,stamina:stats.energy,prep:u.prep+1,choices:{...u.choices,[prep.id]:option.id},decisionLoss:u.decisionLoss+option.seconds,tea:prep.id==='tea'?option.id==='buy':u.tea,checkedID:prep.id==='id'?option.id==='check':u.checkedID,breakfast:prep.id==='breakfast'?option.id==='eat':u.breakfast};
+   u={...u,stats,stamina:stats.energy,prep:u.prep+1,choices:{...u.choices,[prep.id]:option.id},decisionLoss:u.decisionLoss+option.seconds,cake:prep.id==='cake'?option.id==='take':u.cake,checkedID:prep.id==='id'?option.id==='check':u.checkedID,breakfast:prep.id==='breakfast'?option.id==='eat':u.breakfast};
    if(u.checkedID)u.pocket=0;
    return deadline({...s,student:u,remaining:s.remaining-option.seconds,phase:u.prep===PREPARATIONS.length?'route':'preparation',logs:[...s.logs,{title:option.label,seconds:option.seconds}]});
   }
@@ -143,7 +143,6 @@ function reduceCore(s:Run,a:Action):Run{
    if(s.phase!=='station'||s.event)return s;
    return {...s,student:{...u,sprinting:a.held&&!u.exhausted&&!u.runner.blocked},stationRunning:a.held?true:s.stationRunning};
   }
-  if(a.type==='DROP_TEA')return {...s,student:{...u,tea:false}};
   if(a.type==='PREPARE_DOOR')return s.phase==='metro'&&!s.event?{...s,student:{...u,doorReady:true}}:s;
   if(a.type==='OBSERVE')return s.event?.id==='security-queue'?{...s,student:{...u,observed:true},event:studentPrompt('security-queue',{...u,observed:true},s.gate)!}:s;
   if(a.type==='READ_MAP')return {...s,student:{...u,mapRead:true}};
@@ -160,7 +159,7 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
  if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime||s.parent?'preparation':'route',phaseElapsed:0}:s;
  if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
- if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return s.characterTime?.characterId==='tourist'?{...s,phase:'metro',phaseElapsed:0,event:characterEventPrompt(s,'tourist-sleep')??null,eventElapsed:0}:{...s,phase:'metro',phaseElapsed:0};}
+ if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return {...s,phase:'metro',phaseElapsed:0};}
  if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro(s):s;
  if(a.type==='ALIGHT'){
   if(s.phase!=='arrival'||s.event)return s;
@@ -191,6 +190,24 @@ function reduceCore(s:Run,a:Action):Run{
    return deadline({...s,event:null,eventElapsed:0,eventOverdue:false,stationRunning:false,student:{...s.student,stamina:Math.max(s.student.stamina,65),sprinting:false,decisionLoss:s.student.decisionLoss+selected.seconds},remaining:s.remaining-selected.seconds,logs:[...s.logs,{title:'连续冲刺岔气，停下调整呼吸',seconds:selected.seconds,eventId:'student-breath'}]});
   }
 
+  if(s.characterTime&&s.event.id==='tourist-sleep'){
+   const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   const chosen=choice(applyCharacterEvent(s,'tourist-sleep',selected.label),selected,selected.label);
+   if(chosen.phase!=='metro'||!chosen.characterTime?.sleeping)return chosen;
+   const last=chosen.route!.stops.length-1,transfer=transferStopIndex(chosen.route!);
+   const alarmIndex=Math.max(1,last-chosen.characterTime.alarmStops);
+   const wakeIndex=!chosen.metroTransferred&&transfer>0?Math.min(alarmIndex,transfer):alarmIndex;
+   const progress=wakeIndex/last;
+   const arrived:Run={...chosen,phase:'arrival',phaseElapsed:0,metroProgress:progress,metroStopIndex:wakeIndex,remaining:chosen.remaining-(progress-chosen.metroProgress)*chosen.metroDuration,event:null,eventElapsed:0};
+   return deadline({...arrived,event:characterEventPrompt(arrived,'tourist-wake')??null});
+  }
+  if(s.characterTime&&s.event.id==='tourist-wake'){
+   const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   const awakened=applyCharacterEvent(s,'tourist-wake',selected.label);
+   if(selected.label==='醒醒！')return {...choice(awakened,selected,'闹钟叫醒，确认站名'),phaseElapsed:0};
+   return recoverMetro({...awakened,event:null,eventElapsed:0},'闹钟没叫醒，坐过一站后折返',selected.seconds,'arrival');
+  }
+
   if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
    if(s.event.id==='zz-hometown'&&selected.label==='告诉他')return {...s,event:stationChallenge(s,'zz-hometown-answer')??s.event,eventElapsed:0,eventOverdue:false};
    s=applyCharacterEvent(s,s.event.id,selected.label);
@@ -210,7 +227,7 @@ function reduceCore(s:Run,a:Action):Run{
   if(s.stationJourney.length&&s.event!.id==='escalator-ride'&&(!s.student||s.student.vertical==='escalator')){
    const selected=s.event!.choices.find(c=>c.label===chosen.label);if(!selected)return s;
    const fast=!!selected.boost,blocked=s.stationLuck.escalators[s.escalatorLane!]==='blocked';
-   return {...s,event:{id:'escalator-operation',phase:'station',title:fast?(s.student?.tea?'一手奶茶，腾出手再快走！':'前面让开了，快走四步！'):blocked?'被堵住了，先等前面的人走。':'站稳扶手，跟着扶梯上楼。',description:fast?(s.student?.tea?'多点一下整理手里的奶茶，再沿扶梯快步上楼。':'连续点击四次，沿扶梯快步上楼。'):'按住扶手，等这一段走完才能继续。',interaction:{kind:fast?'tap':'hold',required:fast?4+(s.student?.tea?1:0):blocked?3:1.5,seconds:9,penalty:15},choices:[{...selected,boost:undefined,detour:undefined,label:fast?'快走上楼':'按住扶手'}]},eventElapsed:0,eventOverdue:false};
+   return {...s,event:{id:'escalator-operation',phase:'station',title:fast?(s.student?.cake?'一手拎着蛋糕盒，先护好再快走！':'前面让开了，快走四步！'):blocked?'被堵住了，先等前面的人走。':'站稳扶手，跟着扶梯上楼。',description:fast?(s.student?.cake?'多点一下扶稳手里的蛋糕盒，再沿扶梯快步上楼。':'连续点击四次，沿扶梯快步上楼。'):'按住扶手，等这一段走完才能继续。',interaction:{kind:fast?'tap':'hold',required:fast?4+(s.student?.cake?1:0):blocked?3:1.5,seconds:9,penalty:15},choices:[{...selected,boost:undefined,detour:undefined,label:fast?'快走上楼':'按住扶手'}]},eventElapsed:0,eventOverdue:false};
   }
   if(s.event!.id==='elder-block'){
    const selected=s.event!.choices.find(c=>c.effect===chosen.effect);
@@ -248,8 +265,8 @@ function reduceCore(s:Run,a:Action):Run{
    if(!u.breakfast&&!u.hungry&&s.phase==='station'&&s.stage>=3){u.hungry=true;u.stats.energy=Math.max(0,u.stats.energy-10);}
    const running=s.phase==='station'&&s.stationRunning&&!s.event&&!u.runner.blocked;
    const sprint=running&&u.sprinting&&!u.exhausted;
-   const recovery=(running?STUDENT.walkRecover:STUDENT.recover)*(.65+u.stats.energy/100*.4667)*(1-u.stats.load/250)*(u.late?STUDENT.lateRecovery:1)*(u.choices.tea==='buy'&&u.elapsedGame<180?1.2:1);
-   u.stamina=Math.max(0,Math.min(u.stats.energy,u.stamina+(sprint?-STUDENT.drain:recovery)*dt));
+   const recovery=(running?STUDENT.walkRecover:STUDENT.recover)*(.65+u.stats.energy/100*.4667)*(1-u.stats.load/250)*(u.late?STUDENT.lateRecovery:1);
+   u.stamina=Math.max(0,Math.min(u.stats.energy,u.stamina+((sprint?-STUDENT.drain:recovery)-(running&&u.cake?(sprint?STUDENT.cakeSprintDrain:STUDENT.cakeWalkDrain):0))*dt));
    if(sprint)u.sprintStrain+=dt;
    else if(s.phase==='station'&&!s.event&&!u.runner.blocked&&(!running||!u.exhausted))u.sprintStrain=Math.max(0,u.sprintStrain-(running?1.5:2)*dt);
    if(u.stamina===0){u.exhausted=true;u.sprinting=false;}else if(u.exhausted&&u.stamina>=15)u.exhausted=false;
@@ -293,7 +310,7 @@ function reduceCore(s:Run,a:Action):Run{
     if(s.event.id==='elder-block')n=choice(n,s.event.choices[0],'没选，自动绕开老人');
     else if(s.event.id==='escalator-choice')n=choice(n,s.event.choices[1],'没选，走中间的 2 号扶梯');
     else if(s.event.id==='escalator-ride')n=choice(n,s.event.choices.at(-1)!,'跟着扶梯上楼');
-    else if(s.event.id==='tourist-wake')n=choice(applyCharacterEvent(n,'tourist-wake','睡过站了'),{label:'再睡一下',detail:'坐过站',seconds:s.event.interaction?.penalty??80},'闹钟没叫醒，坐过一站');
+    else if(s.event.id==='tourist-wake')n=recoverMetro({...applyCharacterEvent(n,'tourist-wake','再睡一下'),event:null,eventElapsed:0},'闹钟没叫醒，坐过一站后折返',s.event.interaction?.penalty??80,'arrival');
     else n=choice(n,{label:'',detail:'',seconds:s.event.interaction?.penalty??55},'没来得及：'+s.event.title);
    }
    return deadline(n);
@@ -325,14 +342,17 @@ function reduceCore(s:Run,a:Action):Run{
    if(stopProgress-next<1e-9)next=stopProgress;
    const incident=s.metroIncident;
    const checkpoint=incident&&!s.seen.includes(incident.id)&&old<.14&&next>=.14;
+   const sleepCheckpoint=!checkpoint&&s.characterTime?.characterId==='tourist'&&!s.seen.includes('tourist-sleep')&&old<.2&&next>=.2;
    if(checkpoint)next=.14;
+   else if(sleepCheckpoint)next=.2;
    const movingSeconds=(next-old)*METRO_SECONDS;
    n.remaining=s.remaining-(next-old)*s.metroDuration-Math.max(0,dt-movingSeconds)*clockRate(s);
    n.metroProgress=next;
    if(n.parent)n.parent=tickParent(n.parent,'metro',0,(next-old)*s.metroDuration,false);
    if(n.student&&s.student)n.student.elapsedGame=s.student.elapsedGame+s.remaining-n.remaining;
    if(checkpoint){n.event=incident;n.eventElapsed=0;}
-   if(next>=stopProgress){n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;if(s.characterTime?.sleeping&&n.metroStopIndex>=Math.max(1,s.route!.stops.length-1-s.characterTime.alarmStops)){n.event=characterEventPrompt(n,'tourist-wake')??null;n.eventElapsed=0;}}
+   if(sleepCheckpoint){n.event=characterEventPrompt(n,'tourist-sleep')??null;n.eventElapsed=0;}
+   if(next>=stopProgress){n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;}
   }
   // At ordinary stops, doing nothing means staying on. Missing a required exit
   // costs time and returns to that stop, without charging the journey twice.

@@ -42,7 +42,7 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
   const id=l.eventId??event,cat=impactCategory(id);let cost=l.seconds,source=l.title,tag:string|undefined;
   if(id==='security-queue'&&u){const median=[...u.queues].sort((a,b)=>a.seconds-b.seconds)[1].seconds;cost=l.seconds-median;source=cost>0?'安检队比本站常规队更慢':'安检队比本站常规队更快';tag=cost>0?'安检误判':'安检选对了';}
   if(a.type==='CHOICE'&&id===event&&a.choice.stationDecision&&!a.choice.stationDecision.optimal)source=a.choice.label+'后折返';
-  if(id==='prepare-tea')source='买奶茶';if(id==='prepare-breakfast')source='买饭团';if(id==='prepare-id')source='出门前检查身份证';
+  if(id==='prepare-cake')source='带上朋友的小蛋糕';if(id==='prepare-breakfast')source='买饭团';if(id==='prepare-id')source='出门前检查身份证';
   if(id==='student-breath')tag='冲刺过早';
   add('event-'+id+'-'+(a.type==='CHOICE'?a.choice.label:l.title),source,-cost,cat,cat!=='environment',{eventId:id,decisionId:a.type==='CHOICE'?a.choice.label:undefined,tag,baseline:id==='security-queue'?'同局安检队耗时中位数':undefined});
  }
@@ -67,7 +67,7 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
   if(a.type==='CHOICE'&&event==='security-queue')m.choiceResults.judgment.push(a.choice.seconds===Math.min(...u.queues.map(q=>q.seconds)));
   if(a.type==='CHOICE'&&(a.choice.stationDecision?.density??0)>=3)m.pendingRisk={beat:n.stationBeat,collisions:v.runner.collisions};
   if(m.pendingRisk&&(n.event&&n.stationBeat===m.pendingRisk.beat||n.phase==='result')){m.highRiskResults.push(n.phase!=='result'&&v.runner.collisions===m.pendingRisk.collisions);m.pendingRisk=null;}
-  m.characterStats={...m.characterStats,tea:v.choices.tea==='buy',breakfast:v.breakfast,checkedID:v.checkedID,idFound:n.identityReady,bagAttempts:m.bagAttempts,bagMistakes:v.bagMistakes,bagSeconds:v.bagSeconds,lateSprintSaved:v.lateSprintSaved,earlySprintSeconds:m.earlySprintSeconds,lowEnergySeconds:m.lowEnergySeconds,finalEnergy:v.stamina,breathStops:v.breathStops,exhaustedLateSeconds:v.exhaustedLateSeconds,otherDelay:n.logs.some(l=>l.seconds>0&&l.eventId!=='prepare-tea'&&l.eventId!=='prepare-breakfast'&&l.eventId?.startsWith('prepare-')),extraPreparationSeconds:n.logs.filter(l=>l.eventId?.startsWith('prepare-')).reduce((t,l)=>t+l.seconds,0)};
+  m.characterStats={...m.characterStats,cake:v.choices.cake==='take',breakfast:v.breakfast,checkedID:v.checkedID,idFound:n.identityReady,bagAttempts:m.bagAttempts,bagMistakes:v.bagMistakes,bagSeconds:v.bagSeconds,lateSprintSaved:v.lateSprintSaved,earlySprintSeconds:m.earlySprintSeconds,lowEnergySeconds:m.lowEnergySeconds,finalEnergy:v.stamina,breathStops:v.breathStops,exhaustedLateSeconds:v.exhaustedLateSeconds,otherDelay:n.logs.some(l=>l.seconds>0&&l.eventId!=='prepare-cake'&&l.eventId!=='prepare-breakfast'&&l.eventId?.startsWith('prepare-')),extraPreparationSeconds:n.logs.filter(l=>l.eventId?.startsWith('prepare-')).reduce((t,l)=>t+l.seconds,0)};
  }
  if(s.parent&&n.parent){
   const gain=n.parent.syncSprintSaved-s.parent.syncSprintSaved;
