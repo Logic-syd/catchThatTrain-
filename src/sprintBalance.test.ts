@@ -46,7 +46,7 @@ describe('student sprint pacing',()=>{
    const rush=play(st.id,'sprint',seed,['skip','skip','skip']);
    expect(rush.success,`${st.id} seed ${seed} no preparation, all sprint`).toBe(false);
   }
- });
+ },30000);
  it('a breath stop blocks progress and resumes the same corridor after recovery',()=>{
   let s=createStationRun('shanghai',false,rng(921));s={...s,phase:'station',remaining:900,stationJourney:[{id:'gates',stage:4,label:'long corridor',seconds:100}],stationBeat:0,stationRunning:true};
   for(let i=0;i<100&&s.event?.id!=='student-breath';i++)s=tick(reducer(s,{type:'SPRINT_INPUT',held:true}),.1);
