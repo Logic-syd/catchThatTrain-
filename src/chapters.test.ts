@@ -32,7 +32,7 @@ describe('six actual station chapters',()=>{
   const wrong=choose(at('wuhan','wh-floor'),1);expect(wrong.remaining).toBe(1150);expect(wrong.stationDecisions[0].optimal).toBe(false);
   const stairs=choose(at('wuhan','vertical-choice'),1);expect(stairs.stationJourney.some(b=>b.id==='escalator-choice')).toBe(false);expect(stairs.student!.vertical).toBe('stairs');expect(stairs.stationDecisions[0].value).toBe('stairs');
  });
- it('all routes reach their station, while the careful fast route clears without sprinting',()=>{
+ it('the careful fast route is viable; slower routes can miss the deadline without auto-completing facilities',()=>{
   let slowerRouteLosses=0;
   for(const st of STATIONS)for(let routeIndex=0;routeIndex<createStationRun(st.id).city.spawnStations[0].routes.length;routeIndex++){
    let s=reducer(createStationRun(st.id,false,rng(921+routeIndex)),{type:'START'});
@@ -48,10 +48,10 @@ describe('six actual station chapters',()=>{
     else if(s.phase==='station'){const w=runnerWave(s);if(w&&w.lane===s.student!.runner.lane)s=reducer(s,{type:'CHANGE_LANE',direction:w.lane===2?-1:1});s=reducer(s,{type:'RUN_INPUT',held:true});s=tick(s,.1);}
     else{s=reducer(s,{type:'PREPARE_DOOR'});s=tick(s,.1);}
    }
-   expect(s.student!.stationStart,st.id+' route '+routeIndex+' reached station').toBeGreaterThan(0);
-   if(s.route!.id===fastest.id)expect(s.success,st.id+' fast route '+routeIndex+' '+s.phase+' '+s.event?.id).toBe(true);
+   if(s.route!.id===fastest.id){expect(s.student!.stationStart,st.id+' fastest route reaches station').toBeGreaterThan(0);expect(s.success,st.id+' fast route '+routeIndex+' '+s.phase+' '+s.event?.id).toBe(true);}
    else if(!s.success)slowerRouteLosses++;
-   expect(s.gate).toBe(st.gate);expect(s.metroTransferred).toBe(!!s.route!.transfers);
+   expect(s.phase).toBe('result');if(!s.student!.stationStart){expect(s.success).toBe(false);expect(s.gatePassed).toBe(false);expect(s.seen).not.toContain('gate-scan');}
+   expect(s.gate).toBe(st.gate);if(s.student!.stationStart)expect(s.metroTransferred).toBe(!!s.route!.transfers);
    const o=summarizeRun(s);expect(o.stationPlaystyle).toBe(st.playstyle);expect(o.reasons.length).toBeGreaterThanOrEqual(2);expect(o.tags.length).toBeLessThanOrEqual(3);
   }
   expect(slowerRouteLosses).toBeGreaterThan(0);

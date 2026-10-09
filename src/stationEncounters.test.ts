@@ -16,12 +16,13 @@ function lift(state:EscalatorState,lane=0):Run{
 
 describe('backpack student and exit events',()=>{
  it('uses the backpack identity throughout the run',()=>{expect(station().character.name).toBe('背包大学生');});
- it('releases a caught backpack once and allows recovery after a timeout',()=>{
+ it('releases a caught backpack only after action, even after reading slowly',()=>{
   const s=reducer(station(),{type:'STATION_EVENT',id:'bag-snag'});
   expect(s.event?.interaction?.kind).toBe('swipe');
   const success=reducer(s,{type:'CHOICE',choice:s.event!.choices[0]});expect(success.remaining).toBe(s.remaining-8);
-  const timeout=reducer(s,{type:'TICK',dt:7});expect(timeout.event).toBeNull();expect(timeout.logs.at(-1)?.seconds).toBe(25);
-  expect(reducer(timeout,{type:'STATION_EVENT',id:'bag-snag'}).event).toBeNull();
+  const timeout=reducer(s,{type:'TICK',dt:7});expect(timeout.event).toBe(s.event);expect(timeout.remaining).toBe(s.remaining-7);
+  const done=reducer(timeout,{type:'CHOICE',choice:timeout.event!.choices[0]});
+  expect(done.remaining).toBe(timeout.remaining-8);expect(reducer(done,{type:'STATION_EVENT',id:'bag-snag'}).event).toBeNull();
  });
  it('going around always costs ten seconds, regardless of the hidden risk',()=>{
   for(const scam of [false,true]){
@@ -45,8 +46,8 @@ describe('backpack student and exit events',()=>{
    expect(luck.elder).toBe(person<.5?'grandma':'grandpa');expect(luck.elderScam).toBe(risk<.3);
   }
  });
- it('defaults to going around on timeout and does not reopen an outcome at the deadline',()=>{
-  const s=elder(true);const n=reducer(s,{type:'TICK',dt:8});expect(n.remaining).toBe(s.remaining-8-10);expect(n.detour).not.toBeNull();expect(n.event).toBeNull();
+ it('waits for the elder choice and still respects the final boarding deadline',()=>{
+  const s=elder(true);const n=reducer(s,{type:'TICK',dt:8});expect(n.remaining).toBe(s.remaining-8);expect(n.detour).toBeNull();expect(n.event).toBe(s.event);
   const late=reducer({...s,remaining:STOP_BEFORE+50},{type:'CHOICE',choice:s.event!.choices[1]});expect(late.phase).toBe('result');expect(late.event).toBeNull();
  });
 });
@@ -81,11 +82,11 @@ describe('three hidden escalator outcomes',()=>{
    const s=lift(state);const n=reducer(s,{type:'CHOICE',choice:s.event!.choices[0]});expect(n.remaining).toBe(s.remaining-seconds);expect(n.boost).toBe(0);
   }
  });
- it('timeouts choose the middle lane, then continue through the selected exit',()=>{
+ it('reading never chooses an escalator or completes its ride for the player',()=>{
   const choice=reducer({...station(),stage:1},{type:'STATION_EVENT',id:'escalator-choice'});
-  const selected=reducer(choice,{type:'TICK',dt:10});expect(selected.escalatorLane).toBe(1);expect(stationTarget(selected)).toMatchObject({id:'escalator-ride',x:320});
+  const selected=reducer(choice,{type:'TICK',dt:10});expect(selected.escalatorLane).toBeNull();expect(selected.event).toBe(choice.event);expect(selected.remaining).toBe(choice.remaining-10);
   for(const state of ['clear','steady','blocked'] as const){
-   const s=lift(state,1);const timeout=reducer(s,{type:'TICK',dt:8});expect(timeout.event).toBeNull();expect(timeout.detour).toMatchObject({x:320,y:952});expect(timeout.boost).toBe(0);
+   const s=lift(state,1);const timeout=reducer(s,{type:'TICK',dt:8});expect(timeout.event).toBe(s.event);expect(timeout.detour).toBeNull();expect(timeout.remaining).toBe(s.remaining-8);expect(timeout.boost).toBe(0);
   }
  });
  it('replay resets the chosen lane, speed boost and completed encounters',()=>{

@@ -6,3 +6,6 @@ artifacts/
 .env
 .env.*
 !.env.example
+
+.production/
+_site/

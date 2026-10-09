@@ -53,8 +53,8 @@ describe('result UI rendering',()=>{
  });
  it('failure deductions use prominent seconds; early failure identifies preparation',()=>{
   const run={...createStationRun(),phase:'result' as const,success:false,remaining:180};run.metrics.endPhase='preparation';run.metrics.estimatedSecondsToGoal=50;
-  run.metrics.impacts=[{id:'tea',eventId:'prepare-tea',source:'买奶茶',category:'decision',deltaSeconds:-120,positive:false,avoidable:true}];run.student!.choices.tea='buy';
+  run.metrics.impacts=[{id:'cake',eventId:'prepare-cake',source:'带上朋友的小蛋糕',category:'decision',deltaSeconds:-75,positive:false,avoidable:true}];run.student!.choices.cake='take';
   const html=renderToStaticMarkup(<Results run={run} progress={freshProgress()} saved={false} replay={noop} share={noop} selectStation={noop}/>);
-  expect(html).toContain('奶茶误我');expect(html).toContain('止步出门准备');expect(html).toContain('class="time-loss">−120');expect(html).toContain('浏览器未允许保存');
+  expect(html).toContain('蛋糕护送失败');expect(html).toContain('止步出门准备');expect(html).toContain('class="time-loss">−75');expect(html).toContain('浏览器未允许保存');
  });
 });

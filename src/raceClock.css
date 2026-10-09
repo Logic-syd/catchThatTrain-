@@ -1,0 +1,13 @@
+.phase-station .time-capsule.station-race-clock{padding:12px 16px;border-radius:24px;min-width:0;width:min(100%,450px);text-align:center}
+.phase-station .time-capsule.station-race-clock .race-clock{width:100%;display:block}
+.race-clock-values{display:flex;align-items:center;justify-content:center;gap:12px}
+.race-clock-values>div{display:flex;flex-direction:column;min-width:0;flex:1}
+.phase-station .time-capsule.station-race-clock .race-clock-values span{font-size:11px;letter-spacing:0;color:#8c7858}
+.phase-station .time-capsule.station-race-clock .race-clock-values strong{font-size:30px;line-height:1.2;letter-spacing:0;font-variant-numeric:tabular-nums}
+.phase-station .time-capsule.station-race-clock .race-clock-values .race-clock-versus{font-size:10px;flex:0}
+.race-verdict{font-size:13px;font-weight:800;margin:6px 0 2px;color:#627950}
+.race-clock.tight .race-verdict{color:#a56624}
+.race-clock.impossible .race-verdict,.phase-station .time-capsule.station-race-clock .race-clock.impossible strong{color:#b83029}
+.race-clock small{display:block;font-size:10px;line-height:1.5;color:#8a7558}
+.phase-station .time-capsule.station-race-clock:has(.impossible){background:#fff0e9;box-shadow:0 3px 0 #d99c88}
+@media(max-width:420px){.phase-station .time-capsule.station-race-clock{padding:10px}.race-clock-values{gap:6px}.phase-station .time-capsule.station-race-clock .race-clock-values strong{font-size:25px}.phase-station .time-capsule.station-race-clock .race-clock-values span{font-size:10px}}

@@ -1,7 +1,7 @@
 import type {CSSProperties} from 'react';
 import type {Run} from './engine';
 import {stationFor,selectedPath,type StationChapter} from './stations';
-function Structure({id}:{id:string}){
+export function Structure({id}:{id:string}){
  if(id==='shanghai')return <g><rect x="12" y="100" width="476" height="68" rx="14" fill="#fdf5dc"/><rect x="310" y="65" width="175" height="125" rx="12" fill="#e4d9b2"/>{[120,160,200,240].map(x=><g key={x}><rect x={x} y="57" width="30" height="30" rx="4" fill="#b9c3a0"/><path d={`M${x} 67h30`} stroke="#faf4da" strokeWidth="4"/></g>)}<path d="M95 191h220" stroke="#ccbd92" strokeWidth="14"/><text x="360" y="225">长距离候车大厅 →</text></g>;
  if(id==='beijing')return <g><path d="M25 30Q245-10 475 30V220H25Z" fill="#f2cfc1"/><path d="M35 163h425" stroke="#b97465" strokeWidth="8"/>{[70,115,160,205,250].map(x=><g key={x}><rect x={x} y="80" width="27" height="60" rx="4" fill="#fdf4db"/><path d={`M${x+4} 91v41m18-41v41`} stroke="#b39275" strokeWidth="2"/>{[145,153].map(y=><circle key={y} cx={x+14} cy={y} r="3" fill="#9f806c"/>)}</g>)}<text x="280" y="115">安检排队区</text><text x="280" y="210">南入口</text></g>;
  if(id==='guangzhou')return <g><path d="M15 240V125H85V15H365V67H485V240Z" fill="#b6d0b2"/><path d="M35 228V142h95V36h205v55h125v131" fill="none" stroke="#edf0d7" strokeWidth="28"/><path d="m170 192 161-71" stroke="#f8edce" strokeWidth="32"/><path d="m220 180 68-78" stroke="#9cb59f" strokeWidth="6"/>{[165,200,240,282,322].map((x,i)=><g key={x}><circle cx={x} cy={160+i%2*25} r="7" fill="#709486"/><circle cx={x+13} cy={171+i%2*25} r="5" fill="#a1a773"/></g>)}<text x="170" y="235">南区 → 中区 → 北大厅</text></g>;
@@ -13,7 +13,7 @@ const PERSONA_MARKERS:Record<string,{x:number;y:number;label:string;icon:string}
  shanghai:{x:224,y:202,label:'长廊老太太',icon:'♙'},
  beijing:{x:315,y:133,label:'严格安检',icon:'▣'},
  guangzhou:{x:210,y:205,label:'热心指路',icon:'↗'},
- hangzhou:{x:180,y:174,label:'工作群催',icon:'@'},
+ hangzhou:{x:180,y:174,label:'出发 / 到达',icon:'↗'},
  wuhan:{x:264,y:177,label:'急躁店主',icon:'!'},
  zhengzhou:{x:284,y:157,label:'老乡搭话',icon:'♙'}
 };
@@ -23,7 +23,7 @@ export function StationMap({station,run,mini=false}:{station:StationChapter;run?
  const lookup=(id:string)=>station.nodes.find(n=>n.id===id)!;
  const points=route.points.map(lookup);const ratio=run?Math.min(1,(run.stationBeat+run.stationProgress)/Math.max(1,run.stationJourney.length)):0;
  const index=Math.min(points.length-2,Math.floor(ratio*(points.length-1))),part=ratio*(points.length-1)-index;
- const dot={x:points[index].x+(points[index+1].x-points[index].x)*part,y:points[index].y+(points[index+1].y-points[index].y)*part};
+ const dot=run?.stationMap?.position??{x:points[index].x+(points[index+1].x-points[index].x)*part,y:points[index].y+(points[index+1].y-points[index].y)*part};
  return <svg viewBox="0 0 500 250" className={'station-map '+(mini?'mini':'')} role="img" aria-label={`${station.name}底图：${station.feeling} ${station.personality}`} style={{'--station-accent':station.accent,background:station.paper} as CSSProperties}><Structure id={station.id}/><g className="map-edges">{station.edges.map(([a,b],i)=><path key={i} d={`M${lookup(a).x},${lookup(a).y}L${lookup(b).x},${lookup(b).y}`} fill="none" stroke="#fff9e9" strokeWidth="13"/>)}</g><polyline points={points.map(n=>n.x+','+n.y).join(' ')} stroke={station.accent} strokeWidth="4" strokeDasharray={run?'':'7 5'} fill="none" strokeLinejoin="round"/>{station.nodes.map(n=><g key={n.id}><circle cx={n.x} cy={n.y} r={n.kind==='gate'?8:5} fill={n.kind==='gate'?station.accent:'#fffdf1'} stroke={station.accent} strokeWidth="2"/>{!mini&&<text x={n.x} y={n.y+19} textAnchor="middle">{n.label}</text>}</g>)}<StationPersonaArt id={station.id}/>{run&&<g><circle cx={dot.x} cy={dot.y} r="11" fill="#e89565" stroke="#fff" strokeWidth="3"/><text x={dot.x} y={dot.y+4} textAnchor="middle" fill="#fff">你</text></g>}</svg>;
 }
 export function StationWorld({run}:{run:Run}){const station=stationFor(run);return <svg className={'station-world world-'+station.id} viewBox="0 0 500 250" preserveAspectRatio="none" aria-hidden="true" style={{background:station.paper}}><Structure id={station.id}/><StationPersonaArt id={station.id}/></svg>;}

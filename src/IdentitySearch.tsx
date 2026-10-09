@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useStationAction} from './StationActionContext';
 import type {Run,Action} from './engine';
 const names:Record<string,string>={wallet:'钱包',phone:'手机',keys:'钥匙',headphones:'耳机',bottle:'水杯',umbrella:'雨伞',notebook:'笔记本',pen:'笔',glasses:'眼镜',charger:'充电宝',tissue:'纸巾',snack:'饼干',lipstick:'润唇膏',comb:'梳子',watch:'手表',camera:'相机',sock:'袜子',sanitizer:'洗手液',id:'身份证',bank:'银行卡',metro:'交通卡',student:'学生证',photo:'照片',receipt:'小票'};
 function ObjectArt({id}:{id:string}){
@@ -34,22 +35,22 @@ function CardArt({id}:{id:string}){
  </g>;
 }
 export default function IdentitySearch({run,dispatch}:{run:Run;dispatch:React.Dispatch<Action>}){
- const [wrong,setWrong]=useState('');const wallet=run.identityStage==='wallet';
- const pick=(id:string)=>{const correct=id===(wallet?'wallet':'id');setWrong(correct?'':'这是'+names[id]+'，再找找！−5 秒');dispatch({type:'ID_PICK',item:id});};
+ const compact=run.phase==='station';const [wrong,setWrong]=useState('');const wallet=run.identityStage==='wallet';const reportAction=useStationAction();
+ const pick=(id:string)=>{const correct=id===(wallet?'wallet':'id');setWrong(correct?'':'这是'+names[id]+'，再找找！−5 秒');reportAction({progress:correct?(wallet ? .5 : 1):0,active:false,label:correct?(wallet?'钱包找到了，打开找身份证':'身份证找到了！'):'这是'+names[id]+'，再找找'});dispatch({type:'ID_PICK',item:id});};
  return <div className="identity-search">
  <div className="search-steps"><span className={wallet?'current':'complete'}>① 找钱包</span><i>→</i><span className={!wallet?'current':''}>② 找身份证</span></div>
  <div className="search-picture" key={run.identityStage}>
- {wallet?<svg viewBox="0 0 360 318" aria-label="摊开的背包，里面散放着十八件物品">
- <rect x="2" y="2" width="356" height="314" rx="30" fill="#e4d0a8"/><rect x="12" y="12" width="336" height="294" rx="24" fill="#f3e5c6" stroke="#bc9d6e" strokeDasharray="4 5"/>
- <path d="M24 104q153 17 310-3M22 207q157-14 314 3" fill="none" stroke="#deccaa" strokeWidth="1.5"/><path d="M33 29q100-12 271 0" fill="none" stroke="#dfcda6" strokeWidth="3"/>
- {run.identityItems.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(8+i%6*58)+','+(23+Math.floor(i/6)*97+(i%3-1)*7)+')'}>
- <rect x="0" y="-9" width="57" height="84" rx="15" fill="transparent"/>
+ {wallet?<svg viewBox={compact?'0 0 360 230':'0 0 360 318'} aria-label="摊开的背包，里面散放着十八件物品">
+ <rect x="2" y="2" width="356" height={compact?226:314} rx="30" fill="#e4d0a8"/><rect x="12" y="12" width="336" height={compact?206:294} rx="24" fill="#f3e5c6" stroke="#bc9d6e" strokeDasharray="4 5"/>
+ <path d={compact?"M24 80h310M22 150h314":"M24 104q153 17 310-3M22 207q157-14 314 3"} fill="none" stroke="#deccaa" strokeWidth="1.5"/><path d="M33 29q100-12 271 0" fill="none" stroke="#dfcda6" strokeWidth="3"/>
+ {run.identityItems.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(8+i%6*58)+','+((compact?14:23)+Math.floor(i/6)*(compact?70:97)+(i%3-1)*(compact?3:7))+')'}>
+ <rect x="0" y="-9" width="57" height={compact?66:84} rx="15" fill="transparent"/>
  <g transform={'translate(1 4) rotate('+((i*17)%25-12)+' 28 28) scale(.82)'}><ObjectArt id={id}/></g></g>)}
- <text x="180" y="304" fontSize="8" textAnchor="middle" fill="#b59970">包里什么都有，偏偏钱包躲起来了。</text></svg>
- :<svg viewBox="0 0 360 280" aria-label="打开的钱包，找出六张卡片中的身份证">
- <rect x="2" y="2" width="356" height="276" rx="28" fill="#d7b28d"/><rect x="10" y="10" width="340" height="260" rx="22" fill="#bd8b66" stroke="#e9caa1" strokeDasharray="3 4"/>
+ <text x="180" y={compact?222:304} fontSize="8" textAnchor="middle" fill="#b59970">包里什么都有，偏偏钱包躲起来了。</text></svg>
+ :<svg viewBox={compact?'0 0 360 220':'0 0 360 280'} aria-label="打开的钱包，找出六张卡片中的身份证">
+ <rect x="2" y="2" width="356" height={compact?216:276} rx="28" fill="#d7b28d"/><rect x="10" y="10" width="340" height={compact?200:260} rx="22" fill="#bd8b66" stroke="#e9caa1" strokeDasharray="3 4"/>
  <path d="M16 143h328" stroke="#9e704f" strokeWidth="3"/><path d="M25 221q160 20 312-2v38H25" fill="#ab7c57"/><path d="M30 247h297" stroke="#dcba91" strokeDasharray="3 4"/>
- {run.identityCards.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(17+i%3*114)+','+(40+Math.floor(i/3)*112)+') rotate('+((i*11)%13-6)+' 48 30)'}>
+ {run.identityCards.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(17+i%3*114)+','+((compact?29:40)+Math.floor(i/3)*(compact?92:112))+') rotate('+((i*11)%13-6)+' 48 30)'}>
  <rect x="-5" y="-12" width="106" height="84" rx="6" fill="transparent"/><CardArt id={id}/></g>)}
  </svg>}
  </div>

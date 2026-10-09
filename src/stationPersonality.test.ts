@@ -51,9 +51,24 @@ describe('fixed station personalities and character tasks',()=>{
   expect(answered.stationJourney.filter(b=>b.id==='worker-boss-call')).toHaveLength(1);
   expect(answered.characterTime!.bossCallsLeft).toBe(0);
  });
+ it('replying costs 10 stamina while ignoring only sometimes schedules a call',()=>{
+  const base=createCharacterStationRun('hangzhou','worker',false,()=>.2);
+  const prep:Run={...base,phase:'preparation',characterTime:{...base.characterTime!,prepStep:2,energy:50},stamina:50};
+  const reply=reducer(prep,{type:'PERSON_PICK',option:'reply',step:2});
+  expect(reply.characterTime!.energy).toBe(40);
+  expect(reply.stamina).toBe(40);
+  expect(reply.remaining).toBe(prep.remaining);
+  expect(reply.characterTime!.bossCallsLeft).toBe(0);
+  const noCall=reducer({...prep,characterTime:{...prep.characterTime!,bossMayCall:false}},{type:'PERSON_PICK',option:'ignore',step:2});
+  expect(noCall.characterTime!.ignoredWork).toBe(true);
+  expect(noCall.characterTime!.bossCallsLeft).toBe(0);
+  expect(buildStationJourney(noCall).filter(b=>b.id==='worker-boss-call')).toHaveLength(0);
+  const withCall=reducer({...prep,characterTime:{...prep.characterTime!,bossMayCall:true}},{type:'PERSON_PICK',option:'ignore',step:2});
+  expect(buildStationJourney(withCall).filter(b=>b.id==='worker-boss-call')).toHaveLength(2);
+ });
  it('route decisions change later tasks for workers and tourists too',()=>{
-  const outer=select(at('guangzhou','tourist','gz-route'),'看标识，走外围连桥');
-  const center=select(at('guangzhou','tourist','gz-route'),'听热心人，挤中区近路');
+  const outer=select(at('guangzhou','tourist','gz-route'),'走外围连桥');
+  const center=select(at('guangzhou','tourist','gz-route'),'跟着热心人穿中区');
   expect(outer.stationJourney.some(b=>b.id==='gz-lift')).toBe(false);
   expect(center.stationJourney.some(b=>b.id==='gz-lift')).toBe(true);
   const stairs=select(at('wuhan','worker','vertical-choice'),'走楼梯');

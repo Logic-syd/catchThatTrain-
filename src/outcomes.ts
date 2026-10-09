@@ -12,12 +12,12 @@ export const factorText=(i:TimeImpact)=>`${i.source}，${i.positive?'省下':'�
 export function resultTags(r:GameResult,factors:TimeImpact[]):string[]{
  const tags:string[]=[],groups=new Set<string>();const add=(t:string,g:string)=>{const dynamic=/\d/.test(t);if(t&&!groups.has(g)&&!(dynamic&&groups.has('dynamic'))&&tags.length<3){groups.add(g);if(dynamic)groups.add('dynamic');tags.push(t);}};
  const top=factors.find(i=>i.decisive)??factors[0];
- if(top)add(top.tag??(top.category==='navigation'?'路线判断失误':top.category==='movement'?'最后冲刺':top.eventId?.includes('lift')?'电梯排队':top.eventId==='prepare-tea'?'奶茶党':top.category==='environment'?'随机延误':''),'contribution');
+ if(top)add(top.tag??(top.category==='navigation'?'路线判断失误':top.category==='movement'?'最后冲刺':top.eventId?.includes('lift')?'电梯排队':top.eventId==='prepare-cake'?'小蛋糕护送员':top.category==='environment'?'随机延误':''),'contribution');
  const c=r.characterStats;
  if(r.success){if(r.dramaScore>=80)add('顶着 Debuff 上车','drama');else if(r.wasProjectedToFail)add('逆风翻盘','drama');
  if(r.errors===0)add('零走错','navigation');else if(r.missedStops)add('坐过站','navigation');
  if(c.idFound&&Number(c.bagMistakes)===0&&Number(c.bagSeconds)<=5)add('身份证秒找到','character');
- else if(c.childNeverSeparated)add('孩子没掉队','character');else if(c.slept&&r.missedStops===0)add('睡醒刚好到','character');else if(c.tea)add('奶茶党','character');
+ else if(c.childNeverSeparated)add('孩子没掉队','character');else if(c.slept&&r.missedStops===0)add('睡醒刚好到','character');else if(c.cake)add('小蛋糕护送员','character');
  if(r.securityGood)add('安检选对了','queue');if(r.stableChoices>=2)add('稳定路线','stable');
  }else{if(r.finalEnergy<=0)add('体力见底','energy');if(r.wrongDirections)add('坐反了','navigation');else if(r.missedStops)add('坐过站','navigation');else if(r.wrongTurns)add('路线判断失误','navigation');
  if(Number(c.bagSeconds)>10)add('翻包 '+Math.round(Number(c.bagSeconds))+' 秒','character');else if(c.childToiletDuringRun||c.wetPants)add('孩子尿急','character');else if(c.loadDecisive)add('土特产太重','character');else if(c.fatigueDecisive)add('困倦拉满','character');

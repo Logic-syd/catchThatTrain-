@@ -1,3 +1,4 @@
+import {completedOperation,type MeaningfulOperation} from './meaningfulOperations';
 import type {Run,Action} from './engine';
 import {movementFactor} from './studentConfig';
 import {stationFor} from './stations';
@@ -5,8 +6,8 @@ import {parentMovementFactor} from './parent';
 export type CharacterId='student'|'worker'|'tourist'|'mother'|'family';
 export type ImpactCategory='decision'|'navigation'|'movement'|'character'|'environment'|'operation'|'resource';
 export interface TimeImpact{id:string;source:string;category:ImpactCategory;deltaSeconds:number;avoidable:boolean;positive:boolean;decisive?:boolean;estimated?:boolean;characterId?:string;eventId?:string;decisionId?:string;phase?:string;tag?:string;baseline?:string}
-export interface RunMetrics{impacts:TimeImpact[];characterStats:Record<string,number|boolean>;choiceResults:{judgment:boolean[];accessibility:boolean[];sleep:boolean[]};pendingRisk:{beat:number;collisions:number}|null;wrongDirections:number;mapViews:number;bagAttempts:number;earlySprintSeconds:number;lowEnergySeconds:number;minEnergyRatio:number;lateFar:boolean;lateGateEntry:boolean;projectedRiskNode:string|null;wasProjectedToFail:boolean;initialMarginRatio:number|null;routeEfficiency:number;highRiskResults:boolean[];stableChoices:number;endPhase:string|null;estimatedSecondsToGoal:number|null}
-export const freshMetrics=():RunMetrics=>({impacts:[],characterStats:{},choiceResults:{judgment:[],accessibility:[],sleep:[]},pendingRisk:null,wrongDirections:0,mapViews:0,bagAttempts:0,earlySprintSeconds:0,lowEnergySeconds:0,minEnergyRatio:1,lateFar:false,lateGateEntry:false,projectedRiskNode:null,wasProjectedToFail:false,initialMarginRatio:null,routeEfficiency:100,highRiskResults:[],stableChoices:0,endPhase:null,estimatedSecondsToGoal:null});
+export interface RunMetrics{operations:MeaningfulOperation[];impacts:TimeImpact[];characterStats:Record<string,number|boolean>;choiceResults:{judgment:boolean[];accessibility:boolean[];sleep:boolean[]};pendingRisk:{beat:number;collisions:number}|null;wrongDirections:number;mapViews:number;bagAttempts:number;earlySprintSeconds:number;lowEnergySeconds:number;minEnergyRatio:number;lateFar:boolean;lateGateEntry:boolean;projectedRiskNode:string|null;wasProjectedToFail:boolean;initialMarginRatio:number|null;routeEfficiency:number;highRiskResults:boolean[];stableChoices:number;endPhase:string|null;estimatedSecondsToGoal:number|null}
+export const freshMetrics=():RunMetrics=>({operations:[],impacts:[],characterStats:{},choiceResults:{judgment:[],accessibility:[],sleep:[]},pendingRisk:null,wrongDirections:0,mapViews:0,bagAttempts:0,earlySprintSeconds:0,lowEnergySeconds:0,minEnergyRatio:1,lateFar:false,lateGateEntry:false,projectedRiskNode:null,wasProjectedToFail:false,initialMarginRatio:null,routeEfficiency:100,highRiskResults:[],stableChoices:0,endPhase:null,estimatedSecondsToGoal:null});
 export const normalizeCharacter=(id:string):CharacterId=>id==='mom'?'mother':id as CharacterId;
 const routeCost=(s:Run,r= s.route)=>r?r.minutes*60+r.walk/1.5/(s.student?movementFactor({...s.student,sprinting:false,exhausted:false}):s.parent?parentMovementFactor(s.parent):s.character.speed)+r.transfers*20:0;
 export function remainingEstimate(s:Run):number{
@@ -17,6 +18,7 @@ export function remainingEstimate(s:Run):number{
  return metro+stationFor(s).walking+90;
 }
 export function impactCategory(id:string):ImpactCategory{
+ if(id.startsWith('map-'))return 'environment';
  if(id.startsWith('prepare-'))return 'decision';if(/identity/.test(id))return 'character';
  if(id==='student-breath')return 'movement';
  if(/station-sign|metro-route|metro-transfer-sign|hz-|zz-|wh-floor|bj-entry/.test(id))return 'navigation';
@@ -26,6 +28,8 @@ export function impactCategory(id:string):ImpactCategory{
 export function trackTransition(s:Run,n:Run,a:Action):Run{
  if(a.type==='NEW'||n===s||s.phase==='result')return n;
  const m:RunMetrics={...(s.metrics??freshMetrics()),impacts:[...(s.metrics?.impacts??[])],characterStats:{...s.metrics?.characterStats},highRiskResults:[...(s.metrics?.highRiskResults??[])],choiceResults:{judgment:[...(s.metrics?.choiceResults?.judgment??[])],accessibility:[...(s.metrics?.choiceResults?.accessibility??[])],sleep:[...(s.metrics?.choiceResults?.sleep??[])]}};
+ const operation=completedOperation(s,n,a);
+ if(operation&&!m.operations?.some(o=>o.id===operation.id))m.operations=[...(m.operations??[]),operation];
  const add=(id:string,source:string,delta:number,category:ImpactCategory,avoidable=true,extra:Partial<TimeImpact>={})=>{
   if(!Number.isFinite(delta)||Math.abs(delta)<.00001)return;
   const i=m.impacts.findIndex(x=>x.id===id),old=i>=0?m.impacts[i].deltaSeconds:0;
@@ -40,12 +44,19 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
  const newLogs=n.logs.slice(s.logs.length);
  for(const l of newLogs){
   const id=l.eventId??event,cat=impactCategory(id);let cost=l.seconds,source=l.title,tag:string|undefined;
+  if(id==='map-security')source='安检队伍逐人检查，等到轮到你';
+  if(id==='map-door')source='下地铁的人堵住车门，借过后才让开';
+  if(id==='map-landing')source='有人停在扶梯出口，看完手机才挪开';
+  if(id==='map-child')source='小孩横穿通道，刹住脚步让他先过';
+  if(id==='map-crowd')source='并排行走的人占住通道，等他们让开';
   if(id==='security-queue'&&u){const median=[...u.queues].sort((a,b)=>a.seconds-b.seconds)[1].seconds;cost=l.seconds-median;source=cost>0?'安检队比本站常规队更慢':'安检队比本站常规队更快';tag=cost>0?'安检误判':'安检选对了';}
   if(a.type==='CHOICE'&&id===event&&a.choice.stationDecision&&!a.choice.stationDecision.optimal)source=a.choice.label+'后折返';
-  if(id==='prepare-tea')source='买奶茶';if(id==='prepare-breakfast')source='买饭团';if(id==='prepare-id')source='出门前检查身份证';
+  if(id==='prepare-cake')source='带上朋友的小蛋糕';if(id==='prepare-breakfast')source='买饭团';if(id==='prepare-id')source='出门前检查身份证';
   if(id==='student-breath')tag='冲刺过早';
   add('event-'+id+'-'+(a.type==='CHOICE'?a.choice.label:l.title),source,-cost,cat,cat!=='environment',{eventId:id,decisionId:a.type==='CHOICE'?a.choice.label:undefined,tag,baseline:id==='security-queue'?'同局安检队耗时中位数':undefined});
  }
+ if(a.type==='MAP_CLEAR'&&a.method==='join'&&s.stationMap?.block&&n!==s){const d=n.stationDecisions.at(-1);if(d){m.choiceResults.judgment.push(d.optimal);m.characterStats.mapQueueGood=d.optimal;}}
+ if(a.type==='TICK'&&s.stationMap?.block&&!s.event){const id=s.stationMap.block.id,wait=n.stationMap?.block?.waited??s.stationMap.block.waited;if(n.phase==='result'&&wait>0&&!n.logs.slice(s.logs.length).some(l=>l.eventId===id))add('unfinished-'+id,'仍被挡在路上：'+(id==='map-security'?'安检队伍缓慢前进':id==='map-door'?'地铁车门的人没有让开':id==='map-child'?'孩子横穿通道':'通路尚未腾开'),-wait,'environment',false,{eventId:id});}
  if(u&&v){
   add('door','提前靠门',v.doorSavings-u.doorSavings,'operation',true,{tag:'提前靠门',baseline:'未靠门固定多花 12 秒'});
   const total=v.sprintSaved-u.sprintSaved,late=v.lateSprintSaved-u.lateSprintSaved;
@@ -67,7 +78,7 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
   if(a.type==='CHOICE'&&event==='security-queue')m.choiceResults.judgment.push(a.choice.seconds===Math.min(...u.queues.map(q=>q.seconds)));
   if(a.type==='CHOICE'&&(a.choice.stationDecision?.density??0)>=3)m.pendingRisk={beat:n.stationBeat,collisions:v.runner.collisions};
   if(m.pendingRisk&&(n.event&&n.stationBeat===m.pendingRisk.beat||n.phase==='result')){m.highRiskResults.push(n.phase!=='result'&&v.runner.collisions===m.pendingRisk.collisions);m.pendingRisk=null;}
-  m.characterStats={...m.characterStats,tea:v.choices.tea==='buy',breakfast:v.breakfast,checkedID:v.checkedID,idFound:n.identityReady,bagAttempts:m.bagAttempts,bagMistakes:v.bagMistakes,bagSeconds:v.bagSeconds,lateSprintSaved:v.lateSprintSaved,earlySprintSeconds:m.earlySprintSeconds,lowEnergySeconds:m.lowEnergySeconds,finalEnergy:v.stamina,breathStops:v.breathStops,exhaustedLateSeconds:v.exhaustedLateSeconds,otherDelay:n.logs.some(l=>l.seconds>0&&l.eventId!=='prepare-tea'&&l.eventId!=='prepare-breakfast'&&l.eventId?.startsWith('prepare-')),extraPreparationSeconds:n.logs.filter(l=>l.eventId?.startsWith('prepare-')).reduce((t,l)=>t+l.seconds,0)};
+  m.characterStats={...m.characterStats,cake:v.choices.cake==='take',breakfast:v.breakfast,checkedID:v.checkedID,idFound:n.identityReady,bagAttempts:m.bagAttempts,bagMistakes:v.bagMistakes,bagSeconds:v.bagSeconds,lateSprintSaved:v.lateSprintSaved,earlySprintSeconds:m.earlySprintSeconds,lowEnergySeconds:m.lowEnergySeconds,finalEnergy:v.stamina,breathStops:v.breathStops,exhaustedLateSeconds:v.exhaustedLateSeconds,otherDelay:n.logs.some(l=>l.seconds>0&&l.eventId!=='prepare-cake'&&l.eventId!=='prepare-breakfast'&&l.eventId?.startsWith('prepare-')),extraPreparationSeconds:n.logs.filter(l=>l.eventId?.startsWith('prepare-')).reduce((t,l)=>t+l.seconds,0)};
  }
  if(s.parent&&n.parent){
   const gain=n.parent.syncSprintSaved-s.parent.syncSprintSaved;

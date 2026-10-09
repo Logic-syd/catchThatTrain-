@@ -1,0 +1,107 @@
+.little-you { --stride: .48s; --swing: 26deg; --lift: -4px; }
+.little-you .little-leg, .little-you .little-arm { transform-box: view-box; transform-origin: 0 0; }
+.little-you .little-speed-lines { opacity: 0; }
+.little-you .little-pant{opacity:0;pointer-events:none}.little-you .little-pant text{font-size:10px;font-weight:800;fill:#a16b4d}
+.little-you .little-backpack { transform-origin: 30px 39px; }
+.little-you.character-mom .little-body { transform-origin: 35px 38px; }
+.little-you .little-child { transform-origin: 71px 44px; }
+
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking,.panic) .little-leg {
+ animation: little-stride var(--stride) infinite ease-in-out;
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking,.panic) .little-leg.right {
+ animation-delay: calc(var(--stride) * -.5);
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking,.panic) .little-arm {
+ animation: little-arm-swing var(--stride) infinite ease-in-out;
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking,.panic) .little-arm.left {
+ animation-delay: calc(var(--stride) * -.5);
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking) .little-body {
+ animation: little-run-bounce calc(var(--stride) * .5) infinite ease-in-out;
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking) .little-backpack {
+ animation: little-bag-bounce calc(var(--stride) * .5) infinite ease-in-out;
+}
+.little-you:is(.running,.sprinting,.sidestepping) .rolling-case {
+ animation: little-case-rattle calc(var(--stride) * .5) infinite ease-in-out;
+}
+.little-you:is(.running,.sprinting,.sidestepping,.blocked,.asking) .little-child {
+ animation: little-run-bounce calc(var(--stride) * .5) infinite ease-in-out;
+}
+.little-you.carrying-child .little-child .little-leg,
+.little-you.carrying-child .little-child .little-arm { animation: none; }
+
+.little-you.sprinting { --stride: .29s; --swing: 39deg; --lift: -6px; }
+.little-you.sprinting .little-body { animation-name: little-sprint-bounce; }
+.little-you.sprinting .little-speed-lines { animation: little-rush-lines .29s infinite; }
+.little-you:is(.blocked,.asking) { --stride: .38s; --swing: 15deg; --lift: -2px; }
+.little-you:is(.blocked,.asking) .little-body { animation-name: little-urgent-bounce; }
+.little-you.asking .little-arm.right { animation: little-ask-wave .34s infinite ease-in-out; }
+.little-you.sidestepping { --stride: .36s; --swing: 18deg; --lift: -3px; }
+.little-you.sidestepping .little-body { animation-name: little-sidestep-bounce; }
+.little-you.braking .little-body { animation: little-brace .6s infinite ease-in-out; }
+.little-you.braking .little-arm { transform: rotate(-22deg); }
+.little-you.waiting .little-leg.left { animation: little-weight-shift 1.2s infinite ease-in-out; }
+.little-you.waiting .little-leg.right { animation: little-weight-shift 1.2s -.6s infinite ease-in-out; }
+
+@keyframes little-stride {
+ 0%,100% { transform: rotate(calc(var(--swing) * -1)) translateY(1px); }
+ 50% { transform: rotate(var(--swing)) translateY(var(--lift)); }
+}
+@keyframes little-arm-swing {
+ 0%,100% { transform: rotate(calc(var(--swing) * -.85)); }
+ 50% { transform: rotate(calc(var(--swing) * .85)); }
+}
+@keyframes little-run-bounce {
+ 0%,100% { transform: translateY(0) rotate(-2deg); }
+ 50% { transform: translateY(-2px) rotate(2deg); }
+}
+@keyframes little-sprint-bounce {
+ 0%,100% { transform: translateY(-1px) rotate(7deg) scale(1,.96); }
+ 50% { transform: translateY(-4px) rotate(10deg) scale(.98,1.02); }
+}
+@keyframes little-urgent-bounce {
+ 0%,100% { transform: translateY(0) rotate(-3deg); }
+ 50% { transform: translateY(-1.5px) rotate(3deg); }
+}
+@keyframes little-sidestep-bounce {
+ 0%,100% { transform: translate(-1px,0) rotate(-11deg) scaleX(.8); }
+ 50% { transform: translate(1px,-2px) rotate(-6deg) scaleX(.8); }
+}
+@keyframes little-bag-bounce {
+ 0%,100% { transform: translateY(1px) rotate(-2deg); }
+ 50% { transform: translateY(-1.5px) rotate(2deg); }
+}
+@keyframes little-case-rattle {
+ 50% { transform: translateY(-1.5px) rotate(2deg); }
+}
+@keyframes little-ask-wave {
+ 0%,100% { transform: rotate(-112deg); }
+ 50% { transform: rotate(-146deg); }
+}
+@keyframes little-brace {
+ 50% { transform: translateY(-.5px) rotate(-7deg); }
+}
+@keyframes little-weight-shift {
+ 50% { transform: translateY(-1.5px) rotate(7deg); }
+}
+@keyframes little-rush-lines {
+ from { opacity: .7; transform: translateY(-2px); }
+ to { opacity: 0; transform: translateY(5px); }
+}
+/* Fatigue overrides the base stride, including when the player is still holding a button. */
+.little-you:is(.effort-strained,.effort-exhausted) .sweat{animation:sweat .65s infinite}
+.little-you:is(.effort-strained,.effort-exhausted) .little-pant{animation:little-pant .8s infinite ease-out}
+.little-you.effort-strained:is(.running,.sprinting) .little-body{animation-name:little-weary-run}
+.little-you.effort-strained.waiting .little-body,.little-you.effort-exhausted .little-body{animation:little-heavy-breath .8s infinite ease-in-out}
+.little-you.effort-exhausted .little-arm{transform:rotate(-25deg);animation:none}
+.little-you.effort-exhausted .little-leg{animation:little-weight-shift 1s infinite}
+@keyframes little-weary-run{0%,100%{transform:translateY(0) rotate(13deg)}50%{transform:translateY(-4px) rotate(18deg)}}
+@keyframes little-heavy-breath{0%,100%{transform:rotate(17deg) scale(1,.95)}50%{transform:rotate(20deg) scale(1.04,1.04)}}
+@keyframes little-pant{from{opacity:.9;transform:translate(0,0)}to{opacity:0;transform:translate(5px,-5px)}}
+@media(prefers-reduced-motion:reduce) {
+ .little-you *, .travel-avatar .avatar-steps { animation: none !important; }
+ .little-you .little-speed-lines { display: none; }
+}

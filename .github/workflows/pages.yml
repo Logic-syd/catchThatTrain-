@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'pull_request' && format('ci-{0}', github.event.pull_request.number) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -31,13 +31,44 @@ jobs:
       - run: npm test
       - run: npm run build
         env:
+          GITHUB_PAGES_BASE: ${{ github.event_name == 'workflow_dispatch' && github.ref_name != 'main' && '/catchThatTrain-/test/' || '/catchThatTrain-/' }}
+          VITE_PLAYTEST: ${{ github.event_name == 'workflow_dispatch' && github.ref_name != 'main' && 'true' || 'false' }}
+      - name: Check out the current public version for a branch playtest
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'main'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .production
+          persist-credentials: false
+      - name: Build the public version unchanged
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'main'
+        working-directory: .production
+        run: |
+          npm ci
+          npm run build
+        env:
           GITHUB_PAGES_BASE: /catchThatTrain-/
+      - name: Assemble the public and test directories
+        if: github.event_name != 'pull_request'
+        env:
+          BRANCH_PLAYTEST: ${{ github.event_name == 'workflow_dispatch' && github.ref_name != 'main' }}
+        run: |
+          mkdir -p _site
+          if [ "$BRANCH_PLAYTEST" = "true" ]; then
+            cp -R .production/dist/. _site/
+            mkdir -p _site/test
+            cp -R dist/. _site/test/
+            node -e 'require("fs").writeFileSync("_site/test/build.json", JSON.stringify({environment:"test",commit:process.env.GITHUB_SHA,branch:process.env.GITHUB_REF_NAME}))'
+            git -C .production rev-parse HEAD > _site/test/public-commit.txt
+          else
+            cp -R dist/. _site/
+          fi
       - uses: actions/configure-pages@v5
         if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          path: dist
+          path: _site
 
   deploy:
     if: github.event_name != 'pull_request'

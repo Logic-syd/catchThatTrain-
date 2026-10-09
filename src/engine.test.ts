@@ -3,7 +3,7 @@ const createShanghaiRun=(hard=false,rng=Math.random)=>createRun('shanghai','stud
 import {describe,it,expect,vi} from 'vitest';
 import {cities,characters,events} from './data';
 import {stationPrompt,identityPrompt,createStationPlan} from './flow';
-import {planMetroIncident,transferStopIndex} from './metroFlow';
+import {planMetroIncident,metroIncidentCheckpoint,transferStopIndex} from './metroFlow';
 import {createRun,reducer,routeSeconds,TIME_SCALE,METRO_SECONDS,STOP_BEFORE,DOOR_SECONDS,projectedTime,formatTime,saveRecord,readRecords,type Run} from './engine';
 function started(){const s=createShanghaiRun(false,()=>.9);return reducer(reducer(s,{type:'START'}),{type:'ROUTE',route:s.city.spawnStations[0].routes[0]});}
 function ride(){return reducer(started(),{type:'DIRECTION',correct:true});}
@@ -34,7 +34,7 @@ describe('compressed metro accounting',()=>{
  it('does not double-charge elapsed montage seconds',()=>{const s=ride();const n=reducer(s,{type:'TICK',dt:.5});expect(s.remaining-n.remaining).toBeCloseTo(s.metroDuration/METRO_SECONDS*.5,5);expect(projectedTime(n)).toBeCloseTo(projectedTime(s),5);});
  it('reserves station time after all metro stops',()=>{expect(travel(ride()).run.remaining-STOP_BEFORE).toBeGreaterThan(400);});
  it('ticks down while a prompt is open but holds the train',()=>{const s={...ride(),event:stationPrompt('couple')!};const n=reducer(s,{type:'TICK',dt:1});expect(n.metroProgress).toBe(s.metroProgress);expect(n.remaining).toBe(s.remaining-1);});
- it('times out a micro task with a penalty, not immediate game over',()=>{const s={...ride(),event:stationPrompt('couple')!};const n=reducer(s,{type:'TICK',dt:6});expect(n.event).toBeNull();expect(n.phase).toBe('metro');expect(n.remaining).toBe(s.remaining-6-35);expect(n.logs[0].seconds).toBe(35);});
+ it('ordinary micro tasks keep waiting without an extra reading penalty',()=>{const s={...ride(),event:stationPrompt('couple')!};const n=reducer(s,{type:'TICK',dt:6});expect(n.event).toBe(s.event);expect(n.phase).toBe('metro');expect(n.remaining).toBe(s.remaining-6);expect(n.logs).toEqual(s.logs);});
  it('no longer forces extra tasks on transfer routes',()=>{let s={...ride(),route:cities[0].spawnStations[0].routes[2]};s=reducer(s,{type:'TICK',dt:7}) as typeof s;expect(s.phase).toBe('arrival');expect(s.event).toBeNull();});
  it('wrong direction returns after 2.5 real seconds and deducts 75 game seconds',()=>{const s=reducer(started(),{type:'DIRECTION',correct:false});const n=reducer(s,{type:'TICK',dt:2.5});expect(n.phase).toBe('direction');expect(n.remaining).toBe(s.remaining-2.5-75);});
  it('missed final doors allow recovery without charging the route twice',()=>{const s={...travel(ride()).run,remaining:700};const n=reducer(s,{type:'TICK',dt:DOOR_SECONDS});expect(n.phase).toBe('metro-recovery');expect(n.metroMisses).toBe(1);expect(n.remaining).toBe(700-DOOR_SECONDS-80);const p=reducer(n,{type:'TICK',dt:2});expect(p.remaining).toBe(n.remaining-2);expect(p.phase).toBe('arrival');expect(p.metroProgress).toBe(1);expect(reducer(p,{type:'ALIGHT'}).phase).toBe('station');});
@@ -52,7 +52,7 @@ describe('station incidents and deadlines',()=>{
  it('normal mode never gets an old ticket, hard mode can',()=>{expect(stationPrompt('old-ticket')).toBeUndefined();expect(stationPrompt('old-ticket',true)?.id).toBe('old-ticket');});
  it('eight queues all lead to 12A and vary between rounds',()=>{const results=new Set<string>();for(let i=0;i<20;i++){const e=stationPrompt('gates')!;expect(e.choices).toHaveLength(8);expect(new Set(e.choices.map(c=>c.lane)).size).toBe(8);expect(Math.min(...e.choices.map(c=>c.seconds))).toBe(4);results.add(e.choices.map(c=>c.seconds).join(','));}expect(results.size).toBeGreaterThan(1);});
  it('gate lane selection is retained for actual map navigation',()=>{const e=stationPrompt('gates')!;const s={...ride(),phase:'station' as const,stage:4,event:e};const n=reducer(s,{type:'CHOICE',choice:e.choices[5]});expect(n.stationLane).toBe(5);expect(n.seen).toContain('gates');});
- it('an event timeout applies its explicit penalty and allows movement',()=>{const e=stationPrompt('security')!;const s={...ride(),phase:'station' as const,event:e,remaining:700};const n=reducer(s,{type:'TICK',dt:8});expect(n.event).toBeNull();expect(n.remaining).toBe(700-8-55);expect(n.phase).toBe('station');});
+ it('ordinary station reading does not expire or release the obstacle',()=>{const e=stationPrompt('security')!;const s={...ride(),phase:'station' as const,event:e,remaining:700};const n=reducer(s,{type:'TICK',dt:8});expect(n.event).toBe(e);expect(n.remaining).toBe(700-8);expect(n.phase).toBe('station');});
 });
 describe('records',()=>{
  it('safe formatting for zero and negative times',()=>{expect(formatTime(-30)).toBe('00:00');expect(formatTime(61)).toBe('01:01');});
@@ -84,9 +84,14 @@ describe('identity search: once per journey, two pictures',()=>{
  it('cannot skip pictures through an ordinary choice',()=>{
   const s={...identity(),event:identityPrompt('metro')};expect(reducer(s,{type:'CHOICE',choice:{label:'',detail:'',seconds:0}})).toBe(s);
  });
- it('times out with assistance and penalties, never a second search later',()=>{
-  let s={...identity(),event:identityPrompt('metro')};s=reducer(s,{type:'TICK',dt:8}) as typeof s;expect(s.identityStage).toBe('card');expect(s.identityReady).toBe(false);
-  const n=reducer(s,{type:'TICK',dt:6});expect(n.identityReady).toBe(true);expect(n.event).toBeNull();expect(n.logs.map(l=>l.seconds)).toEqual([20,35]);
+ it('waiting in identity search neither finds the card nor adds a fixed penalty',()=>{
+  const base={...identity(),event:identityPrompt('metro')};
+  const waited=reducer(base,{type:'TICK',dt:14});
+  expect(waited.identityStage).toBe('wallet');expect(waited.identityReady).toBe(false);
+  expect(waited.remaining).toBe(base.remaining-14);expect(waited.logs).toEqual(base.logs);
+  const wallet=reducer(waited,{type:'ID_PICK',item:'wallet'});
+  const n=reducer(wallet,{type:'ID_PICK',item:'id'});
+  expect(n.identityReady).toBe(true);expect(n.event).toBeNull();
   expect(reducer({...n,phase:'station'},{type:'STATION_EVENT',id:'identity-search'}).event).toBeNull();
  });
  it('does not allow checking in without ID',()=>{
@@ -169,7 +174,8 @@ describe('route-linked metro decisions',()=>{
  });
  it('timeouts clear the optional incident and do not cause a second one',()=>{
   const incident=planMetroIncident(ride().route!,.1,.9)!;
-  const s=reducer({...ride(),metroIncident:incident},{type:'TICK',dt:1});
+  const base=ride(),at=metroIncidentCheckpoint(base.route!,incident);
+  const s=reducer({...base,metroIncident:incident,metroProgress:at-.01,metroStopIndex:base.route!.stops.length-2},{type:'TICK',dt:.1});
   const n=reducer(s,{type:'TICK',dt:7});expect(n.event).toBeNull();expect(n.seen).toContain(incident.id);
   expect(travel(n).run.seen.filter(id=>id===incident.id)).toHaveLength(1);
  });

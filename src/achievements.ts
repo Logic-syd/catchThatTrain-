@@ -1,3 +1,4 @@
+import {readGameStorage,writeGameStorage} from './playtestEnvironment';
 import type {Run} from './engine';
 import {summarizeRun} from './outcomes';
 import {analyzeFactors,type GameResult} from './gameResult';
@@ -6,13 +7,13 @@ export {ACHIEVEMENTS} from './achievementConfig';
 export const PROFILE_KEY='train-rush:profile:v1';
 export type PlayableCharacterId='student'|'worker'|'tourist'|'mom';
 export type Stat={runs:number;wins:number;streak:number;bestStreak:number;goodRouteStreak:number;failuresBeforeFirstWin:number};
-export type Progress={schemaVersion:1;totalRuns:number;totalWins:number;currentWinStreak:number;bestWinStreak:number;characterStats:Record<string,Stat>;stationStats:Record<string,Stat>;achievementProgress:Record<string,{current:number;target:number;unlocked:boolean}>;unlocked:Record<string,{at:string;runId:string}>;processedRunIds:string[];lastRunId:string|null;lastUnlocks:string[];legacyMigrated:boolean;conqueredStations:number;
+export type Progress={schemaVersion:1;unlockedCharacters:PlayableCharacterId[];totalRuns:number;totalWins:number;currentWinStreak:number;bestWinStreak:number;characterStats:Record<string,Stat>;stationStats:Record<string,Stat>;achievementProgress:Record<string,{current:number;target:number;unlocked:boolean}>;unlocked:Record<string,{at:string;runId:string}>;processedRunIds:string[];lastRunId:string|null;lastUnlocks:string[];legacyMigrated:boolean;conqueredStations:number;
  // Kept for existing record/UI consumers.
  wins:number;streak:number;clutchStreak:number;stationWins:Record<string,number>};
 const stat=():Stat=>({runs:0,wins:0,streak:0,bestStreak:0,goodRouteStreak:0,failuresBeforeFirstWin:0});
-export const freshProgress=():Progress=>({schemaVersion:1,totalRuns:0,totalWins:0,currentWinStreak:0,bestWinStreak:0,characterStats:{},stationStats:{},achievementProgress:{},unlocked:{},processedRunIds:[],lastRunId:null,lastUnlocks:[],legacyMigrated:false,conqueredStations:0,wins:0,streak:0,clutchStreak:0,stationWins:{}});
+export const freshProgress=():Progress=>({schemaVersion:1,unlockedCharacters:['student'],totalRuns:0,totalWins:0,currentWinStreak:0,bestWinStreak:0,characterStats:{},stationStats:{},achievementProgress:{},unlocked:{},processedRunIds:[],lastRunId:null,lastUnlocks:[],legacyMigrated:false,conqueredStations:0,wins:0,streak:0,clutchStreak:0,stationWins:{}});
 export function isCharacterUnlocked(progress:Progress,id:PlayableCharacterId){
- if(id==='student')return true;
+ if(id==='student'||progress.unlockedCharacters?.includes(id))return true;
  if(id==='worker')return (progress.characterStats.student?.wins??0)>0||(progress.characterStats.worker?.runs??0)>0||(progress.characterStats.tourist?.runs??0)>0;
  if(id==='tourist')return (progress.characterStats.worker?.wins??0)>0||(progress.characterStats.tourist?.runs??0)>0;
  return (progress.characterStats.tourist?.wins??0)>0||(progress.characterStats.mother?.runs??0)>0;
@@ -31,6 +32,7 @@ function stats(raw:unknown):Record<string,Stat>{return Object.fromEntries(Object
 export function parseProfile(raw:unknown):Progress{
  const v=object(raw),p=freshProgress();if(v.schemaVersion!==1)return p;
  for(const k of ['totalRuns','totalWins','currentWinStreak','bestWinStreak','clutchStreak'] as const)p[k]=count(v[k]);
+ p.unlockedCharacters=Array.isArray(v.unlockedCharacters)?v.unlockedCharacters.filter((id):id is PlayableCharacterId=>['student','worker','tourist','mom'].includes(String(id))):['student'];
  p.characterStats=stats(v.characterStats);p.stationStats=stats(v.stationStats);p.unlocked=unlocks(v.unlocked);
  p.processedRunIds=Array.isArray(v.processedRunIds)?v.processedRunIds.filter((x):x is string=>typeof x==='string').slice(-512):[];
  p.lastRunId=typeof v.lastRunId==='string'?v.lastRunId:null;p.lastUnlocks=Array.isArray(v.lastUnlocks)?v.lastUnlocks.filter((x):x is string=>typeof x==='string'&&!!p.unlocked[x]):[];
@@ -38,7 +40,12 @@ export function parseProfile(raw:unknown):Progress{
  for(const a of ACHIEVEMENTS){const current=Math.min(a.target,count(object(object(v.achievementProgress)[a.id]).current));p.achievementProgress[a.id]={current:p.unlocked[a.id]?a.target:current,target:a.target,unlocked:!!p.unlocked[a.id]};}
  return aliases(p);
 }
-function aliases(p:Progress):Progress{p.wins=p.totalWins;p.streak=p.currentWinStreak;p.stationWins=Object.fromEntries(Object.entries(p.stationStats).map(([k,v])=>[k,v.wins]));p.conqueredStations=Object.values(p.stationWins).filter(v=>v>0).length;return p;}
+function aliases(p:Progress):Progress{
+ const granted=new Set<PlayableCharacterId>(p.unlockedCharacters??['student']);
+ for(const id of ['student','worker','tourist','mom'] as const)if(isCharacterUnlocked(p,id))granted.add(id);
+ if(!Object.keys(p.characterStats).length&&p.totalWins>0)granted.add('worker');
+ const order:PlayableCharacterId[]=['student','worker','tourist','mom'];const highest=Math.max(...[...granted].map(id=>order.indexOf(id)));p.unlockedCharacters=order.slice(0,highest+1);
+p.wins=p.totalWins;p.streak=p.currentWinStreak;p.stationWins=Object.fromEntries(Object.entries(p.stationStats).map(([k,v])=>[k,v.wins]));p.conqueredStations=Object.values(p.stationWins).filter(v=>v>0).length;return p;}
 export function migrateLegacy(raw:unknown):Progress{
  const v=object(raw),p=freshProgress();if(v.version!==1)return p;p.legacyMigrated=true;
  p.unlocked=unlocks(v.unlocked);p.processedRunIds=Array.isArray(v.completed)?v.completed.filter((x):x is string=>typeof x==='string').slice(-512):[];
@@ -48,13 +55,31 @@ export function migrateLegacy(raw:unknown):Progress{
  for(const a of ACHIEVEMENTS)p.achievementProgress[a.id]={current:p.unlocked[a.id]?a.target:0,target:a.target,unlocked:!!p.unlocked[a.id]};
  return aliases(p);
 }
-export function readProgress():Progress{try{const current=localStorage.getItem(PROFILE_KEY);if(current)return parseProfile(JSON.parse(current));const p=migrateLegacy(JSON.parse(localStorage.getItem('catch-train-achievements-v1')??'null'));if(p.legacyMigrated){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(p));}catch{/* in-memory migration remains usable */}}return p;}catch{return freshProgress();}}
+// Unlocks are monotonic. A stale tab may reset a streak, never an earned chapter.
+export function mergeProgress(a:Progress,b:Progress):Progress{
+ const base=b.totalRuns>=a.totalRuns?b:a;
+ const mergeStats=(left:Record<string,Stat>,right:Record<string,Stat>)=>Object.fromEntries([...new Set([...Object.keys(left),...Object.keys(right)])].map(id=>{const x=left[id]??stat(),y=right[id]??stat();return [id,{...(y.runs>=x.runs?y:x),runs:Math.max(x.runs,y.runs),wins:Math.max(x.wins,y.wins),bestStreak:Math.max(x.bestStreak,y.bestStreak)}];}));
+ const p:Progress={...base,totalRuns:Math.max(a.totalRuns,b.totalRuns),totalWins:Math.max(a.totalWins,b.totalWins),bestWinStreak:Math.max(a.bestWinStreak,b.bestWinStreak),unlockedCharacters:[...new Set([...a.unlockedCharacters,...b.unlockedCharacters])],characterStats:mergeStats(a.characterStats,b.characterStats),stationStats:mergeStats(a.stationStats,b.stationStats),unlocked:{...a.unlocked,...b.unlocked},achievementProgress:{...base.achievementProgress},processedRunIds:[...new Set([...a.processedRunIds,...b.processedRunIds])].slice(-512)};
+ for(const award of ACHIEVEMENTS)if(p.unlocked[award.id])p.achievementProgress[award.id]={current:award.target,target:award.target,unlocked:true};
+ return aliases(p);
+}
+export function readProgress():Progress{
+ const read=(key:string):unknown=>{try{return JSON.parse(readGameStorage(key)??'null');}catch{return null;}};
+ const current=read(PROFILE_KEY);let p=current?parseProfile(current):migrateLegacy(read('catch-train-achievements-v1'));
+ p=mergeProgress(p,parseProfile(read(PROFILE_KEY+':backup')));
+ const grants=read('train-rush:characters:v1');
+ if(Array.isArray(grants))p.unlockedCharacters.push(...grants.filter((id):id is PlayableCharacterId=>['student','worker','tourist','mom'].includes(String(id))));
+ // Recover proven wins from the existing local battle records as well.
+ const records=read('catch-train-records');
+ if(Array.isArray(records))for(const record of records){const r=object(record);if(r.success!==true)continue;const name=String(r.character??'');if(/大学生|student/.test(name))p.unlockedCharacters.push('worker');if(/打工人|worker/.test(name))p.unlockedCharacters.push('tourist');if(/游客|tourist/.test(name))p.unlockedCharacters.push('mom');}
+ p=aliases(p);if(!current&&p.legacyMigrated){try{writeGameStorage(PROFILE_KEY,JSON.stringify(p));}catch{/* usable in memory */}}return p;
+}
 function updateStat(old:Stat|undefined,r:GameResult):Stat{const s={...(old??stat())};s.runs++;if(r.success)s.wins++;else if(!s.wins)s.failuresBeforeFirstWin++;s.streak=r.success?s.streak+1:0;s.bestStreak=Math.max(s.bestStreak,s.streak);s.goodRouteStreak=r.routeEfficiency>=90?s.goodRouteStreak+1:0;return s;}
 export function awardResult(previous:Progress,input:GameResult,at=new Date().toISOString()):Progress{
  if(previous.processedRunIds.includes(input.runId))return previous;
  const analysis=analyzeFactors(input),r={...input,timeImpacts:analysis.impacts,characterStats:{...input.characterStats}};
  const decisive=(pattern:RegExp)=>r.timeImpacts.some(i=>pattern.test(i.eventId??i.id)&&i.decisive&&(r.success?i.deltaSeconds>r.resultMarginSeconds:-i.deltaSeconds>=-r.resultMarginSeconds));
- Object.assign(r.characterStats,{teaDecisive:decisive(/prepare-tea/),liftDecisive:decisive(/lift|vertical-choice/),lateSprintDecisive:decisive(/sprint-late/)});
+ Object.assign(r.characterStats,{cakeDecisive:decisive(/prepare-cake/),liftDecisive:decisive(/lift|vertical-choice/),lateSprintDecisive:decisive(/sprint-late/)});
  const p:Progress={...previous,totalRuns:previous.totalRuns+1,totalWins:previous.totalWins+(r.success?1:0),currentWinStreak:r.success?previous.currentWinStreak+1:0,characterStats:{...previous.characterStats},stationStats:{...previous.stationStats},achievementProgress:{...previous.achievementProgress},unlocked:{...previous.unlocked},processedRunIds:[...previous.processedRunIds,r.runId].slice(-512),lastRunId:r.runId,lastUnlocks:[],clutchStreak:r.success&&r.resultMarginSeconds<=15?previous.clutchStreak+1:0};
  p.bestWinStreak=Math.max(p.bestWinStreak,p.currentWinStreak);p.characterStats[r.characterId]=updateStat(p.characterStats[r.characterId],r);p.stationStats[r.stationId]=updateStat(p.stationStats[r.stationId],r);aliases(p);
  const context={r,p,station:p.stationStats[r.stationId],character:p.characterStats[r.characterId]};
@@ -69,6 +94,6 @@ export function awardResult(previous:Progress,input:GameResult,at=new Date().toI
  return p;
 }
 export function awardRun(previous:Progress,s:Run,at?:string):Progress{return s.phase==='result'?awardResult(previous,summarizeRun(s).result,at):previous;}
-export function persistRun(s:Run,memory?:Progress):{progress:Progress;saved:boolean}{const disk=readProgress();const p=awardRun(memory&&memory.totalRuns>=disk.totalRuns?memory:disk,s);try{localStorage.setItem(PROFILE_KEY,JSON.stringify(p));return {progress:p,saved:true};}catch{return {progress:p,saved:false};}}
+export function persistRun(s:Run,memory?:Progress):{progress:Progress;saved:boolean}{const disk=readProgress();const p=awardRun(memory?mergeProgress(memory,disk):disk,s);try{writeGameStorage('train-rush:characters:v1',JSON.stringify(p.unlockedCharacters));writeGameStorage(PROFILE_KEY+':backup',JSON.stringify(p));writeGameStorage(PROFILE_KEY,JSON.stringify(p));return {progress:p,saved:true};}catch{return {progress:p,saved:false};}}
 export const rarityRank={common:0,uncommon:1,rare:2,legendary:3};
 export function featuredUnlock(ids:string[]){return ACHIEVEMENTS.filter(a=>ids.includes(a.id)).sort((a,b)=>rarityRank[b.rarity]-rarityRank[a.rarity]||a.id.localeCompare(b.id))[0];}

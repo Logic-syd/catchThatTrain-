@@ -1,0 +1,1814 @@
+{
+  "scenario": {
+    "character": "student",
+    "samples": 8,
+    "seed": 921,
+    "seedStep": 83,
+    "policy": "paced",
+    "adjustments": [
+      0,
+      -30,
+      -45
+    ],
+    "cases": [
+      {
+        "name": "baseline",
+        "reading": 5,
+        "mistakes": 0,
+        "preparation": [
+          "skip",
+          "check",
+          "eat"
+        ]
+      },
+      {
+        "name": "read8",
+        "reading": 8,
+        "mistakes": 0,
+        "preparation": [
+          "skip",
+          "check",
+          "eat"
+        ]
+      },
+      {
+        "name": "read8-one-wrong",
+        "reading": 8,
+        "mistakes": 1,
+        "preparation": [
+          "skip",
+          "check",
+          "eat"
+        ]
+      },
+      {
+        "name": "read8-two-wrong",
+        "reading": 8,
+        "mistakes": 2,
+        "preparation": [
+          "skip",
+          "check",
+          "eat"
+        ]
+      },
+      {
+        "name": "read8-skip-all-one-wrong",
+        "reading": 8,
+        "mistakes": 1,
+        "preparation": [
+          "skip",
+          "skip",
+          "skip"
+        ]
+      },
+      {
+        "name": "read12-one-wrong",
+        "reading": 12,
+        "mistakes": 1,
+        "preparation": [
+          "skip",
+          "check",
+          "eat"
+        ]
+      },
+      {
+        "name": "read8-cake-one-wrong",
+        "reading": 8,
+        "mistakes": 1,
+        "preparation": [
+          "take",
+          "check",
+          "eat"
+        ]
+      }
+    ]
+  },
+  "note": "Scenario sensitivity only; all players know the optimal route/queue and use paced sprinting. Mistake count is an upper limit: some stations have only one eligible direction decision. No empirical human win rate.",
+  "rows": [
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        105,
+        151
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        85,
+        99
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        150,
+        157
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        84,
+        85
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        100,
+        107
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "baseline",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        85,
+        91
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        41,
+        93
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        39,
+        59
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        100,
+        109
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        44,
+        45
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        49,
+        61
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        36,
+        45
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "shanghai",
+      "clears": 5,
+      "samples": 8,
+      "margin": [
+        23,
+        41
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "beijing",
+      "clears": 2,
+      "samples": 8,
+      "margin": [
+        5,
+        6
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        47,
+        57
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        1,
+        2
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "wuhan",
+      "clears": 1,
+      "samples": 8,
+      "margin": [
+        6,
+        6
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "shanghai",
+      "clears": 5,
+      "samples": 8,
+      "margin": [
+        23,
+        41
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "beijing",
+      "clears": 2,
+      "samples": 8,
+      "margin": [
+        5,
+        6
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        47,
+        57
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "wuhan",
+      "clears": 1,
+      "samples": 8,
+      "margin": [
+        6,
+        6
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-two-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        47,
+        111
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        45,
+        82
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        100,
+        143
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        43,
+        86
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        41,
+        84
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-skip-all-one-wrong",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        36,
+        78
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read12-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": 0,
+      "case": "read8-cake-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        76,
+        121
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        57,
+        70
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        120,
+        127
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        56,
+        57
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        70,
+        78
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "baseline",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        56,
+        63
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        14,
+        65
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        10,
+        31
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        71,
+        81
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        15,
+        16
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        21,
+        31
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        8,
+        17
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "shanghai",
+      "clears": 4,
+      "samples": 8,
+      "margin": [
+        8,
+        14
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        18,
+        27
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "shanghai",
+      "clears": 4,
+      "samples": 8,
+      "margin": [
+        8,
+        14
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        18,
+        27
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-two-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        17,
+        84
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        15,
+        52
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        72,
+        113
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        14,
+        58
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        11,
+        54
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-skip-all-one-wrong",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        6,
+        50
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read12-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -30,
+      "case": "read8-cake-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        62,
+        106
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "beijing",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        42,
+        57
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        106,
+        112
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        41,
+        42
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        55,
+        64
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "baseline",
+      "city": "zhengzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        42,
+        49
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        2,
+        51
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "beijing",
+      "clears": 6,
+      "samples": 8,
+      "margin": [
+        5,
+        16
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        57,
+        66
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "hangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        1,
+        2
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "wuhan",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        6,
+        18
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8",
+      "city": "zhengzhou",
+      "clears": 6,
+      "samples": 8,
+      "margin": [
+        2,
+        13
+      ],
+      "wrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "shanghai",
+      "clears": 1,
+      "samples": 8,
+      "margin": [
+        0,
+        0
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        4,
+        14
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "shanghai",
+      "clears": 1,
+      "samples": 8,
+      "margin": [
+        0,
+        0
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        4,
+        14
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-two-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        2,
+        2
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "shanghai",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        2,
+        70
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "beijing",
+      "clears": 7,
+      "samples": 8,
+      "margin": [
+        5,
+        38
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "guangzhou",
+      "clears": 8,
+      "samples": 8,
+      "margin": [
+        57,
+        99
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "hangzhou",
+      "clears": 7,
+      "samples": 8,
+      "margin": [
+        14,
+        44
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "wuhan",
+      "clears": 7,
+      "samples": 8,
+      "margin": [
+        10,
+        40
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-skip-all-one-wrong",
+      "city": "zhengzhou",
+      "clears": 6,
+      "samples": 8,
+      "margin": [
+        6,
+        35
+      ],
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read12-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "shanghai",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "beijing",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "guangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "hangzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "wuhan",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "adjustment": -45,
+      "case": "read8-cake-one-wrong",
+      "city": "zhengzhou",
+      "clears": 0,
+      "samples": 8,
+      "margin": null,
+      "wrongTurns": [
+        1,
+        1
+      ]
+    }
+  ]
+}

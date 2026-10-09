@@ -20,10 +20,10 @@ describe('V1.1 causal settlement',()=>{
   expect(selectTitle(base({resultMarginSeconds:2,dramaScore:105})).name).toBe('这都能赶上？');
   expect(new Set(TITLE_CONFIGS.map(t=>t.id)).size).toBe(TITLE_CONFIGS.length);
  });
- it('tea is decisive with a 50s gap, but cannot alone fix a 240s gap (C/D)',()=>{
-  const tea=impact('prepare-tea',-120);const close=analyzed(base({success:false,resultMarginSeconds:-50,timeImpacts:[tea],characterStats:{tea:true}}));
-  expect(selectTitle(close).name).toBe('奶茶误我');expect(analyzeFactors(close).advice).toContain('足以赶上');
-  const far=analyzed({...close,resultMarginSeconds:-240});expect(selectTitle(far).name).not.toBe('奶茶误我');expect(analyzeFactors(far).advice).toBeUndefined();
+ it('cake is decisive with a 50s gap, but cannot alone fix a 240s gap (C/D)',()=>{
+  const cake=impact('prepare-cake',-75);const close=analyzed(base({success:false,resultMarginSeconds:-50,timeImpacts:[cake],characterStats:{cake:true}}));
+  expect(selectTitle(close).name).toBe('蛋糕护送失败');expect(analyzeFactors(close).advice).toContain('足以赶上');
+  const far=analyzed({...close,resultMarginSeconds:-240});expect(selectTitle(far).name).not.toBe('蛋糕护送失败');expect(analyzeFactors(far).advice).toBeUndefined();
  });
  it('never blames random delay or invents a next-run fix (E)',()=>{
   const r=base({success:false,resultMarginSeconds:-60,timeImpacts:[impact('metro-stop',-80,{avoidable:false,category:'environment'})]});
@@ -52,9 +52,9 @@ describe('V1.1 causal settlement',()=>{
 });
 describe('event-time telemetry',()=>{
  it('logs choice cost exactly once, with stable positive sign and no invented ID saving',()=>{
-  let s=reducer(createStationRun(),{type:'START'});s=reducer(s,{type:'PREP_PICK',option:'buy',step:0});s=reducer(s,{type:'PREP_PICK',option:'check',step:1});
-  expect(s.metrics.impacts.filter(i=>i.eventId==='prepare-tea').map(i=>i.deltaSeconds)).toEqual([-120]);
-  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-30);
+  let s=reducer(createStationRun(),{type:'START'});s=reducer(s,{type:'PREP_PICK',option:'take',step:0});s=reducer(s,{type:'PREP_PICK',option:'check',step:1});
+  expect(s.metrics.impacts.filter(i=>i.eventId==='prepare-cake').map(i=>i.deltaSeconds)).toEqual([-75]);
+  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-10);
   expect(s.metrics.impacts.every(i=>i.positive===(i.deltaSeconds>0))).toBe(true);
   const o=summarizeRun({...s,phase:'result',success:true,gateRemaining:60});expect(o.result.timeImpacts.some(i=>i.deltaSeconds===28)).toBe(false);
  });
@@ -95,8 +95,8 @@ describe('persistent achievements and lifecycle',()=>{
   expect(p.achievementProgress['student-bag-five'].current).toBe(4);expect(p.currentWinStreak).toBe(0);expect(awardRun(p,createStationRun())).toBe(p);
   p=awardResult(p,base({characterStats:{idFound:true,bagMistakes:0}}));expect(p.unlocked['student-bag-five']).toBeDefined();
  });
- it('tea requires three wins and cumulative clutch tolerates intervening failure',()=>{
-  let p=freshProgress();for(let i=0;i<3;i++){p=awardResult(p,base({resultMarginSeconds:9,characterStats:{tea:true}}));if(i<2){expect(p.unlocked['student-tea-three']).toBeUndefined();p=awardResult(p,base({success:false,resultMarginSeconds:-90}));}}
+ it('cake requires three wins and cumulative clutch tolerates intervening failure',()=>{
+  let p=freshProgress();for(let i=0;i<3;i++){p=awardResult(p,base({resultMarginSeconds:9,characterStats:{cake:true}}));if(i<2){expect(p.unlocked['student-tea-three']).toBeUndefined();p=awardResult(p,base({success:false,resultMarginSeconds:-90}));}}
   expect(p.unlocked['student-tea-three']).toBeDefined();expect(p.unlocked['clutch-pro']).toBeDefined();expect(p.unlocked['three-wins']).toBeUndefined();
  });
  it('station-specific good-route streak and first win after three failures',()=>{
@@ -109,7 +109,7 @@ describe('persistent achievements and lifecycle',()=>{
   p=awardResult(p,base({characterId:'worker',choiceResults:{judgment:[true,true,true,true,true],accessibility:[],sleep:[]}}));expect(p.unlocked['worker-judgment']).toBeDefined();
  });
  it('all seven hidden achievements have a reachable rule trigger and rarest is featured',()=>{
-  const cases:Partial<GameResult>[]=[{resultMarginSeconds:5,errors:1,characterStats:{extraPreparationSeconds:180}},{characterId:'mother',characterStats:{wetPants:true}},{dramaScore:105},{success:false,resultMarginSeconds:-90,dramaScore:105},{success:false,resultMarginSeconds:-50,characterStats:{tea:true},timeImpacts:[impact('prepare-tea',-120)]},{success:false,resultMarginSeconds:-25,timeImpacts:[impact('vertical-choice',-35)]},{success:false,resultMarginSeconds:-1}];
+  const cases:Partial<GameResult>[]=[{resultMarginSeconds:5,errors:1,characterStats:{extraPreparationSeconds:180}},{characterId:'mother',characterStats:{wetPants:true}},{dramaScore:105},{success:false,resultMarginSeconds:-90,dramaScore:105},{success:false,resultMarginSeconds:-50,characterStats:{cake:true},timeImpacts:[impact('prepare-cake',-75)]},{success:false,resultMarginSeconds:-25,timeImpacts:[impact('vertical-choice',-35)]},{success:false,resultMarginSeconds:-1}];
   let p=freshProgress();for(const c of cases)p=awardResult(p,base(c));expect(ACHIEVEMENTS.filter(a=>a.hidden&&p.unlocked[a.id])).toHaveLength(7);expect(featuredUnlock(['first-win','secret-second'])?.id).toBe('secret-second');
  });
  it('old earned badges survive migration without inventing new progress',()=>{

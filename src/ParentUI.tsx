@@ -1,13 +1,17 @@
 import type {Dispatch} from 'react';
 import {ArrowRight,Heart,Footprints} from 'lucide-react';
 import ChoiceDetail from './ChoiceDetail';
+import PreparationFrame from './PreparationFrame';
 import {parentPreparation} from './parent';
 import type {Action,Run} from './engine';
 import {LittleYou} from './Scenes';
 
 export function ParentPreparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const p=run.parent!,step=parentPreparation[p.prepStep];
- return <section className="student-preparation parent-preparation"><span className="chapter-sticker">出门前 · {p.prepStep+1} / 2</span><div className="parent-origin"><LittleYou characterId="mom" parentAppearance={p.appearance}/><span><b>“行，还是我自己带。”</b><small>孩子会自己走，所有事却都要你来处理。</small></span></div><div className="prep-art">{p.prepStep===0?'🚻':'🍪'}</div><h2>{step.title}</h2><p>{step.story}</p><div className="event-buttons">{step.options.map(o=><button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PARENT_PREP',option:o.id,step:p.prepStep})}><span><strong>{o.label}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>)}</div><small>现在的准备会改变后面孩子停不停、要不要绕路。</small></section>;
+ return <PreparationFrame className="parent-preparation" run={run} step={p.prepStep} title={step.title} story={step.story} note="现在的准备会改变后面孩子停不停、要不要绕路。">
+  {p.prepStep===0&&<div className="parent-origin"><LittleYou characterId="mom" parentAppearance={p.appearance}/><span><b>“行，还是我自己带。”</b><small>孩子会自己走，所有事却都要你来处理。</small></span></div>}
+  <div className="event-buttons">{step.options.map(o=><button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PARENT_PREP',option:o.id,step:p.prepStep})}><span><strong>{o.label}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>)}</div>
+ </PreparationFrame>;
 }
 export function ParentStatus({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const p=run.parent!,warning=p.gap>=5?'孩子快跟不上了':p.toilet>=80?'孩子想上厕所':p.patience<=25?'孩子不想走了':p.childEnergy<=30?'孩子快走不动了':p.carrying?'抱着孩子赶路':'孩子牵着手跟上了';
