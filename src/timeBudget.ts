@@ -1,3 +1,6 @@
+import {BALANCE} from './balanceConfig';
+import {NORMAL_REFERENCE,type BudgetCharacter} from './referenceBudgets';
+
 /** All values here are countdown seconds, never real input/animation seconds. */
 export interface TimeBudgetInput {
  metroSeconds:number;
@@ -24,10 +27,10 @@ export interface TimeBudget {
  /** Engine clock until departure; the closing lead is included exactly once. */
  departureBudgetSeconds:number;
  calibration:{
-  status:'legacy-unallocated';
-  mandatoryInteractionSeconds:null;
-  expectedEnvironmentSeconds:null;
-  errorBudgetSeconds:null;
+  status:'legacy-unallocated'|'reference-v1';
+  mandatoryInteractionSeconds:number|null;
+  expectedEnvironmentSeconds:number|null;
+  errorBudgetSeconds:number|null;
  };
 }
 
@@ -55,4 +58,23 @@ export function buildTimeBudget(input:TimeBudgetInput):TimeBudget {
   departureBudgetSeconds:gateBudgetSeconds+input.gateClosingLeadSeconds,
   calibration:{status:'legacy-unallocated',mandatoryInteractionSeconds:null,expectedEnvironmentSeconds:null,errorBudgetSeconds:null},
  };
+}
+
+/** Use the measured full reference plus explicit mistake allowance. Legacy
+ * buffers and post-gate walking are not added. Round once to a whole second. */
+export function buildReferenceTimeBudget(station:string,character:BudgetCharacter,hard:boolean,gateClosingLeadSeconds:number):TimeBudget {
+ const reference=NORMAL_REFERENCE[character][station];
+ if(!reference)throw new RangeError('Missing normal reference: '+character+'/'+station);
+ if(!Number.isFinite(gateClosingLeadSeconds)||gateClosingLeadSeconds<0)throw new RangeError('Invalid gate closing lead');
+ const errorBudgetSeconds=BALANCE.errorBudgetSeconds[character];
+ const hardReductionSeconds=hard?BALANCE.hardReduction[character]:0;
+ const {metroSeconds,stationWalkSeconds,mandatoryInteractionSeconds,expectedEnvironmentSeconds}=reference;
+ // Stored measurement components use hundredths; avoid binary noise adding a second.
+ const unrounded=Math.round((metroSeconds+stationWalkSeconds+mandatoryInteractionSeconds+expectedEnvironmentSeconds+errorBudgetSeconds)*100)/100;
+ const rounded=Math.ceil(unrounded);
+ const gateBudgetSeconds=rounded-hardReductionSeconds;
+ return {metroSeconds,stationWalkSeconds,legacyAllowanceSeconds:0,roundingSeconds:1,
+  roundingAdjustmentSeconds:rounded-unrounded,hardReductionSeconds,gateClosingLeadSeconds,
+  gateBudgetSeconds,departureBudgetSeconds:gateBudgetSeconds+gateClosingLeadSeconds,
+  calibration:{status:'reference-v1',mandatoryInteractionSeconds,expectedEnvironmentSeconds,errorBudgetSeconds}};
 }

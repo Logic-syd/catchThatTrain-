@@ -16,7 +16,7 @@ function station(city='hangzhou',role:typeof roles[number]='student'):Run{
  const s=createCharacterStationRun(city,role,false,()=>.6);
  return {...s,phase:'station',remaining:1400,stationJourney:buildStationJourney(s)};
 }
-describe('meaningful operation floor and progressive mistake cost',()=>{
+describe('meaningful operation floor and equal mistake cost',()=>{
  it('even the smallest no-detour, identity-already-ready plan has 12 meaningful operations',()=>{
   // Exclude everything removable, all optional interactions, identity retries,
   // movement inputs and intermediate metro stops. This is a conservative floor.
@@ -42,7 +42,7 @@ describe('meaningful operation floor and progressive mistake cost',()=>{
   for(const lane of [0,1,2,0,1])s=reducer(s,{type:'MAP_CLEAR',method:'join',lane});
   expect(s.metrics.operations.filter(o=>o.id==='map-security:queue')).toHaveLength(1);
  });
- it('the same wrong turn grows by character tier, while correct choices and explicit metro costs stay unchanged',()=>{
+ it('the same wrong turn costs every role equally, while correct choices and explicit metro costs stay unchanged',()=>{
   const costs=roles.map(role=>{
    let s=station('hangzhou',role);s={...s,event:journeyPrompt(s)};
    const right=s.event!.choices.find(c=>c.stationDecision?.optimal)!,wrong=s.event!.choices.find(c=>!c.stationDecision?.optimal)!;
@@ -51,7 +51,7 @@ describe('meaningful operation floor and progressive mistake cost',()=>{
    expect(s.remaining-next.remaining).toBe(wrong.seconds);
    return wrong.seconds;
   });
-  expect(costs).toEqual([45,55,65,75]);
+  expect(costs).toEqual([45,45,45,45]);
   expect(BALANCE.metroAnnouncement.choiceSeconds).toBe(5);expect(BALANCE.metroAnnouncement.missSeconds).toBe(50);
  });
 });

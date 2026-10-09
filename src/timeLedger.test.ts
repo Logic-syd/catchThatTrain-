@@ -26,13 +26,12 @@ describe('actual countdown accounting for every character',()=>{
  it.each(roles)('%s records completed routes and failed runs without treating display logs as charges',character=>{
   for(const policy of ['paced','sprint'] as const)reconciles(simulateBalance({city:'guangzhou',character,policy,seed:921,reading:5}));
  });
- it('preserves all 48 opening budgets while exposing their unallocated buffer',()=>{
-  const baselines={shanghai:[1770,1860,1980,1860],beijing:[1230,1380,1500,1350],guangzhou:[1710,1830,1950,1830],hangzhou:[1080,1200,1290,1170],wuhan:[1560,1740,1830,1680],zhengzhou:[1470,1620,1710,1560]};
-  for(const [city,budgets] of Object.entries(baselines))for(const [i,character] of roles.entries())for(const hard of [false,true]){
-   const s=createCharacterStationRun(city,character,hard,()=>.6);
-   expect(s.initial-STOP_BEFORE).toBe(budgets[i]-(hard?(character==='mom'?75:90):0));
-   expect(s.timeBudget!.departureBudgetSeconds).toBe(s.initial);
-   expect(s.timeBudget!.calibration.errorBudgetSeconds).toBeNull();
+ it('all 48 opening budgets use calibrated reference costs and keep the departure lead separate',()=>{
+  for(const city of ['shanghai','beijing','guangzhou','hangzhou','wuhan','zhengzhou'])for(const character of roles)for(const hard of [false,true]){
+   const s=createCharacterStationRun(city,character,hard,()=>.6),b=s.timeBudget!,c=b.calibration;
+   expect(c.status).toBe('reference-v1');expect(b.legacyAllowanceSeconds).toBe(0);
+   expect(b.metroSeconds+b.stationWalkSeconds+c.mandatoryInteractionSeconds!+c.expectedEnvironmentSeconds!+c.errorBudgetSeconds!+b.roundingAdjustmentSeconds-b.hardReductionSeconds).toBeCloseTo(s.initial-STOP_BEFORE,6);
+   expect(b.departureBudgetSeconds).toBe(s.initial);
   }
  });
  it('sleep charges only the jumped route share and keeps the selected metro price frozen',()=>{

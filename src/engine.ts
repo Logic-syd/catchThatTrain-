@@ -5,7 +5,7 @@ import {trackMapChildDelay} from './mapTimeFeedback';
 import {freshMetrics,trackTransition,type RunMetrics} from './resultMetrics';
 import {applyCharacterEvent,applyTimedChoice,characterEventPrompt,characterMovementFactor,createCharacterTimeState,tickCharacterTime,type CharacterTimeState} from './characterTime';
 import {BALANCE} from './balanceConfig';
-import {buildTimeBudget,type TimeBudget} from './timeBudget';
+import {buildReferenceTimeBudget,type TimeBudget} from './timeBudget';
 import {freshTimeLedger,trackTimeLedger,type TimeLedger,type MetroTimeBudget} from './timeLedger';
 import {applyJourneyDecision,prepareNextJourney} from './journeyRules';
 import {summarizeRun} from './outcomes';
@@ -43,11 +43,7 @@ export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):R
  const chapter=STATIONS.find(c=>c.id===original.id)!;const city=gameShanghai(original);
  city.stationConfig={...city.stationConfig,gate:chapter.gate};
  city.spawnStations=city.spawnStations.map(p=>({...p,routes:p.routes.map(r=>r.lines.length>2?{...r,lines:[r.lines[0],r.lines.at(-1)!],transfers:1,via:r.via?.split(' / ')[0]}:r)}));
- const best=Math.min(...city.spawnStations[0].routes.map(r=>r.minutes*60+r.walk/1.5+r.transfers*20));
- // Student runs budget for a viable route, the station's walking distance,
- // and a short decision buffer. Pricing from the slowest route made every other
- // route finish with many unused minutes and removed the stakes from route choice.
- const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking,legacyAllowanceSeconds:BALANCE.studentDecisionBuffer[chapter.id],hardReductionSeconds:hard?BALANCE.hardReduction.student:0,gateClosingLeadSeconds:STOP_BEFORE});
+ const timeBudget=buildReferenceTimeBudget(chapter.id,'student',hard,STOP_BEFORE);
  const initial=timeBudget.departureBudgetSeconds;
  return {...s,city,gate:chapter.gate,timeBudget,initial,remaining:initial,student:studentState(rng)};
 }
@@ -56,16 +52,12 @@ export function createCharacterStationRun(cityId='shanghai',characterId:'student
  const base=createStationRun(cityId,hard,rng),character=characters.find(c=>c.id===characterId)!;const chapter=STATIONS.find(c=>c.id===cityId)!;
  if(characterId==='mom'){
   const parent=createParentState(rng);
-  const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
-  const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking/parentMovementFactor(parent),legacyAllowanceSeconds:BALANCE.parentDecisionBuffer[chapter.id],hardReductionSeconds:hard?BALANCE.hardReduction.mom:0,gateClosingLeadSeconds:STOP_BEFORE});
+  const timeBudget=buildReferenceTimeBudget(chapter.id,'mom',hard,STOP_BEFORE);
   const initial=timeBudget.departureBudgetSeconds;
   return {...base,character,student:undefined,parent,timeBudget,initial,remaining:initial,stamina:parent.energy,phase:'lobby'};
  }
  const characterTime=createCharacterTimeState(characterId,rng);
- const context={...base,character,student:undefined,characterTime};
- const factor=characterMovementFactor(context,false);
- const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>journeyRouteSeconds(context,r)));
- const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking/factor,legacyAllowanceSeconds:BALANCE.characterDecisionBuffer[characterId]+(BALANCE.characterStationExtra[characterId][chapter.id]??0),hardReductionSeconds:hard?BALANCE.hardReduction[characterId]:0,gateClosingLeadSeconds:STOP_BEFORE});
+ const timeBudget=buildReferenceTimeBudget(chapter.id,characterId,hard,STOP_BEFORE);
  const initial=timeBudget.departureBudgetSeconds;
  return {...base,character,student:undefined,characterTime,timeBudget,initial,remaining:initial,stamina:characterTime.energy,phase:'lobby'};
 }

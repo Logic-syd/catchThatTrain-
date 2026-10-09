@@ -1,4 +1,3 @@
-import {BALANCE} from './balanceConfig';
 import {withDecisionClues} from './decisionPresentation';
 import {stationFor,stationChallenge} from './stations';
 import {studentPrompt} from './studentConfig';
@@ -47,9 +46,7 @@ export function buildStationJourney(s:Run):StationBeat[]{
  return beats.map(b=>({...b,seconds:b.seconds/weight*total}));
 }
 export function journeyPrompt(s:Run):EventConfig{
- const event=withDecisionClues(s,rawJourneyPrompt(s));
- const multiplier=BALANCE.navigationMistakeMultiplier[s.character.id as keyof typeof BALANCE.navigationMistakeMultiplier]??1;
- return {...event,choices:event.choices.map(c=>c.stationDecision?.category==='navigation'&&!c.stationDecision.optimal&&c.seconds>0?{...c,seconds:Math.ceil(c.seconds*multiplier/5)*5}:c)};
+ return withDecisionClues(s,rawJourneyPrompt(s));
 }
 function rawJourneyPrompt(s:Run):EventConfig{
  const id=s.stationJourney[s.stationBeat].id;

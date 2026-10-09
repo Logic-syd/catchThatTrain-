@@ -26,7 +26,8 @@ describe('normal-completion reference measurement',()=>{
   const run=simulateBalance({city:'zhengzhou',character:'worker',reference:true,seed:921});
   const gateCost=run.timeLedger.entries.filter(e=>e.deadline==='gate').reduce((t,e)=>t+e.seconds,0);
   const currentOpening=run.timeBudget!.gateBudgetSeconds;
-  expect(currentOpening-gateCost).toBeLessThan(0);
+  expect(currentOpening-gateCost).toBeGreaterThan(0);
+  expect(currentOpening-gateCost).toBeLessThan(240);
   expect(run.gateRemaining-REFERENCE_PLAYER.measurementAllowance).toBeCloseTo(currentOpening-gateCost,6);
   expect(run.initial-STOP_BEFORE-gateCost).toBeGreaterThan(0);
  });
