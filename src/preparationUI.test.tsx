@@ -10,15 +10,15 @@ const scenarios=[
  {character:'student',steps:[
   {current:'小蛋糕',question:'朋友打包好的小蛋糕',option:'take',receipt:'带上小蛋糕',seconds:75},
   {current:'身份证',question:'身份证，真的在包里吗',option:'skip',receipt:'先跑到检票口再说吧',seconds:0},
-  {current:'早餐',question:'早餐还没吃',option:'eat',receipt:'买个饭团，吃完再走',seconds:60},
+  {current:'早餐',question:'早餐还没吃',option:'eat',receipt:'买个饭团，吃完再走',seconds:20},
  ]},
  {character:'worker',steps:[
   {current:'土特产',question:'妈把一袋土特产放进箱子',option:'leave-gifts',receipt:'先不带了，轻装赶车',seconds:0},
-  {current:'再吃两口',question:'吃完再走',option:'eat',receipt:'再吃两口，马上走',seconds:60},
+  {current:'再吃两口',question:'吃完再走',option:'eat',receipt:'再吃两口，马上走',seconds:20},
   {current:'老板消息',question:'老板又发来消息',option:'ignore',receipt:'不理',seconds:0},
  ]},
  {character:'tourist',steps:[
-  {current:'缓口气',question:'今日步数 23,487',option:'rest',receipt:'靠着小箱子坐一会',seconds:30},
+  {current:'缓口气',question:'今日步数 23,487',option:'rest',receipt:'靠着小箱子坐一会',seconds:8},
   {current:'纪念品',question:'纪念品要不要留下',option:'light',receipt:'先放下，轻装赶车',seconds:0},
  ]},
  {character:'mom',steps:[
@@ -71,7 +71,7 @@ describe('preparation step feedback',()=>{
   run={...run,logs:[...run.logs,{title:'无关事件',seconds:15,eventId:'metro-route'}]};
   const html=renderToStaticMarkup(<PreparationComplete run={run}/>);
   expect(html).toContain('买个饭团，吃完再走');
-  expect(html).toContain('−60 秒');
+  expect(html).toContain('−20 秒');
   expect(html).not.toContain('无关事件');
  });
 
@@ -82,7 +82,7 @@ describe('preparation step feedback',()=>{
   const before=run.remaining;
   const eat:Action={type:'PERSON_PICK',option:'eat',step:1};
   run=reducer(run,eat);
-  expect(run.remaining).toBe(before-60);
+  expect(run.remaining).toBe(before-20);
   expect(reducer(run,eat)).toBe(run);
  });
 });

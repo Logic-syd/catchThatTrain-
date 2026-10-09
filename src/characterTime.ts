@@ -1,3 +1,4 @@
+import {PREPARATION_BALANCE as PREP} from './preparationConfig';
 import {SPRINT} from './sprintConfig';
 import type {Run} from './engine';
 import {movementFactor} from './studentConfig';
@@ -35,11 +36,11 @@ export function timedPrompt(s:Run):TimedPrompt|undefined{
  const t=s.characterTime;if(!t)return;
  if(t.characterId==='worker'){
   if(t.prepStep===0)return {eyebrow:'出门前 · 家门口',title:'妈把一袋土特产放进箱子：“这个也带上。”',story:'行李已经收好了，明早九点还得回去上班。',choices:[{id:'take-gifts',label:'带上，妈特地准备的',detail:'负重 +15 · 解锁妈妈的土特产',seconds:0,load:15,set:{souvenirs:true}},{id:'leave-gifts',label:'先不带了，轻装赶车',detail:'不增加负重 · 妈妈嘴上说好，还是有点舍不得',seconds:0}]};
-  if(t.prepStep===1)return {eyebrow:'出门前 · 再吃两口',title:'妈：“吃完再走，路上就不用找东西了。”',story:'厨房里还热着饭菜，行李箱旁边已经多了两袋吃的。',choices:[{id:'eat',label:'再吃两口，马上走',detail:'−60 秒 · 体力上限 +10，补充 10 体力 · 后半程有余力',seconds:60,energy:10,maxEnergy:10,set:{ateBeforeLeaving:true}},{id:'leave',label:'真得走了，到了发消息',detail:'妈妈送你到门口',seconds:0}]};
+  if(t.prepStep===1)return {eyebrow:'出门前 · 再吃两口',title:'妈：“吃完再走，路上就不用找东西了。”',story:'厨房里还热着饭菜，行李箱旁边已经多了两袋吃的。',choices:[{id:'eat',label:'再吃两口，马上走',detail:`−${PREP.workerMealSeconds} 秒 · 体力上限 +10，补充 10 体力 · 吃饱再拖箱子`,seconds:PREP.workerMealSeconds,energy:10,maxEnergy:10,set:{ateBeforeLeaving:true}},{id:'leave',label:'真得走了，到了发消息',detail:'空腹拖箱子，脚步会慢一些 · 妈妈送你到门口',seconds:0,set:{ateBeforeLeaving:false}}]};
   const task=['设计稿','测试版本','报价'][Array.from(s.id).reduce((sum,char)=>sum+char.charCodeAt(0),0)%3];
   return {eyebrow:'出门前 · 工作群',title:`老板又发来消息：“之前那个${task}，今晚能发吗？”`,story:'假期刚结束，老板已经催起今晚的活；你还得拖着妈妈塞满的箱子赶回去。',choices:[{id:'reply',label:'今晚一定发',detail:'体力 −10 · 回复后暂时清静了',seconds:0,energy:-10,set:{bossUnread:false,bossCallsLeft:0}},{id:'ignore',label:'不理',detail:'一会儿老板可能会打电话',seconds:0,set:{bossUnread:true}}]};
  }
- if(t.prepStep===0){const gain=Math.round(Math.min(10,t.maxEnergy-t.energy)),restore=gain>0?` · 精力 +${gain}`:'';return {eyebrow:'出门前 · 已退房',title:'今日步数 23,487。你真的不想再动了。',story:'酒店已经退房，今晚只有这趟车能赶回家上班。要不要先缓口气？',choices:[{id:'coffee',label:'买杯咖啡提神',detail:`−50 秒 · 疲劳 −15${restore}`,seconds:50,energy:10,fatigue:-15,set:{coffee:true}},{id:'rest',label:'靠着小箱子坐一会',detail:`−30 秒 · 疲劳 −5${restore}`,seconds:30,energy:10,fatigue:-5},{id:'go',label:'起来就走，车上再休息',detail:'保留地铁补觉机会',seconds:0}]};}
+ if(t.prepStep===0){const gain=Math.round(Math.min(10,t.maxEnergy-t.energy)),restore=gain>0?` · 精力 +${gain}`:'';return {eyebrow:'出门前 · 已退房',title:'今日步数 23,487。你真的不想再动了。',story:'酒店已经退房，今晚只有这趟车能赶回家上班。要不要先缓口气？',choices:[{id:'coffee',label:'买杯咖啡提神',detail:`−${PREP.coffeeSeconds} 秒 · 疲劳 −15${restore} · 脚步轻一些`,seconds:PREP.coffeeSeconds,energy:10,fatigue:-15,set:{coffee:true}},{id:'rest',label:'靠着小箱子坐一会',detail:`−${PREP.restSeconds} 秒 · 疲劳 −5${restore}`,seconds:PREP.restSeconds,energy:10,fatigue:-5},{id:'go',label:'起来就走，车上再休息',detail:'保留地铁补觉机会',seconds:0}]};}
  if(t.prepStep===1)return {eyebrow:'出门前 · 小号行李箱',title:'一个小箱子，一个背包。纪念品要不要留下？',story:'不是行李太多，是你已经走了一整天，腿有点发沉。',choices:[{id:'keep',label:'纪念品带回家',detail:'负重 +5 · 旅行没白逛',seconds:0,load:5,set:{souvenirs:true}},{id:'light',label:'先放下，轻装赶车',detail:'负重 −5 · 陌生站里更好走',seconds:0,load:-5}]};
  return undefined;
 }
@@ -52,7 +53,7 @@ export function characterEventPrompt(s:Run,id:string){
   return {id,phase:'metro' as const,title:'列车开起来了，眼皮也撑不住了',description:'设好闹钟就睡一会儿。睡着后会直接到叫醒的那站；需要换乘时，会先在换乘站叫醒你。',interaction:{kind:'choice' as const,seconds:12,penalty:20},choices:[...alarms.map(option=>({label:`提前 ${option.stops} 站叫醒`,detail:`睡到那站 · 精力 +${option.energy} · 疲劳 −${option.fatigue}`,seconds:0})),{label:'撑着，盯紧站名',detail:'保持清醒，逐站决定下不下车',seconds:0}]};
  }
  if(id==='tourist-wake')return {id,phase:'metro' as const,title:`闹钟响了：${s.route?.stops[s.metroStopIndex]??'到站了'}！`,description:'点一下醒来，先认清站名；接下来由你决定下车、换乘，还是继续坐。',interaction:{kind:'tap' as const,seconds:3,penalty:80,required:1},choices:[{label:'醒醒！',detail:'确认站名，再决定要不要下车',seconds:0},{label:'再睡一下',detail:'闹钟没叫醒你 · 坐过站并折返',seconds:80}]};
- if(id==='tourist-wheel')return {id,phase:'station' as const,title:'行李箱轮子卡住了！',description:'坏掉的轮子一直往旁边偏。停下来调整会花时间，硬拖会更耗精力。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停下来调整轮子',detail:'多花 20 秒 · 负重减少 5',seconds:20},{label:'先硬拖着赶路',detail:'精力额外消耗',seconds:0}]};
+ if(id==='tourist-wheel')return {id,phase:'station' as const,title:'行李箱轮子卡住了！',description:'坏掉的轮子一直往旁边偏。停下来调整会花时间，硬拖会更耗精力。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停下来调整轮子',detail:`多花 ${PREP.wheelSeconds} 秒 · 负重减少 5`,seconds:PREP.wheelSeconds},{label:'先硬拖着赶路',detail:'精力额外消耗',seconds:0}]};
  if(id==='tourist-wayfinding')return {id,phase:'station' as const,title:t.mapChecked?'这里的指示牌怎么又变了？':'出口好多，哪个才是铁路出发？',description:t.focus<35?'走了一整天，字都看花了。陌生车站里人流也可能带错方向。':'先看清铁路出发标识，跟着人群不一定对。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停一下，看楼层地图',detail:'花 12 秒确认方向 · 记住路线',seconds:12},{label:'跟着人流先走',detail:t.wrongWayRisk?'看着像近路，可能要折返':'顺着人流前进',seconds:t.wrongWayRisk?42:0}]};
  return undefined;
 }
@@ -94,6 +95,7 @@ export function applyTimedChoice(s:Run,id:string):Run{
  const complete=nextState.prepStep>=(t.characterId==='worker'?3:2);
  return {...next,phase:complete?'route':'preparation'};
 }
+export function workerHungry(t:CharacterTimeState){return t.characterId==='worker'&&t.prepStep>=2&&!t.ateBeforeLeaving;}
 export function characterMovementFactor(run:Run,sprinting=run.student?.sprinting??false):number{
  if(run.student)return movementFactor({...run.student,sprinting,exhausted:run.student.exhausted});
  const t=run.characterTime,p=t?characterTimeProfiles[t.characterId]:characterTimeProfiles.worker;
@@ -102,7 +104,7 @@ export function characterMovementFactor(run:Run,sprinting=run.student?.sprinting
  const fatigueSpeed=Math.max(.82,1-fatigue*.0015),energySpeed=Math.max(.7,.72+energyRatio*.28),loadSpeed=1/Math.max(.75,1+(load-15)*.0045);
  const lateWorker=t?.characterId==='worker'&&run.remaining-(run.gatePassed?0:180)<=120?1.1:1;
  const lateTourist=t?.characterId==='tourist'&&run.remaining-(run.gatePassed?0:180)<=120?1.05:1;
- return (sprinting&&!t?.exhausted?p.sprintSpeed:p.baseSpeed)*fatigueSpeed*energySpeed*loadSpeed*focusSlow*lateWorker*lateTourist;
+ return (run.phase==='station'&&t&&workerHungry(t)?PREP.workerHungrySpeed:1)*(sprinting&&!t?.exhausted?p.sprintSpeed:p.baseSpeed)*fatigueSpeed*energySpeed*loadSpeed*focusSlow*lateWorker*lateTourist;
 }
 
 export function tickCharacterTime(t:CharacterTimeState,dt:number,running:boolean):CharacterTimeState{

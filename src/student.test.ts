@@ -9,9 +9,9 @@ function tick(s:Run,seconds:number){for(let i=0;i<Math.ceil(seconds*10);i++)s=re
 function select(s:Run,i=0){return reducer(s,{type:'CHOICE',choice:s.event!.choices[i]});}
 function at(id:string,options?:string[]){let s=station(options);s.stationBeat=s.stationJourney.findIndex(b=>b.id===id);s.stationProgress=.999;s.student={...s.student!,runner:{...s.student!.runner,wave:99}};s=reducer(s,{type:'RUN_INPUT',held:true});return tick(s,.1);}
 describe('Hongqiao student chapter',()=>{
- it('starts with 29:30 and three explicit choices, replay has fresh stats',()=>{
-  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1983);expect(s.student!.stats).toEqual(STUDENT.baseStats);
-  const n=prepared(['take','check','eat']);expect(n.phase).toBe('route');expect(n.remaining).toBe(s.remaining-165);expect(n.student!.stats).toEqual({agility:80,energy:100,focus:70,load:20});
+ it('starts with a calibrated budget and three explicit choices, replay has fresh stats',()=>{
+  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1923);expect(s.student!.stats).toEqual(STUDENT.baseStats);
+  const n=prepared(['take','check','eat']);expect(n.phase).toBe('route');expect(n.remaining).toBe(s.remaining-105);expect(n.student!.stats).toEqual({agility:80,energy:100,focus:70,load:20});
   expect(reducer(n,{type:'PREP_PICK',option:'eat',step:2})).toBe(n);expect(createShanghaiRun().student!.choices).toEqual({});
  });
  it('route choices fit the opening budget and preparation affects walking efficiency',()=>{

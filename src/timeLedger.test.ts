@@ -105,12 +105,12 @@ describe('actual countdown accounting for every character',()=>{
   reconciles(big);
   expect(Object.values(big.student!.clockSpent).reduce((sum,x)=>sum+x,0)+big.student!.decisionLoss+big.student!.environmentLoss).toBeCloseTo(big.initial-big.remaining);
  });
- it('timeouts split interaction time from penalty, and post-gate spending uses the departure deadline',()=>{
+ it('slow reading stays natural elapsed time, including after the gate',()=>{
   const base=station('worker');
   let s:Run={...base,gatePassed:true,gateRemaining:base.remaining-STOP_BEFORE,event:{id:'audit-hold',phase:'station',title:'hold',description:'',interaction:{kind:'hold',seconds:1,penalty:15,required:3},choices:[]}};
   s=reducer(s,{type:'TICK',dt:1.1});
-  expect(s.timeLedger.totalSeconds).toBeCloseTo(16.1);
-  expect(s.timeLedger.entries.find(e=>e.category==='operationPenalty')!.seconds).toBeCloseTo(15);
+  expect(s.timeLedger.totalSeconds).toBeCloseTo(1.1);
+  expect(s.timeLedger.entries.some(e=>e.category==='operationPenalty')).toBe(false);
   expect(s.timeLedger.entries.every(e=>e.deadline==='departure')).toBe(true);reconciles(s);
  });
  it('new runs reset accounting; invalid input and display-only logs do not add charges',()=>{

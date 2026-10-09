@@ -54,7 +54,7 @@ describe('event-time telemetry',()=>{
  it('logs choice cost exactly once, with stable positive sign and no invented ID saving',()=>{
   let s=reducer(createStationRun(),{type:'START'});s=reducer(s,{type:'PREP_PICK',option:'take',step:0});s=reducer(s,{type:'PREP_PICK',option:'check',step:1});
   expect(s.metrics.impacts.filter(i=>i.eventId==='prepare-cake').map(i=>i.deltaSeconds)).toEqual([-75]);
-  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-30);
+  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-10);
   expect(s.metrics.impacts.every(i=>i.positive===(i.deltaSeconds>0))).toBe(true);
   const o=summarizeRun({...s,phase:'result',success:true,gateRemaining:60});expect(o.result.timeImpacts.some(i=>i.deltaSeconds===28)).toBe(false);
  });

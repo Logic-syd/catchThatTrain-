@@ -1,3 +1,4 @@
+import {hasEventDeadline} from './eventTiming';
 import {readGameStorage,writeGameStorage} from './playtestEnvironment';
 import {initialMapTravel,setMapDestination,advanceOnMap,mapDistance,mapTaskPoint,mapPath,pathLength,type MapTravel,type MapPoint} from './stationMapTravel';
 import {activeObstacle,bypassObstacle,clearMapObstacle,mapSecurityBlock,advanceMapQueues,mapQueueWait,obstructionTitle,type ClearMethod} from './mapObstructions';
@@ -367,28 +368,14 @@ function reduceCore(s:Run,a:Action):Run{
   }
   if(s.event){
    n.eventElapsed+=dt;
-   if(s.student){n.eventOverdue=n.eventElapsed>=(s.event.interaction?.seconds??12)*focusWindow(s.student.stats.focus);return deadline(n);}
-
-   if(s.phase==='station'&&s.stationJourney.length){
-    const limit=s.event.id==='identity-search'?(s.identityStage==='wallet'?8:6):(s.event.interaction?.seconds??10);
-    if(n.eventElapsed>=limit&&!s.eventOverdue){const penalty=s.event.interaction?.penalty??15;n={...n,eventOverdue:true,remaining:n.remaining-penalty,logs:[...n.logs,{title:'耽误了，仍需完成：'+s.event.title,seconds:penalty}]};}
-    return deadline(n);
-   }
-   if(s.event.id==='identity-search'){
-    const limit=s.identityStage==='wallet'?8:6;
-    if(n.eventElapsed>=limit){
-     if(s.identityStage==='wallet')return deadline({...n,identityStage:'card',eventElapsed:0,eventOverdue:false,remaining:n.remaining-20,logs:[...n.logs,{title:'钱包终于翻到了',seconds:20}]});
-     return choice({...n,identityReady:true},{label:'',detail:'',seconds:35},'找太久了，终于拿到身份证');
-    }
+   if(!hasEventDeadline(s.event)){
+    const limit=s.event.interaction?.seconds??12;
+    n.eventOverdue=n.eventElapsed>=limit;
     return deadline(n);
    }
    if(n.eventElapsed>=(s.event.interaction?.seconds??10)){
     if(s.event.id==='metro-announcement'){const seated=s.event.choices[1];n=choice(applyMetroAnnouncement(n,seated),seated,'还坐着等下一站');}
-    else if(s.event.id==='elder-block')n=choice(n,s.event.choices[0],'没选，自动绕开老人');
-    else if(s.event.id==='escalator-choice')n=choice(n,s.event.choices[1],'没选，走中间的 2 号扶梯');
-    else if(s.event.id==='escalator-ride')n=choice(n,s.event.choices.at(-1)!,'跟着扶梯上楼');
     else if(s.event.id==='tourist-wake')n=recoverMetro({...applyCharacterEvent(n,'tourist-wake','再睡一下'),event:null,eventElapsed:0},'闹钟没叫醒，坐过一站后折返',s.event.interaction?.penalty??80,'arrival');
-    else n=choice(n,{label:'',detail:'',seconds:s.event.interaction?.penalty??55},'没来得及：'+s.event.title);
    }
    return deadline(n);
   }

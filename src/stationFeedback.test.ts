@@ -62,7 +62,7 @@ describe('station action feedback',()=>{
   const next=reducer(previous,{type:'TICK',dt:15});
   expect(next.eventOverdue).toBe(true);
   expect(next.event?.id).toBe('security');
-  if(character==='worker')expect(next.logs.at(-1)?.title).toContain('仍需完成');
+  expect(previous.remaining-next.remaining).toBeCloseTo(15);expect(next.logs).toEqual(previous.logs);
   expect(completedStationAction(previous,next)).toBeNull();
  });
 

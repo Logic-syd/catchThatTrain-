@@ -13,4 +13,4 @@ for(const role of ['student','worker','tourist','mom'] as BalanceCharacter[])for
  });
  rows.push({role,station:station.id,extraSeconds:runs[1].gateSeconds-runs[0].gateSeconds,extraOperationPenalty:runs[1].penalties.reduce((sum,e)=>sum+e.seconds,0)-runs[0].penalties.reduce((sum,e)=>sum+e.seconds,0),runs});
 }
-console.log(JSON.stringify({metadata:{baseRevision:'81f1c20',seed:921,runCount:48,note:'Extended deadline, reference preparation and movement, 5 versus 8 seconds per new prompt. Source-level ledger diagnosis, not human pass probability.'},rows},(_key,value)=>typeof value==='number'?Math.round(value*1000)/1000:value,2));
+console.log(JSON.stringify({metadata:{baseRevision:process.env.TIME_AUDIT_REV??'working-tree',seed:921,runCount:48,note:'Extended deadline, reference preparation and movement, 5 versus 8 seconds per new prompt. Source-level ledger diagnosis, not human pass probability.'},rows},(_key,value)=>typeof value==='number'?Math.round(value*1000)/1000:value,2));

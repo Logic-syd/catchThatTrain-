@@ -1,3 +1,4 @@
+import {PREPARATION_BALANCE as PREP} from './preparationConfig';
 import {SPRINT} from './sprintConfig';
 import type {RunnerState} from './runner';
 import type {CityConfig, EventConfig} from './data';
@@ -7,8 +8,8 @@ export const HONGQIAO={id:'shanghai-hongqiao',modifiers:{distance:1.2,crowd:1.1,
 export type Preparation={id:string;title:string;story:string;options:{id:string;label:string;detail:string;seconds:number;stats?:Partial<Stats>}[]};
 export const PREPARATIONS:Preparation[]=[
  {id:'cake',title:'朋友打包好的小蛋糕，要不要带上？',story:'朋友捧着蛋糕盒等你来拿。车站就在前面，你得赶紧和朋友告别。',options:[{id:'take',label:'带上小蛋糕',detail:'−75 秒 · 专注 +5、负重 +5；占一只手，赶路更费体力',seconds:75,stats:{focus:5,load:5}},{id:'skip',label:'不带，和朋友伤心地分开',detail:'专注 −5 · 舍不得朋友，有点走神',seconds:0,stats:{focus:-5}}]},
- {id:'id',title:'身份证，真的在包里吗？',story:'你摸了一下书包。“昨天好像放进去了……”',options:[{id:'skip',label:'先跑到检票口再说吧',detail:'检票时要翻包 · 位置没确认，要自己找',seconds:0},{id:'check',label:'检查好，放进前袋',detail:'−30 秒 · 专注 +10；记住前袋的位置，检票时直接取出',seconds:30,stats:{focus:10}}]},
- {id:'breakfast',title:'早餐还没吃，肚子先叫了。',story:'便利店就在旁边，还有温热的饭团。',options:[{id:'eat',label:'买个饭团，吃完再走',detail:'−60 秒 · 精力上限 +15 · 吃饱，后半程不会挨饿',seconds:60,stats:{energy:15}},{id:'skip',label:'直接走，上车再吃',detail:'精力上限 −10 · 到候车大厅后生效，后半程更容易跑不动',seconds:0}]}
+ {id:'id',title:'身份证，真的在包里吗？',story:'你摸了一下书包。“昨天好像放进去了……”',options:[{id:'skip',label:'先跑到检票口再说吧',detail:'检票时要翻包 · 位置没确认，要自己找',seconds:0},{id:'check',label:'检查好，放进前袋',detail:`−${PREP.identitySeconds} 秒 · 专注 +10；记住前袋的位置，检票时直接取出`,seconds:PREP.identitySeconds,stats:{focus:10}}]},
+ {id:'breakfast',title:'早餐还没吃，肚子先叫了。',story:'便利店就在旁边，还有温热的饭团。',options:[{id:'eat',label:'买个饭团，吃完再走',detail:`−${PREP.studentMealSeconds} 秒 · 精力上限 +15 · 吃饱，后半程脚步稳`,seconds:PREP.studentMealSeconds,stats:{energy:15}},{id:'skip',label:'直接走，上车再吃',detail:'精力上限 −10 · 到候车大厅后生效，空腹赶路会慢一些',seconds:0}]}
 ];
 export const POCKETS=['前袋','侧袋','主袋','电脑夹层'];
 export type StudentState={eventTime:Record<string,number>;lateSprintSaved:number;exhaustedLateSeconds:number;runner:RunnerState;clockSpent:{journey:number;moving:number;handling:number;waiting:number};stats:Stats;prep:number;choices:Record<string,string>;cake:boolean;checkedID:boolean;breakfast:boolean;hungry:boolean;late:boolean;elapsedGame:number;stamina:number;exhausted:boolean;sprinting:boolean;sprintStrain:number;breathStops:number;doorReady:boolean;doorSavings:number;vertical:'escalator'|'stairs'|'lift';pocket:number;searched:number[];mapRead:boolean;observed:boolean;bagSeconds:number;bagMistakes:number;sprintSeconds:number;movingSeconds:number;sprintSaved:number;decisionLoss:number;environmentLoss:number;wrongTurns:number;stationStart:number;transferSeconds:number;queues:{people:number;seconds:number;hint:string}[]};
@@ -19,7 +20,7 @@ export function studentSprintMultiplier(u:StudentState){
  const fade=Math.min(1,Math.max(0,u.sprintStrain-SPRINT.studentFullSpeedSeconds)/(STUDENT.breathLimit-SPRINT.studentFullSpeedSeconds));
  return 1+(peak-1)*(1-(1-SPRINT.studentMinimumGainFraction)*fade);
 }
-export function movementFactor(u:StudentState){const base=(.65+u.stats.agility/100*.4667)/(1+(u.stats.load-15)*.006);return base*(u.sprinting&&!u.exhausted?studentSprintMultiplier(u):u.exhausted?.85:1);}
+export function movementFactor(u:StudentState){const base=(.65+u.stats.agility/100*.4667)/(1+(u.stats.load-15)*.006);return base*(u.hungry?PREP.studentHungrySpeed:1)*(u.sprinting&&!u.exhausted?studentSprintMultiplier(u):u.exhausted?.85:1);}
 export function focusWindow(focus:number){return .7+focus/100*.6;}
 export function bagHint(u:StudentState){if(u.checkedID)return '出门前检查过：身份证就在前袋。';if(u.stats.focus>=75)return '刚才回想起来了，留意亮起的夹层。';if(u.stats.focus>=55)return `还记得：${u.pocket<2?'在一个外侧小袋里':'应该和大件物品放在一起'}。`;if(u.stats.focus>=35)return '记不清了，一层一层翻。';return '不会没带吧……先把每个夹层都找一遍。';}
 export function studentPrompt(id:string,u:StudentState,gate='12A'):EventConfig|undefined{

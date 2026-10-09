@@ -19,7 +19,7 @@ describe('resource and countdown consistency',()=>{
   s=reducer(s,{type:'PERSON_PICK',option:'take-gifts',step:0});const before=s.remaining;
   expect(s.characterTime!.energy).toBe(60);
   s=reducer(s,{type:'PERSON_PICK',option:'eat',step:1});
-  expect(s.remaining).toBe(before-60);expect(s.characterTime!.maxEnergy).toBe(70);expect(s.characterTime!.energy).toBe(70);
+  expect(s.remaining).toBe(before-20);expect(s.characterTime!.maxEnergy).toBe(70);expect(s.characterTime!.energy).toBe(70);
   expect(reducer(s,{type:'PERSON_PICK',option:'eat',step:1})).toBe(s);
   s=reducer(s,{type:'PERSON_PICK',option:'reply',step:2});
   const recovered=tickCharacterTime(s.characterTime!,20,false);
@@ -37,7 +37,7 @@ describe('resource and countdown consistency',()=>{
  it('repairing the wheel spends time once, reduces real load and improves movement',()=>{
   const s=mapStart('tourist'),prompt=characterEventPrompt(s,'tourist-wheel')!;
   const n=reducer({...s,event:prompt},{type:'CHOICE',choice:prompt.choices[0]});
-  expect(n.remaining).toBe(s.remaining-20);expect(n.characterTime!.load).toBe(s.characterTime!.load-5);
+  expect(n.remaining).toBe(s.remaining-6);expect(n.characterTime!.load).toBe(s.characterTime!.load-5);
   expect(characterMovementFactor(n)).toBeGreaterThan(characterMovementFactor(s));
   expect(n.characterTime!.energy).toBe(s.characterTime!.energy);
   const dragged=applyCharacterEvent(s,'tourist-wheel',prompt.choices[1].label);
