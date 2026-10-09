@@ -5,6 +5,8 @@ import {trackMapChildDelay} from './mapTimeFeedback';
 import {freshMetrics,trackTransition,type RunMetrics} from './resultMetrics';
 import {applyCharacterEvent,applyTimedChoice,characterEventPrompt,characterMovementFactor,createCharacterTimeState,tickCharacterTime,type CharacterTimeState} from './characterTime';
 import {BALANCE} from './balanceConfig';
+import {buildTimeBudget,type TimeBudget} from './timeBudget';
+import {freshTimeLedger,trackTimeLedger,type TimeLedger,type MetroTimeBudget} from './timeLedger';
 import {applyJourneyDecision,prepareNextJourney} from './journeyRules';
 import {summarizeRun} from './outcomes';
 import {stationFor,stationChallenge,STATIONS,type StationDecision} from './stations';
@@ -22,7 +24,7 @@ export const DOOR_SECONDS = 4;
 export const STOP_BEFORE = 180;
 export type Phase='preparation'|'lobby'|'route'|'direction'|'wrong'|'metro'|'arrival'|'transfer'|'metro-recovery'|'station'|'result';
 export type Log={title:string;seconds:number;eventId?:string};
-export type Run={metroAnnouncementRoll?:number;metroAnnouncement?:{mode:'door'|'seated';miss:boolean};stationMap?:MapTravel;metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
+export type Run={timeBudget?:TimeBudget;timeLedger:TimeLedger;metroTimeBudget?:MetroTimeBudget;metroAnnouncementRoll?:number;metroAnnouncement?:{mode:'door'|'seated';miss:boolean};stationMap?:MapTravel;metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
 export function pick<T>(array:T[],rng=Math.random):T{return array[Math.floor(rng()*array.length)]!;}
 export function routeSeconds(route:MetroRoute,character:CharacterConfig){return route.minutes*60+route.walk/1.5/character.speed+route.transfers*(character.stroller?90:character.luggage?45:20);}
 export function createRun(cityId?:string,characterId?:string,hard=false,first=false,rng=Math.random):Run{
@@ -33,7 +35,7 @@ export function createRun(cityId?:string,characterId?:string,hard=false,first=fa
  // Seven seconds of travel, split by real stop decisions. Dwell time is additional.
  const metroIncidentRoll=rng(),metroIncidentVariant=rng();
  const initial=best+(hard?420:522)/character.speed+STOP_BEFORE;
- const run:Run={metrics:freshMetrics(),stationDecisions:[],endEventId:null,id:crypto.randomUUID(),city,character,spawn,hard,initial,remaining:initial,departure:15*3600,phase:'lobby',metroProgress:0,metroDuration:0,elapsed:0,phaseElapsed:0,event:null,eventElapsed:0,seen:[],logs:[],slow:0,gate:city.stationConfig.gate,gatePassed:false,gateRemaining:0,stage:0,distance:970,success:false,stationEvents:0,stamina:100,stationLane:null,metroMisses:0,metroStopIndex:0,metroTransferred:false,metroIncidentRoll,metroIncidentVariant,metroIncident:null,metroRecoveryMessage:'',metroRecoveryTarget:'metro',identityEarly:metroIncidentRoll<METRO_INCIDENT_CHANCE&&metroIncidentVariant<1/3,identityReady:false,identityStage:"wallet",identityItems:shuffle(["wallet","phone","keys","headphones","bottle","umbrella","notebook","pen","glasses","charger","tissue","snack","lipstick","comb","watch","camera","sock","sanitizer"],rng),identityCards:shuffle(["id","bank","metro","student","photo","receipt"],rng),encounters:createStationPlan(hard,rng),detour:null,stationLuck:createStationLuck(rng),escalatorLane:null,boost:0,stationJourney:[],stationBeat:0,stationProgress:0,stationRunning:false,eventOverdue:false};
+ const run:Run={timeLedger:freshTimeLedger(),metrics:freshMetrics(),stationDecisions:[],endEventId:null,id:crypto.randomUUID(),city,character,spawn,hard,initial,remaining:initial,departure:15*3600,phase:'lobby',metroProgress:0,metroDuration:0,elapsed:0,phaseElapsed:0,event:null,eventElapsed:0,seen:[],logs:[],slow:0,gate:city.stationConfig.gate,gatePassed:false,gateRemaining:0,stage:0,distance:970,success:false,stationEvents:0,stamina:100,stationLane:null,metroMisses:0,metroStopIndex:0,metroTransferred:false,metroIncidentRoll,metroIncidentVariant,metroIncident:null,metroRecoveryMessage:'',metroRecoveryTarget:'metro',identityEarly:metroIncidentRoll<METRO_INCIDENT_CHANCE&&metroIncidentVariant<1/3,identityReady:false,identityStage:"wallet",identityItems:shuffle(["wallet","phone","keys","headphones","bottle","umbrella","notebook","pen","glasses","charger","tissue","snack","lipstick","comb","watch","camera","sock","sanitizer"],rng),identityCards:shuffle(["id","bank","metro","student","photo","receipt"],rng),encounters:createStationPlan(hard,rng),detour:null,stationLuck:createStationLuck(rng),escalatorLane:null,boost:0,stationJourney:[],stationBeat:0,stationProgress:0,stationRunning:false,eventOverdue:false};
  return {...run,metroAnnouncementRoll:rng()};
 }
 export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):Run{
@@ -45,8 +47,9 @@ export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):R
  // Student runs budget for a viable route, the station's walking distance,
  // and a short decision buffer. Pricing from the slowest route made every other
  // route finish with many unused minutes and removed the stakes from route choice.
- const initial=Math.ceil((best+chapter.walking+BALANCE.studentDecisionBuffer[chapter.id])/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction.student:0);
- return {...s,city,gate:chapter.gate,initial,remaining:initial,student:studentState(rng)};
+ const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking,legacyAllowanceSeconds:BALANCE.studentDecisionBuffer[chapter.id],hardReductionSeconds:hard?BALANCE.hardReduction.student:0,gateClosingLeadSeconds:STOP_BEFORE});
+ const initial=timeBudget.departureBudgetSeconds;
+ return {...s,city,gate:chapter.gate,timeBudget,initial,remaining:initial,student:studentState(rng)};
 }
 export function createCharacterStationRun(cityId='shanghai',characterId:'student'|'worker'|'tourist'|'mom'='student',hard=false,rng=Math.random):Run{
  if(characterId==='student')return createStationRun(cityId,hard,rng);
@@ -54,24 +57,30 @@ export function createCharacterStationRun(cityId='shanghai',characterId:'student
  if(characterId==='mom'){
   const parent=createParentState(rng);
   const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
-  const initial=Math.ceil((best+chapter.walking/parentMovementFactor(parent)+BALANCE.parentDecisionBuffer[chapter.id])/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction.mom:0);
-  return {...base,character,student:undefined,parent,initial,remaining:initial,stamina:parent.energy,phase:'lobby'};
+  const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking/parentMovementFactor(parent),legacyAllowanceSeconds:BALANCE.parentDecisionBuffer[chapter.id],hardReductionSeconds:hard?BALANCE.hardReduction.mom:0,gateClosingLeadSeconds:STOP_BEFORE});
+  const initial=timeBudget.departureBudgetSeconds;
+  return {...base,character,student:undefined,parent,timeBudget,initial,remaining:initial,stamina:parent.energy,phase:'lobby'};
  }
  const characterTime=createCharacterTimeState(characterId,rng);
  const context={...base,character,student:undefined,characterTime};
  const factor=characterMovementFactor(context,false);
  const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>journeyRouteSeconds(context,r)));
- const initial=Math.ceil((best+chapter.walking/factor+BALANCE.characterDecisionBuffer[characterId]+(BALANCE.characterStationExtra[characterId][chapter.id]??0))/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction[characterId]:0);
- return {...base,character,student:undefined,characterTime,initial,remaining:initial,stamina:characterTime.energy,phase:'lobby'};
+ const timeBudget=buildTimeBudget({metroSeconds:best,stationWalkSeconds:chapter.walking/factor,legacyAllowanceSeconds:BALANCE.characterDecisionBuffer[characterId]+(BALANCE.characterStationExtra[characterId][chapter.id]??0),hardReductionSeconds:hard?BALANCE.hardReduction[characterId]:0,gateClosingLeadSeconds:STOP_BEFORE});
+ const initial=timeBudget.departureBudgetSeconds;
+ return {...base,character,student:undefined,characterTime,timeBudget,initial,remaining:initial,stamina:characterTime.energy,phase:'lobby'};
 }
 export function createShanghaiRun(hard=false,rng=Math.random):Run{return createStationRun('shanghai',hard,rng);}
 
 function shuffle<T>(items:T[],rng:()=>number){for(let i=items.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[items[i],items[j]]=[items[j],items[i]];}return items;}
 export function formatTime(seconds:number){const s=Math.max(0,Math.ceil(seconds));return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
 export function clockTime(seconds:number){return String(Math.floor(seconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(seconds/60)%60).padStart(2,'0');}
-export function journeyRouteSeconds(s:Run,route:MetroRoute){return route.minutes*60+route.walk/1.5/(s.parent?parentMovementFactor(s.parent):characterMovementFactor(s,false))+route.transfers*(s.character.stroller?90:s.character.luggage?45:20);}
+export function journeyRouteBudget(s:Run,route:MetroRoute):MetroTimeBudget{
+ const rideSeconds=route.minutes*60,walkSeconds=route.walk/1.5/(s.parent?parentMovementFactor(s.parent):characterMovementFactor(s,false)),transferSeconds=route.transfers*(s.character.stroller?90:s.character.luggage?45:20);
+ return {rideSeconds,walkSeconds,transferSeconds,totalSeconds:rideSeconds+walkSeconds+transferSeconds};
+}
+export function journeyRouteSeconds(s:Run,route:MetroRoute){return journeyRouteBudget(s,route).totalSeconds;}
 export function projectedTime(s:Run,route=s.route){
- const cost=route?journeyRouteSeconds(s,route):Math.min(...s.city.spawnStations[s.spawn].routes.map(r=>journeyRouteSeconds(s,r)));
+ const cost=route?(route===s.route?s.metroDuration:journeyRouteSeconds(s,route)):Math.min(...s.city.spawnStations[s.spawn].routes.map(r=>journeyRouteSeconds(s,r)));
  return Math.max(0,s.remaining-STOP_BEFORE-cost*(['metro','arrival','transfer','metro-recovery'].includes(s.phase)?1-s.metroProgress:['station','result'].includes(s.phase)?0:1));
 }
 export function randomEvent(s:Run,phase:'metro'|'station'):EventConfig{
@@ -227,7 +236,7 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='SPRINT_INPUT'&&s.parent&&s.phase==='station'&&!s.event)return {...s,stationRunning:a.held||s.stationRunning,parent:{...s.parent,sprinting:a.held&&!s.parent.exhausted&&!s.parent.runner.blocked}};
  if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
  if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime||s.parent?'preparation':'route',phaseElapsed:0}:s;
- if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroAnnouncement:undefined,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant,s.character.id),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
+ if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroAnnouncement:undefined,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant,s.character.id),metroDuration:journeyRouteSeconds(s,a.route),metroTimeBudget:journeyRouteBudget(s,a.route),phase:'direction',phaseElapsed:0}:s;
  if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return {...s,phase:'metro',phaseElapsed:0};}
  if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro({...s,metroAnnouncement:undefined}):s;
  if(a.type==='ALIGHT'){
@@ -333,13 +342,6 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='TICK'){
   if(s.phase==='lobby')return s;
   if(!Number.isFinite(a.dt)||a.dt<=0)return s;
-  // A delayed mobile frame must not charge full travel time while only moving
-  // a quarter-second. Substeps also stop at people and event boundaries.
-  if(s.stationMap&&a.dt>.25){
-   let next=s,left=a.dt;
-   while(left>1e-8&&next.phase!=='result'){const step=Math.min(.1,left);next=reducer(next,{type:'TICK',dt:step});left-=step;}
-   return next;
-  }
   const dt=Math.max(0,a.dt);
   let n:Run={...s,remaining:s.remaining-dt*clockRate(s),elapsed:s.elapsed+dt,phaseElapsed:s.phaseElapsed+dt,slow:Math.max(0,s.slow-dt),boost:Math.max(0,s.boost-dt)};
   if(s.student){let u={...s.student,stats:{...s.student.stats},elapsedGame:s.student.elapsedGame+dt*clockRate(s)};
@@ -485,11 +487,21 @@ export function saveRecord(run:Run){const records=readRecords();if(!records.some
 // Reading and choosing run at real time; travel keeps its compressed game clock.
 export function clockRate(s:Run){if(s.stationMap?.block)return s.stationMap.block.mode==='queue'?TIME_SCALE:1;return !s.event&&s.phase==='station'&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked?TIME_SCALE:1;}
 export function reducer(s:Run,a:Action):Run{
+ if(a.type==='TICK'&&Number.isFinite(a.dt)&&s.phase!=='lobby'&&s.phase!=='result'){
+  // A delayed mobile frame must not charge full travel time while only moving
+  // a quarter-second. Substeps also stop at people and event boundaries.
+  if(s.stationMap&&a.dt>.25){
+   let next=s,left=a.dt;
+   while(left>1e-8&&next.phase!=='result'){const step=Math.min(.1,left);next=reducer(next,{type:'TICK',dt:step});left-=step;}
+   return next;
+  }
+ }
  let n=trackMapChildDelay(s,reduceCore(s,a));
  if(n.logs.length>s.logs.length){const eventId=s.event?.id??(a.type==='PREP_PICK'?'prepare-'+PREPARATIONS[s.student?.prep??0]?.id:a.type==='ALIGHT'?'metro-door':'metro-route');n={...n,logs:n.logs.map((l,i)=>i<s.logs.length?l:{...l,eventId:l.eventId??eventId})};}
- if(a.type!=='TICK'||!s.student||!n.student||n===s)return trackTransition(s,n,a);
+ if(a.type!=='TICK'||!s.student||!n.student||n===s)return trackTransition(s,trackTimeLedger(s,n,a,clockRate(s),METRO_SECONDS),a);
  const charged=(n.student.decisionLoss-s.student.decisionLoss)+(n.student.environmentLoss-s.student.environmentLoss);
  const spent=Math.max(0,s.remaining-n.remaining-charged);
  const key=s.phase==='metro'&&!s.event?'journey':s.event?'handling':s.phase==='station'&&s.stationRunning&&!s.student.runner.blocked?'moving':'waiting';
- return trackTransition(s,{...n,student:{...n.student,clockSpent:{...n.student.clockSpent,[key]:n.student.clockSpent[key]+spent}}},a);
+ n={...n,student:{...n.student,clockSpent:{...n.student.clockSpent,[key]:n.student.clockSpent[key]+spent}}};
+ return trackTransition(s,trackTimeLedger(s,n,a,clockRate(s),METRO_SECONDS),a);
 }

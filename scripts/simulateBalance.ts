@@ -85,6 +85,6 @@ export function simulateBalance(options:BalanceOptions):Run{
  }finally{Math.random=oldRandom;}
 }
 export function balanceSummary(s:Run){
- const u=s.student,ledger=u?Object.values(u.clockSpent).reduce((sum,value)=>sum+value,0)+u.decisionLoss+u.environmentLoss:null;
- return {operations:s.metrics.operations.length,station:s.city.id,character:s.character.id,won:s.success,gateMargin:Math.round(s.gateRemaining),realSeconds:Math.round(s.elapsed),initialGateBudget:Math.round(s.initial-STOP_BEFORE),stationBudget:u&&u.stationStart>0?Math.round(u.stationStart-STOP_BEFORE):null,spent:Math.round(s.initial-s.remaining),ledgerError:ledger===null?null:Math.round((ledger-(s.initial-s.remaining))*100)/100,breathStops:u?.breathStops??0,energy:Math.round(u?.stamina??s.characterTime?.energy??s.parent?.energy??0),delay:Math.round(s.logs.reduce((sum,l)=>sum+l.seconds,0))};
+ const u=s.student,ledger=s.timeLedger.entries.reduce((sum,entry)=>sum+entry.seconds,0);
+ return {operations:s.metrics.operations.length,station:s.city.id,character:s.character.id,won:s.success,gateMargin:Math.round(s.gateRemaining),realSeconds:Math.round(s.elapsed),initialGateBudget:Math.round(s.initial-STOP_BEFORE),stationBudget:u&&u.stationStart>0?Math.round(u.stationStart-STOP_BEFORE):null,spent:Math.round(s.initial-s.remaining),ledgerError:Math.round((ledger-(s.initial-s.remaining))*100)/100,breathStops:u?.breathStops??0,energy:Math.round(u?.stamina??s.characterTime?.energy??s.parent?.energy??0),delay:Math.round(s.logs.reduce((sum,l)=>sum+l.seconds,0))};
 }
