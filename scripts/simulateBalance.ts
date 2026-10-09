@@ -4,11 +4,11 @@ import {activeObstacle,mapQueueWait} from '../src/mapObstructions';
 import {trainPoint} from '../src/stationMapTravel';
 import {transferStopIndex} from '../src/metroFlow';
 import {focusWindow} from '../src/studentConfig';
-import type {Choice} from '../src/data';
+import type {Choice,EventConfig} from '../src/data';
 
 export type BalanceCharacter='student'|'worker'|'tourist'|'mom';
 export type BalancePolicy='walk'|'paced'|'sprint';
-export type BalanceOptions={city:string;character?:BalanceCharacter;policy?:BalancePolicy;seed?:number;reading?:number;mistakes?:number;preparation?:string[];hard?:boolean;budgetAdjustment?:number;reference?:boolean;onReferenceMovement?:(stats:ReferenceMovement)=>void;onState?:(run:Run)=>void};
+export type BalanceOptions={city:string;character?:BalanceCharacter;policy?:BalancePolicy;seed?:number;reading?:number;mistakes?:number;preparation?:string[];hard?:boolean;budgetAdjustment?:number;reference?:boolean;choose?:(run:Run,event:EventConfig)=>Choice|undefined;onReferenceMovement?:(stats:ReferenceMovement)=>void;onState?:(run:Run)=>void};
 export function seededRandom(seed:number){return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
 // A repeatable scenario runner, not a model of the probability that a real person wins.
 // It uses real map travel, hold durations, queues and a 4-second burst / 3-second walk cycle.
@@ -52,12 +52,15 @@ export function simulateBalance(options:BalanceOptions):Run{
       s=reducer(s,{type:'POCKET_PICK',pocket});
      }else{advance(1.5);s=reducer(s,{type:'ID_PICK',item:s.identityStage==='wallet'?'wallet':'id'});}continue;
     }
-    if(e.id==='tourist-sleep'){const choice=options.reference?referenceChoice(s,e):e.choices.find(c=>c.label.startsWith('提前 1'))??e.choices[0];select(choice);continue;}
-    if(e.id==='tourist-wake'){select(e.choices[0]);continue;}
+    const override=options.choose?.(s,e);
+    if(override&&!e.choices.includes(override))throw Error('Scenario choice must belong to the active event: '+e.id);
+    if(e.id==='tourist-sleep'){const choice=override??(options.reference?referenceChoice(s,e):e.choices.find(c=>c.label.startsWith('提前 1'))??e.choices[0]);select(choice);continue;}
+    if(e.id==='tourist-wake'){select(override??e.choices[0]);continue;}
     const bad=e.choices.find(c=>c.stationDecision?.category==='navigation'&&!c.stationDecision.optimal);
-    if(mistakes>0&&bad){mistakes--;select(bad);continue;}
+    if(!override&&mistakes>0&&bad){mistakes--;select(bad);continue;}
     let choice:Choice;
-    if(options.reference)choice=referenceChoice(s,e);
+    if(override)choice=override;
+    else if(options.reference)choice=referenceChoice(s,e);
     else {
      choice=e.choices.find(c=>c.stationDecision?.optimal)??e.choices.reduce((best,c)=>c.seconds<best.seconds?c:best,e.choices[0]);
     if(e.id==='vertical-choice')choice=energy()>30?e.choices.find(c=>c.stationDecision?.value==='stairs'||c.studentEffect==='stairs')!:e.choices.at(-1)!;
