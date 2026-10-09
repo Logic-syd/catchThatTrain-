@@ -3,7 +3,7 @@ const createShanghaiRun=(hard=false,rng=Math.random)=>createRun('shanghai','stud
 import {describe,it,expect,vi} from 'vitest';
 import {cities,characters,events} from './data';
 import {stationPrompt,identityPrompt,createStationPlan} from './flow';
-import {planMetroIncident,transferStopIndex} from './metroFlow';
+import {planMetroIncident,metroIncidentCheckpoint,transferStopIndex} from './metroFlow';
 import {createRun,reducer,routeSeconds,TIME_SCALE,METRO_SECONDS,STOP_BEFORE,DOOR_SECONDS,projectedTime,formatTime,saveRecord,readRecords,type Run} from './engine';
 function started(){const s=createShanghaiRun(false,()=>.9);return reducer(reducer(s,{type:'START'}),{type:'ROUTE',route:s.city.spawnStations[0].routes[0]});}
 function ride(){return reducer(started(),{type:'DIRECTION',correct:true});}
@@ -169,7 +169,8 @@ describe('route-linked metro decisions',()=>{
  });
  it('timeouts clear the optional incident and do not cause a second one',()=>{
   const incident=planMetroIncident(ride().route!,.1,.9)!;
-  const s=reducer({...ride(),metroIncident:incident},{type:'TICK',dt:1});
+  const base=ride(),at=metroIncidentCheckpoint(base.route!,incident);
+  const s=reducer({...base,metroIncident:incident,metroProgress:at-.01,metroStopIndex:base.route!.stops.length-2},{type:'TICK',dt:.1});
   const n=reducer(s,{type:'TICK',dt:7});expect(n.event).toBeNull();expect(n.seen).toContain(incident.id);
   expect(travel(n).run.seen.filter(id=>id===incident.id)).toHaveLength(1);
  });

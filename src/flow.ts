@@ -15,7 +15,7 @@ export function createStationPlan(hard=false,rng=Math.random):Encounter[]{
 export function identityPrompt(phase:'metro'|'station'):EventConfig{
  return {id:'identity-search',title:phase==='metro'?'趁现在，找好身份证！':'到闸机了，身份证呢？',description:'先找到钱包，再从里面拿出身份证。',phase,interaction:{kind:'identity',seconds:8,penalty:35},choices:[]};
 }
-const choices=(a:string,b:string,sa:number,sb:number)=>[{label:a,detail:sa?'−'+sa+' 秒':'不额外扣时',seconds:sa},{label:b,detail:'−'+sb+' 秒',seconds:sb}];
+const choices=(a:string,b:string,sa:number,sb:number)=>[{label:a,detail:sa?'−'+sa+' 秒':'',seconds:sa},{label:b,detail:sb?'−'+sb+' 秒':'',seconds:sb}];
 const make=(id:string,title:string,description:string,cs:EventConfig['choices'],interaction:Interaction):EventConfig=>({id,title,description,phase:'station',choices:cs,interaction});
 export function stationPrompt(id:string,hard=false):EventConfig|undefined{
  const cases:Record<string,EventConfig>={
@@ -46,6 +46,21 @@ export function stationPrompt(id:string,hard=false):EventConfig|undefined{
   result.interaction={kind:'choice',seconds:6,penalty:35};
   result.choices=[{label:'借过！我要赶车！',detail:'提醒他们让开 · −5 秒',seconds:5},{label:'从旁边绕过去',detail:'绕开人群 · −2 秒',seconds:2,detour:{x:390,y:1150,label:'从右边绕过扶梯口'}}];
  }
- if(id==='gates'&&result){const queues=[65,48,35,4,32,5,65,10].map(v=>({v,order:Math.random()})).sort((a,b)=>a.order-b.order).map(x=>x.v);result.choices=result.choices.map((c,i)=>({...c,lane:i,seconds:queues[i],detail:'\u6b65\u884c '+Math.round((Math.abs(68+i*72-320)+115)/42*4)+' \u79d2 \u00b7 \u6392\u961f '+queues[i]+' \u79d2'}));}
+ if(id==='gates'&&result){
+  const queues=[
+   {seconds:65,people:4,clue:'队首的人正在翻包找证件',outcome:'排进去才轮到前面的人找证件，等了一阵才放行'},
+   {seconds:48,people:6,clue:'前面几只大箱子正挪过窄闸门',outcome:'大箱子逐个挪过闸门，等到你才继续'},
+   {seconds:35,people:5,clue:'前面的人正把行李一件件推过去',outcome:'跟着前面的人逐个过闸'},
+   {seconds:4,people:3,clue:'证件都拿在手里，绿灯接连亮起',outcome:'前面的证件都已备好，很快轮到你'},
+   {seconds:32,people:2,clue:'两个人还在同一个包里找东西',outcome:'虽然只有两个人，他们还要找出证件'},
+   {seconds:5,people:4,clue:'几个人拿着证件，刚过去一位',outcome:'这一队已经备好证件，顺着队伍通过'},
+   {seconds:65,people:4,clue:'有人反复把手机贴向读卡区',outcome:'前面的旅客反复尝试读卡，队伍停了一阵'},
+   {seconds:10,people:2,clue:'闸门前的人正在收好随身物品',outcome:'前面的人收好东西后，轮到你通过'}
+  ].map(q=>({...q,order:Math.random()})).sort((a,b)=>a.order-b.order);
+  result.choices=result.choices.map((c,i)=>{
+   const q=queues[i],distance=Math.abs(68+i*72-320);
+   return {...c,lane:i,seconds:q.seconds,queuePeople:q.people,outcome:q.outcome,detail:(distance<70?'就在你面前':distance<180?'沿栏杆过去一段':'在另一端')+' · '+q.people+' 人，'+q.clue};
+  });
+ }
  return result;
 }

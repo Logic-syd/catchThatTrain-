@@ -1,7 +1,8 @@
+import {IS_PLAYTEST} from './playtestEnvironment';
 import {STATIONS} from './stations';
 
 export type SharedChallenge={stationId:string;stationName:string;title:string;success:boolean};
-export const SHARE_GAME_URL='https://logic-syd.github.io/catchThatTrain-/';
+export const SHARE_GAME_URL='https://logic-syd.github.io/catchThatTrain-/'+(IS_PLAYTEST?'test/':'');
 
 export function challengeUrl(pageUrl:string,stationId:string,title:string,success:boolean){
  const url=new URL(pageUrl);

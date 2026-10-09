@@ -9,14 +9,18 @@ function tick(s:Run,seconds:number){for(let i=0;i<Math.ceil(seconds*10);i++)s=re
 function select(s:Run,i=0){return reducer(s,{type:'CHOICE',choice:s.event!.choices[i]});}
 function at(id:string,options?:string[]){let s=station(options);s.stationBeat=s.stationJourney.findIndex(b=>b.id===id);s.stationProgress=.999;s.student={...s.student!,runner:{...s.student!.runner,wave:99}};s=reducer(s,{type:'RUN_INPUT',held:true});return tick(s,.1);}
 describe('Hongqiao student chapter',()=>{
- it('starts with 30:00 and three explicit choices, replay has fresh stats',()=>{
-  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1800);expect(s.student!.stats).toEqual(STUDENT.baseStats);
-  const n=prepared(['take','check','eat']);expect(n.phase).toBe('route');expect(n.remaining).toBe(s.remaining-165);expect(n.student!.stats).toEqual({agility:80,energy:100,focus:70,load:15});
+ it('starts with 29:30 and three explicit choices, replay has fresh stats',()=>{
+  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1770);expect(s.student!.stats).toEqual(STUDENT.baseStats);
+  const n=prepared(['take','check','eat']);expect(n.phase).toBe('route');expect(n.remaining).toBe(s.remaining-165);expect(n.student!.stats).toEqual({agility:80,energy:100,focus:70,load:20});
   expect(reducer(n,{type:'PREP_PICK',option:'eat',step:2})).toBe(n);expect(createShanghaiRun().student!.choices).toEqual({});
  });
  it('route choices fit the opening budget and preparation affects walking efficiency',()=>{
   const s=prepared();for(const r of s.city.spawnStations[0].routes)expect(journeyRouteSeconds(s,r)).toBeLessThan(s.remaining-STOP_BEFORE);
-  const bare=prepared(['skip','skip','skip']),cake=prepared(['take','skip','skip']);expect(cake.remaining).toBe(bare.remaining-75);expect(cake.student!.stats.energy).toBeGreaterThan(bare.student!.stats.energy);
+  const bare=prepared(['skip','skip','skip']),cake=prepared(['take','skip','skip']);expect(cake.remaining).toBe(bare.remaining-75);
+  expect(cake.student!.stats).toEqual({...STUDENT.baseStats,focus:60,load:20});
+  expect(bare.student!.stats).toEqual({...STUDENT.baseStats,focus:50});
+  expect(cake.student!.stamina).toBe(STUDENT.baseStats.energy);
+  expect(journeyRouteSeconds(cake,cake.city.spawnStations[0].routes[0])).toBeGreaterThan(journeyRouteSeconds(bare,bare.city.spawnStations[0].routes[0]));
  });
  it('sprinting moves faster, exhausts, cannot be spammed, then recovers',()=>{
   const start=station();start.stationJourney=[{id:'gates',stage:4,label:'long',seconds:100}];
@@ -35,7 +39,7 @@ describe('Hongqiao student chapter',()=>{
   s=reducer(s,{type:'POCKET_PICK',pocket:0});expect(s.identityReady).toBe(true);expect(s.event).toBeNull();expect(s.student!.bagSeconds).toBeGreaterThan(14);
  });
  it('the boxed cake costs 75 seconds, occupies one hand, and drains stamina while moving',()=>{
-  const s=station(['take','skip','skip']);expect(s.student!.cake).toBe(true);expect(s.student!.stats.energy).toBe(100);
+  const s=station(['take','skip','skip']);expect(s.student!.cake).toBe(true);expect(s.student!.stats.energy).toBe(90);
   const stairs=studentPrompt('escalator-ride',{...s.student!,vertical:'stairs'})!;expect(stairs.interaction!.required).toBe(10);
   const plain=station(['skip','skip','skip']);expect(studentPrompt('escalator-ride',{...plain.student!,vertical:'stairs'})!.interaction!.required).toBe(8);
   const cakeWalk=tick(reducer(s,{type:'RUN_INPUT',held:true}),3);

@@ -37,7 +37,7 @@ export const cities:CityConfig[]=[
  {name:'五一公园',routes:[route('zz-w-1',['1'],39,380,'河南大学新区方向','河南工业大学方向',['五一公园','紫荆山','会展中心','郑州东站']),route('zz-w-5',['5'],43,600,'外环 · 月季公园方向','内环 · 桐淮方向',['五一公园','月季公园','黄河路','郑州东站'])]},
  {name:'黄河路',routes:[route('zz-h-5',['5'],24,560,'外环 · 省人民医院方向','内环 · 郑州人民医院方向',['黄河路','省人民医院','金水东路','郑州东站']),route('zz-h-x',['2','1'],29,690,'南四环方向','贾河方向',['黄河路','紫荆山','郑州东站'],'紫荆山')]}]}
 ];
-export type Choice = {stationDecision?:import('./stations').StationDecision;studentEffect?:'escalator'|'stairs'|'lift'|'queue'|'wrong-turn';effect?:'elder-push'|'elder-detour';escalator?:number;boost?:number;detour?:{x:number;y:number;label:string};lane?:number;label:string; detail:string; seconds:number; slow?:number; restore?:boolean; gate?:boolean};
+export type Choice = {outcome?:string;queuePeople?:number;metroEffect?:'door-wait'|'seated-wait';stationDecision?:import('./stations').StationDecision;studentEffect?:'escalator'|'stairs'|'lift'|'queue'|'wrong-turn';effect?:'elder-push'|'elder-detour';escalator?:number;boost?:number;detour?:{x:number;y:number;label:string};lane?:number;label:string; detail:string; seconds:number; slow?:number; restore?:boolean; gate?:boolean};
 export type EventConfig={interaction?:import('./flow').Interaction;id:string;title:string;description:string;phase:'metro'|'station'|'both';choices:Choice[];character?:string[]};
 const event=(id:string,title:string,description:string,seconds:number,alt:string,altSeconds:number,phase:EventConfig['phase']='both',character?:string[]):EventConfig=>({id,title,description,phase,character,choices:[{label:alt,detail:altSeconds?`预计 ${altSeconds} 秒`:'继续赶路',seconds:altSeconds},{label:'稳妥处理',detail:`预计 ${seconds} 秒`,seconds,restore:true}]});
 export const events:EventConfig[]=[

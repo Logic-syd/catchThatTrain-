@@ -1,10 +1,12 @@
-import type { EventConfig, MetroRoute } from './data';
+import type { Choice, EventConfig, MetroRoute } from './data';
+import type {Run} from './engine';
+import {BALANCE} from './balanceConfig';
 import { identityPrompt } from './flow';
 
 export const METRO_INCIDENT_CHANCE = .3;
 
 // Draw once per journey. Rendering, stopping and reopening the map never reroll it.
-export function planMetroIncident(route: MetroRoute, roll: number, variant: number): EventConfig | null {
+export function planMetroIncident(route: MetroRoute, roll: number, variant: number,characterId='student'): EventConfig | null {
  if (roll >= METRO_INCIDENT_CHANCE) return null;
  if (variant < 1 / 3) return identityPrompt('metro');
  if (variant < 2 / 3) return {
@@ -27,13 +29,25 @@ export function planMetroIncident(route: MetroRoute, roll: number, variant: numb
  };
  return {
   id:'metro-announcement',phase:'metro',title:'广播没听清，刚刚报的是哪站？',
-  description:`${route.lines[0]}号线驶过隧道，广播断断续续。要去的是${route.stops.at(-1)}。`,
-  interaction:{kind:'choice',seconds:7,penalty:40},
+  description:`下一站就要到${route.stops.at(-1)}，广播却断断续续。先去门口盯着站名，还是坐着等？`,
+  interaction:{kind:'choice',seconds:7,penalty:0},
   choices:[
-   {label:'看车门上方的站名屏',detail:'重新确认位置 · −5 秒',seconds:5},
-   {label:'问旁边也没听清的乘客',detail:'确认了好一会儿 · −35 秒',seconds:35}
+   {label:'不管哪站，先去门口等着',detail:`−${BALANCE.metroAnnouncement.choiceSeconds} 秒 · ${characterId==='tourist'?'精力':'体力'} −${BALANCE.metroAnnouncement.doorEnergyCost} · 靠门留意站名`,seconds:BALANCE.metroAnnouncement.choiceSeconds,metroEffect:'door-wait'},
+   {label:'老实坐着，等下一站',detail:`−${BALANCE.metroAnnouncement.choiceSeconds} 秒 · 保留体力 · 可能坐过站，折返会耽误 ${BALANCE.metroAnnouncement.missSeconds} 秒`,seconds:BALANCE.metroAnnouncement.choiceSeconds,metroEffect:'seated-wait'}
   ]
  };
+}
+
+export function metroIncidentCheckpoint(route:MetroRoute,incident:EventConfig|null):number{
+ return incident?.id==='metro-announcement'?(route.stops.length-2+.14)/(route.stops.length-1):.14;
+}
+export function applyMetroAnnouncement(s:Run,c:Choice):Run{
+ const door=c.metroEffect==='door-wait',cost=door?BALANCE.metroAnnouncement.doorEnergyCost:0;
+ return {...s,metroAnnouncement:{mode:door?'door':'seated',miss:!door&&(s.metroAnnouncementRoll??.5)<BALANCE.metroAnnouncement.missChance},
+  student:s.student?{...s.student,stamina:Math.max(0,s.student.stamina-cost),doorReady:door}:undefined,
+  characterTime:s.characterTime?{...s.characterTime,energy:Math.max(0,s.characterTime.energy-cost)}:undefined,
+  parent:s.parent?{...s.parent,energy:Math.max(0,s.parent.energy-cost)}:undefined,
+  stamina:Math.max(0,(s.student?.stamina??s.characterTime?.energy??s.parent?.energy??s.stamina)-cost)};
 }
 
 export function transferStopIndex(route: MetroRoute): number {

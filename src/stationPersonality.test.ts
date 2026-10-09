@@ -67,8 +67,8 @@ describe('fixed station personalities and character tasks',()=>{
   expect(buildStationJourney(withCall).filter(b=>b.id==='worker-boss-call')).toHaveLength(2);
  });
  it('route decisions change later tasks for workers and tourists too',()=>{
-  const outer=select(at('guangzhou','tourist','gz-route'),'看标识，走外围连桥');
-  const center=select(at('guangzhou','tourist','gz-route'),'听热心人，挤中区近路');
+  const outer=select(at('guangzhou','tourist','gz-route'),'走外围连桥');
+  const center=select(at('guangzhou','tourist','gz-route'),'跟着热心人穿中区');
   expect(outer.stationJourney.some(b=>b.id==='gz-lift')).toBe(false);
   expect(center.stationJourney.some(b=>b.id==='gz-lift')).toBe(true);
   const stairs=select(at('wuhan','worker','vertical-choice'),'走楼梯');

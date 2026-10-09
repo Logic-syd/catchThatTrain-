@@ -1,12 +1,18 @@
+import {readGameStorage,writeGameStorage} from './playtestEnvironment';
+import {initialMapTravel,setMapDestination,advanceOnMap,mapDistance,mapTaskPoint,mapPath,pathLength,type MapTravel,type MapPoint} from './stationMapTravel';
+import {activeObstacle,bypassObstacle,clearMapObstacle,mapSecurityBlock,advanceMapQueues,mapQueueWait,obstructionTitle,type ClearMethod} from './mapObstructions';
+import {trackMapChildDelay} from './mapTimeFeedback';
 import {freshMetrics,trackTransition,type RunMetrics} from './resultMetrics';
-import {applyCharacterEvent,applyTimedChoice,characterEventPrompt,characterMovementFactor,createCharacterTimeState,type CharacterTimeState} from './characterTime';
+import {applyCharacterEvent,applyTimedChoice,characterEventPrompt,characterMovementFactor,createCharacterTimeState,tickCharacterTime,type CharacterTimeState} from './characterTime';
+import {BALANCE} from './balanceConfig';
+import {applyJourneyDecision,prepareNextJourney} from './journeyRules';
 import {summarizeRun} from './outcomes';
 import {stationFor,stationChallenge,STATIONS,type StationDecision} from './stations';
 import {runnerWave} from './runner';
 import {STUDENT,HONGQIAO,PREPARATIONS,studentState,gameShanghai,movementFactor,focusWindow,studentPrompt,type StudentState} from './studentConfig';
 import { cities, characters, events, type CityConfig, type CharacterConfig, type MetroRoute, type EventConfig, type Choice } from './data';
 import { identityPrompt, stationPrompt, createStationPlan, type Encounter } from './flow';
-import { planMetroIncident, transferStopIndex, METRO_INCIDENT_CHANCE } from './metroFlow';
+import { planMetroIncident,applyMetroAnnouncement,metroIncidentCheckpoint,transferStopIndex, METRO_INCIDENT_CHANCE } from './metroFlow';
 import { createStationLuck, elderPrompt, elderOutcome, escalatorPrompt, escalatorRide, type StationLuck } from './stationEncounters';
 import {buildStationJourney,journeyPrompt,type StationBeat} from './stationJourney';
 import {applyParentChoice,applyParentPreparation,createParentState,isParentBlock,parentBlockPrompt,parentMovementFactor,tickParent,type ParentState} from './parent';
@@ -16,7 +22,7 @@ export const DOOR_SECONDS = 4;
 export const STOP_BEFORE = 180;
 export type Phase='preparation'|'lobby'|'route'|'direction'|'wrong'|'metro'|'arrival'|'transfer'|'metro-recovery'|'station'|'result';
 export type Log={title:string;seconds:number;eventId?:string};
-export type Run={metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
+export type Run={metroAnnouncementRoll?:number;metroAnnouncement?:{mode:'door'|'seated';miss:boolean};stationMap?:MapTravel;metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
 export function pick<T>(array:T[],rng=Math.random):T{return array[Math.floor(rng()*array.length)]!;}
 export function routeSeconds(route:MetroRoute,character:CharacterConfig){return route.minutes*60+route.walk/1.5/character.speed+route.transfers*(character.stroller?90:character.luggage?45:20);}
 export function createRun(cityId?:string,characterId?:string,hard=false,first=false,rng=Math.random):Run{
@@ -27,7 +33,8 @@ export function createRun(cityId?:string,characterId?:string,hard=false,first=fa
  // Seven seconds of travel, split by real stop decisions. Dwell time is additional.
  const metroIncidentRoll=rng(),metroIncidentVariant=rng();
  const initial=best+(hard?420:522)/character.speed+STOP_BEFORE;
- return {metrics:freshMetrics(),stationDecisions:[],endEventId:null,id:crypto.randomUUID(),city,character,spawn,hard,initial,remaining:initial,departure:15*3600,phase:'lobby',metroProgress:0,metroDuration:0,elapsed:0,phaseElapsed:0,event:null,eventElapsed:0,seen:[],logs:[],slow:0,gate:city.stationConfig.gate,gatePassed:false,gateRemaining:0,stage:0,distance:970,success:false,stationEvents:0,stamina:100,stationLane:null,metroMisses:0,metroStopIndex:0,metroTransferred:false,metroIncidentRoll,metroIncidentVariant,metroIncident:null,metroRecoveryMessage:'',metroRecoveryTarget:'metro',identityEarly:metroIncidentRoll<METRO_INCIDENT_CHANCE&&metroIncidentVariant<1/3,identityReady:false,identityStage:"wallet",identityItems:shuffle(["wallet","phone","keys","headphones","bottle","umbrella","notebook","pen","glasses","charger","tissue","snack","lipstick","comb","watch","camera","sock","sanitizer"],rng),identityCards:shuffle(["id","bank","metro","student","photo","receipt"],rng),encounters:createStationPlan(hard,rng),detour:null,stationLuck:createStationLuck(rng),escalatorLane:null,boost:0,stationJourney:[],stationBeat:0,stationProgress:0,stationRunning:false,eventOverdue:false};
+ const run:Run={metrics:freshMetrics(),stationDecisions:[],endEventId:null,id:crypto.randomUUID(),city,character,spawn,hard,initial,remaining:initial,departure:15*3600,phase:'lobby',metroProgress:0,metroDuration:0,elapsed:0,phaseElapsed:0,event:null,eventElapsed:0,seen:[],logs:[],slow:0,gate:city.stationConfig.gate,gatePassed:false,gateRemaining:0,stage:0,distance:970,success:false,stationEvents:0,stamina:100,stationLane:null,metroMisses:0,metroStopIndex:0,metroTransferred:false,metroIncidentRoll,metroIncidentVariant,metroIncident:null,metroRecoveryMessage:'',metroRecoveryTarget:'metro',identityEarly:metroIncidentRoll<METRO_INCIDENT_CHANCE&&metroIncidentVariant<1/3,identityReady:false,identityStage:"wallet",identityItems:shuffle(["wallet","phone","keys","headphones","bottle","umbrella","notebook","pen","glasses","charger","tissue","snack","lipstick","comb","watch","camera","sock","sanitizer"],rng),identityCards:shuffle(["id","bank","metro","student","photo","receipt"],rng),encounters:createStationPlan(hard,rng),detour:null,stationLuck:createStationLuck(rng),escalatorLane:null,boost:0,stationJourney:[],stationBeat:0,stationProgress:0,stationRunning:false,eventOverdue:false};
+ return {...run,metroAnnouncementRoll:rng()};
 }
 export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):Run{
  const s=createRun('shanghai','student',hard,true,rng);const original=cities.find(c=>c.id===cityId)??cities[0];
@@ -38,7 +45,7 @@ export function createStationRun(cityId='shanghai',hard=false,rng=Math.random):R
  // Student runs budget for a viable route, the station's walking distance,
  // and a short decision buffer. Pricing from the slowest route made every other
  // route finish with many unused minutes and removed the stakes from route choice.
- const initial=Math.ceil((best+chapter.walking+240)/30)*30+STOP_BEFORE-(hard?HONGQIAO.studentHardReduction:0);
+ const initial=Math.ceil((best+chapter.walking+BALANCE.studentDecisionBuffer[chapter.id])/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction.student:0);
  return {...s,city,gate:chapter.gate,initial,remaining:initial,student:studentState(rng)};
 }
 export function createCharacterStationRun(cityId='shanghai',characterId:'student'|'worker'|'tourist'|'mom'='student',hard=false,rng=Math.random):Run{
@@ -47,12 +54,14 @@ export function createCharacterStationRun(cityId='shanghai',characterId:'student
  if(characterId==='mom'){
   const parent=createParentState(rng);
   const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
-  const initial=Math.ceil((best+chapter.walking/parentMovementFactor(parent)+200)/30)*30+STOP_BEFORE-(hard?105:0);
+  const initial=Math.ceil((best+chapter.walking/parentMovementFactor(parent)+BALANCE.parentDecisionBuffer[chapter.id])/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction.mom:0);
   return {...base,character,student:undefined,parent,initial,remaining:initial,stamina:parent.energy,phase:'lobby'};
  }
  const characterTime=createCharacterTimeState(characterId,rng);
- const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>r.minutes*60+r.walk/1.5/character.speed+r.transfers*20));
- const initial=(cityId==='shanghai'?HONGQIAO.initial:Math.ceil((best+chapter.walking+480)/30)*30)+STOP_BEFORE-(hard?HONGQIAO.hardReduction:0);
+ const context={...base,character,student:undefined,characterTime};
+ const factor=characterMovementFactor(context,false);
+ const best=Math.min(...base.city.spawnStations[base.spawn].routes.map(r=>journeyRouteSeconds(context,r)));
+ const initial=Math.ceil((best+chapter.walking/factor+BALANCE.characterDecisionBuffer[characterId]+(BALANCE.characterStationExtra[characterId][chapter.id]??0))/30)*30+STOP_BEFORE-(hard?BALANCE.hardReduction[characterId]:0);
  return {...base,character,student:undefined,characterTime,initial,remaining:initial,stamina:characterTime.energy,phase:'lobby'};
 }
 export function createShanghaiRun(hard=false,rng=Math.random):Run{return createStationRun('shanghai',hard,rng);}
@@ -69,12 +78,20 @@ export function randomEvent(s:Run,phase:'metro'|'station'):EventConfig{
  const pool=events.filter(e=>!s.seen.includes(e.id)&&(!e.character||e.character.includes(s.character.id))&&(e.phase===phase||e.phase==='both')&&!e.id.includes('-'));
  return pick(pool.length?pool:[events[0]]);
 }
-export type Action={type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
-function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??null,phase:'result',event:null,success};}
+export type Action={type:'MAP_CLEAR';method:ClearMethod;lane?:number}|{type:'MAP_ENABLE';manual?:boolean}|{type:'MAP_TARGET';point:MapPoint}|{type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
+function stopSprint(s:Run):Run{return {...s,stationMap:s.stationMap?.manual?{...s.stationMap,driveHeld:false}:s.stationMap,stationRunning:false,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined};}
+function enterMapTask(s:Run):Run{
+ if(s.stationJourney[s.stationBeat]?.id==='security-queue'){
+  const {obstacle,block}=mapSecurityBlock(s,mapTaskPoint(s));
+  return stopSprint({...s,stationProgress:1,stationMap:{...s.stationMap!,block,obstacles:[...s.stationMap!.obstacles.filter(o=>o.id!==obstacle.id),obstacle]}});
+ }
+ return stopSprint({...s,stationProgress:1,event:journeyPrompt(s),eventElapsed:0,eventOverdue:false});
+}
+function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??s.stationMap?.block?.id??null,phase:'result',event:null,success};}
 function deadline(s:Run):Run{return s.remaining<=(s.gatePassed?0:STOP_BEFORE)?finish(s):s;}
-function choice(s:Run,c:Choice,title=s.event?.title||'途中耽误'):Run{
- if(c.stationDecision){const d=c.stationDecision;let beats=s.stationJourney.filter(b=>!d.skip?.includes(b.id));if(d.travelScale&&beats[s.stationBeat+1])beats=beats.map((b,i)=>i===s.stationBeat+1?{...b,seconds:b.seconds*(d.travelScale??1)}:b);
-  s={...s,stationJourney:beats,stationDecisions:[...s.stationDecisions,d],student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+(d.category==='navigation'&&!d.optimal?1:0),stamina:d.group==='gz-lift'?Math.max(0,Math.min(s.student.stats.energy,s.student.stamina+(d.value==='stairs'?-22:25))):s.student.stamina}:undefined};
+function choice(s:Run,c:Choice,title=c.outcome??s.event?.title??'途中耽误'):Run{
+ if(c.stationDecision){const d=c.stationDecision;
+  s={...applyJourneyDecision(s,d),student:s.student?{...s.student,wrongTurns:s.student.wrongTurns+(d.category==='navigation'&&!d.optimal?1:0),stamina:d.group==='gz-lift'?Math.max(0,Math.min(s.student.stats.energy,s.student.stamina+(d.value==='stairs'?-22:25))):s.student.stamina}:undefined};
  }
 
  if(s.student){let u={...s.student,decisionLoss:s.student.decisionLoss+c.seconds};
@@ -95,13 +112,17 @@ function completeStationBeat(s:Run):Run{
  if(beat.id==='board-train')return finish(s,true);
  const gate=beat.id==='gate-scan';
  let index=s.stationBeat+1;
- if(s.characterTime?.characterId==='worker'&&beat.id==='worker-boss-call'&&s.characterTime.bossCallsLeft===0){s={...s,stationJourney:s.stationJourney.filter((b,i)=>i<=s.stationBeat||b.id!=='worker-boss-call')};}
- const vertical=s.student?.vertical??[...s.stationDecisions].reverse().find(d=>d.group==='vertical-choice')?.value;
- if(beat.id==='vertical-choice'&&vertical&&vertical!=='escalator'){const name=vertical==='stairs'?'楼梯':'直达电梯';s={...s,stationJourney:s.stationJourney.filter(b=>b.id!=='escalator-choice').map(b=>b.id==='escalator-ride'?{...b,label:'走向选中的'+name}:b)};}
+ s=prepareNextJourney(s);
  if(s.student)s={...s,student:{...s.student,sprinting:false,observed:false,runner:{...s.student.runner,wave:0,blocked:false}}};
  if(s.characterTime)s={...s,characterTime:{...s.characterTime,sprinting:false,runner:{...s.characterTime.runner,wave:0,blocked:false}}};
  if(s.parent)s={...s,parent:{...s.parent,sprinting:false,runner:{...s.parent.runner,wave:0,blocked:false}}};
- return {...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationProgress:0,stationRunning:false,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
+ let next:Run={...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationMap:s.stationMap?{...s.stationMap,path:[],legBeat:-1}:undefined,stationProgress:0,stationRunning:false,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
+ if(next.stationMap?.destination){
+  const goal=next.stationMap.destination;
+  if(mapDistance(next.stationMap.position,goal)>.1){next={...next,stationMap:setMapDestination(next,goal)};next.stationRunning=next.stationMap!.path.length>0&&(!next.stationMap!.manual||!!next.stationMap!.driveHeld);}
+  else next.stationMap={...next.stationMap,destination:null};
+ }
+ return next;
 }
 function recoverMetro(s:Run,title:string,seconds:number,target:'metro'|'arrival'):Run{
  if(s.student)s={...s,student:{...s.student,decisionLoss:s.student.decisionLoss+seconds,wrongTurns:s.student.wrongTurns+(title.startsWith('坐过')?0:1),doorReady:false}};
@@ -124,11 +145,59 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='PARENT_RELEASE'&&s.parent&&s.phase==='station'&&s.parent.carrying&&s.city.id!=='guangzhou')return {...s,parent:{...s.parent,carrying:false,gap:0}};
  if(a.type==='READ_MAP'&&s.characterTime)return {...s,characterTime:{...s.characterTime,mapChecked:true}};
  if(a.type==='PERSON_PICK'&&s.characterTime&&s.phase==='preparation'&&s.characterTime.prepStep===a.step)return deadline(applyTimedChoice(s,a.option));
+ if(a.type==='MAP_ENABLE'){
+  if(s.phase!=='station')return s;
+  if(!s.stationMap)return {...s,stationMap:{...initialMapTravel(s),manual:!!a.manual,driveHeld:false},stationRunning:false};
+  if(a.manual&&!s.stationMap.manual)return stopSprint({...s,stationMap:{...s.stationMap,manual:true,driveHeld:false}});
+  return s;
+ }
+ if(a.type==='MAP_CLEAR'){
+  if(s.phase!=='station'||s.event||!s.stationMap?.block)return s;
+  const map=s.stationMap,block=map.block!,obstacle=activeObstacle(map);if(!obstacle)return s;
+  if(a.method==='join'&&obstacle.kind==='security'&&block.mode!=='tray'&&a.lane!==undefined&&Number.isInteger(a.lane)&&block.queues[a.lane]){
+   if(block.mode==='queue'&&block.lane===a.lane)return s;
+   const q=block.queues[a.lane];
+   const duration=mapQueueWait(q);
+   return {...s,stationMap:{...map,block:{...block,mode:duration>0?'queue':'tray',elapsed:0,duration,lane:a.lane}},stationDecisions:[...s.stationDecisions,{group:'security-queue',value:String(a.lane),category:'queue',optimal:duration===Math.min(...block.queues.map(mapQueueWait))}]};
+  }
+  if(a.method==='tray'&&obstacle.kind==='security'&&block.mode==='tray'){
+   const n={...s,stationMap:clearMapObstacle(map),logs:[...s.logs,{title:'队伍终于轮到你，放好背包，安检放行',seconds:block.waited,eventId:'map-security'}]};
+   let next=completeStationBeat(n);
+   // Beijing's old tray beat is the same bag operation just completed on the map.
+   if(next.stationJourney[next.stationBeat]?.id==='bj-tray')next=completeStationBeat(next);
+   return {...next,stationMap:{...next.stationMap!,notice:'安检放行，拿好背包继续跑！'}};
+  }
+  if(block.mode!=='stopped')return s;
+  if((a.method==='sidestep'&&['door','landing','child','crowd'].includes(obstacle.kind))||(a.method==='leave'&&obstacle.kind==='closed'))return {...s,stationMap:bypassObstacle(map,obstacle),stationRunning:!map.manual||!!map.driveHeld,student:s.student?{...s.student,runner:{...s.student.runner,dodges:s.student.runner.dodges+1}}:undefined,characterTime:s.characterTime?{...s.characterTime,runner:{...s.characterTime.runner,dodges:s.characterTime.runner.dodges+1}}:undefined,parent:s.parent?{...s.parent,runner:{...s.parent.runner,dodges:s.parent.runner.dodges+1}}:undefined,logs:[...s.logs,{title:obstacle.kind==='closed'?'人工窗口未开放，改走自助通道':'侧身绕开：'+obstructionTitle(obstacle.kind),seconds:0,eventId:obstacle.id}]};
+  if(a.method==='ask'&&['door','landing','crowd'].includes(obstacle.kind))return {...s,stationMap:{...map,block:{...block,mode:'yielding',elapsed:0,duration:.8+obstacle.phase/6.28*.8}}};
+  if(a.method==='wait'&&obstacle.kind==='child')return {...s,stationMap:{...map,block:{...block,mode:'waiting',elapsed:0,duration:2.2}}};
+  return s;
+ }
+ if(a.type==='MAP_TARGET'){
+  if(s.phase!=='station'||s.event||!s.stationMap||s.stationMap.block||!Number.isFinite(a.point.x)||!Number.isFinite(a.point.y))return s;
+  if(s.stationMap.bypassing)return {...s,stationRunning:s.stationMap.path.length>0&&(!s.stationMap.manual||!!s.stationMap.driveHeld)};
+  const stationMap=setMapDestination(s,a.point);if(mapDistance(stationMap.position,mapTaskPoint(s))<.05)return enterMapTask({...s,stationMap});return {...s,stationMap,stationRunning:stationMap.path.length>0&&(!stationMap.manual||!!stationMap.driveHeld)};
+ }
+ if(a.type==='RUN_INPUT'&&s.stationMap?.manual&&s.phase==='station'){
+  if(!a.held)return stopSprint(s);
+  if(s.event||s.stationMap.block||!s.stationMap.path.length)return s;
+  return {...stopSprint(s),stationMap:{...s.stationMap,driveHeld:true},stationRunning:true};
+ }
+ if(a.type==='SPRINT_INPUT'&&s.stationMap?.manual&&s.phase==='station'){
+  if(s.event||s.stationMap.block||!s.stationMap.path.length)return s;
+  s={...s,stationMap:{...s.stationMap,driveHeld:a.held||s.stationMap.driveHeld}};
+ }
+ if((a.type==='SPRINT_INPUT'||a.type==='RUN_INPUT')&&s.stationMap?.block)return s;
+ if(a.type==='SPRINT_INPUT'&&a.held&&s.stationMap&&!s.stationMap.path.length)return s;
+ if(a.type==='PREPARE_DOOR'&&s.phase==='metro'&&!s.event&&s.metroAnnouncement?.mode==='seated'){
+  const door:Choice={label:'改变主意，去门口等着',detail:'',seconds:BALANCE.metroAnnouncement.choiceSeconds,metroEffect:'door-wait'};
+  return choice(applyMetroAnnouncement(s,door),door,door.label);
+ }
  if(s.student){
   let u=s.student;
   if(a.type==='PREP_PICK'){
    if(s.phase!=='preparation'||a.step!==u.prep)return s;const prep=PREPARATIONS[u.prep],option=prep?.options.find(o=>o.id===a.option);if(!option)return s;
-   const stats={...u.stats};for(const [key,value] of Object.entries(option.stats??{}))stats[key as keyof typeof stats]=Math.min(100,stats[key as keyof typeof stats]+value!);
+   const stats={...u.stats};for(const [key,value] of Object.entries(option.stats??{}))stats[key as keyof typeof stats]=Math.max(0,Math.min(100,stats[key as keyof typeof stats]+value!));
    u={...u,stats,stamina:stats.energy,prep:u.prep+1,choices:{...u.choices,[prep.id]:option.id},decisionLoss:u.decisionLoss+option.seconds,cake:prep.id==='cake'?option.id==='take':u.cake,checkedID:prep.id==='id'?option.id==='check':u.checkedID,breakfast:prep.id==='breakfast'?option.id==='eat':u.breakfast};
    if(u.checkedID)u.pocket=0;
    return deadline({...s,student:u,remaining:s.remaining-option.seconds,phase:u.prep===PREPARATIONS.length?'route':'preparation',logs:[...s.logs,{title:option.label,seconds:option.seconds}]});
@@ -158,11 +227,12 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='SPRINT_INPUT'&&s.parent&&s.phase==='station'&&!s.event)return {...s,stationRunning:a.held||s.stationRunning,parent:{...s.parent,sprinting:a.held&&!s.parent.exhausted&&!s.parent.runner.blocked}};
  if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
  if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime||s.parent?'preparation':'route',phaseElapsed:0}:s;
- if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
+ if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroAnnouncement:undefined,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant,s.character.id),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
  if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return {...s,phase:'metro',phaseElapsed:0};}
- if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro(s):s;
+ if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro({...s,metroAnnouncement:undefined}):s;
  if(a.type==='ALIGHT'){
   if(s.phase!=='arrival'||s.event)return s;
+  s={...s,metroAnnouncement:undefined};
   if(s.student){const delay=s.student.doorReady?0:12;s=deadline({...s,remaining:s.remaining-delay,student:{...s.student,decisionLoss:s.student.decisionLoss+delay,doorSavings:s.student.doorSavings+(delay?0:12)},logs:[...s.logs,{title:delay?'没提前靠门，挤过人群':'提前靠门，快速下车',seconds:delay}]});if(s.phase==='result')return s;}
 
   if(s.metroStopIndex===transferStopIndex(s.route!)&&!s.metroTransferred)return {...s,phase:'transfer',event:s.student?{id:'transfer-run',title:'跟着换乘标识，跑过通道！',description:'连续点击六次，主动完成换乘。',phase:'metro',interaction:{kind:'tap',required:6,seconds:12,penalty:0},choices:[{label:'换乘完成',detail:'继续上车',seconds:0}]}:null,phaseElapsed:0,metroTransferred:true,logs:[...s.logs,{title:'在'+s.route!.stops[s.metroStopIndex]+'换乘'+s.route!.lines[1]+'号线',seconds:0}]};
@@ -179,6 +249,10 @@ function reduceCore(s:Run,a:Action):Run{
  }
  if(a.type==='CHOICE'){
   if(!s.event||s.event.id==='identity-search')return s;
+  if(s.event.id==='metro-announcement'){
+   const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
+   return choice(applyMetroAnnouncement(s,selected),selected,selected.label);
+  }
   if(s.parent&&isParentBlock(s.event.id)){
    const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
    const parent=applyParentChoice(s.parent,s.event.id,selected.label,selected.seconds);
@@ -258,6 +332,14 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='WIN')return s.phase==='station'&&s.gatePassed&&s.remaining>0?finish(s,true):s;
  if(a.type==='TICK'){
   if(s.phase==='lobby')return s;
+  if(!Number.isFinite(a.dt)||a.dt<=0)return s;
+  // A delayed mobile frame must not charge full travel time while only moving
+  // a quarter-second. Substeps also stop at people and event boundaries.
+  if(s.stationMap&&a.dt>.25){
+   let next=s,left=a.dt;
+   while(left>1e-8&&next.phase!=='result'){const step=Math.min(.1,left);next=reducer(next,{type:'TICK',dt:step});left-=step;}
+   return next;
+  }
   const dt=Math.max(0,a.dt);
   let n:Run={...s,remaining:s.remaining-dt*clockRate(s),elapsed:s.elapsed+dt,phaseElapsed:s.phaseElapsed+dt,slow:Math.max(0,s.slow-dt),boost:Math.max(0,s.boost-dt)};
   if(s.student){let u={...s.student,stats:{...s.student.stats},elapsedGame:s.student.elapsedGame+dt*clockRate(s)};
@@ -268,7 +350,7 @@ function reduceCore(s:Run,a:Action):Run{
    const recovery=(running?STUDENT.walkRecover:STUDENT.recover)*(.65+u.stats.energy/100*.4667)*(1-u.stats.load/250)*(u.late?STUDENT.lateRecovery:1);
    u.stamina=Math.max(0,Math.min(u.stats.energy,u.stamina+((sprint?-STUDENT.drain:recovery)-(running&&u.cake?(sprint?STUDENT.cakeSprintDrain:STUDENT.cakeWalkDrain):0))*dt));
    if(sprint)u.sprintStrain+=dt;
-   else if(s.phase==='station'&&!s.event&&!u.runner.blocked&&(!running||!u.exhausted))u.sprintStrain=Math.max(0,u.sprintStrain-(running?1.5:2)*dt);
+   else if(s.phase==='station'&&!s.event&&!s.stationMap?.block&&!u.runner.blocked&&(!running||!u.exhausted))u.sprintStrain=Math.max(0,u.sprintStrain-(running?1.5:2)*dt);
    if(u.stamina===0){u.exhausted=true;u.sprinting=false;}else if(u.exhausted&&u.stamina>=15)u.exhausted=false;
    if(running){u.movingSeconds+=dt;if(sprint){u.sprintSeconds+=dt;u.sprintSaved+=dt*TIME_SCALE*(movementFactor(s.student)/movementFactor({...s.student,sprinting:false,exhausted:false})-1);}}
    if(s.event){u.eventTime={...u.eventTime,[s.event.id]:(u.eventTime[s.event.id]??0)+dt*clockRate(s)};}
@@ -278,16 +360,16 @@ function reduceCore(s:Run,a:Action):Run{
    if(s.phase==='transfer')u.transferSeconds+=dt*clockRate(s);
    n.student=u;
    if(sprint&&u.sprintStrain>=STUDENT.breathLimit){
-    n={...n,student:{...u,sprinting:false,sprintStrain:0,breathStops:u.breathStops+1},stationRunning:false,event:{id:'student-breath',phase:'station',title:'冲太猛，岔气了！',description:`你一直在冲，呼吸乱了。这次停步要花 ${STUDENT.breathPenalty} 秒；走路或主动停下能提前缓解冲刺负荷。`,interaction:{kind:'hold',required:1.5,seconds:10,penalty:0},choices:[{label:'按住调整呼吸',detail:`耽误 ${STUDENT.breathPenalty} 秒 · 恢复体力`,seconds:STUDENT.breathPenalty}]},eventElapsed:0,eventOverdue:false};
+    n={...n,student:{...u,sprinting:false,sprintStrain:0,breathStops:u.breathStops+1},stationMap:n.stationMap?.manual?{...n.stationMap,driveHeld:false}:n.stationMap,stationRunning:false,event:{id:'student-breath',phase:'station',title:'冲太猛，岔气了！',description:`你一直在冲，呼吸乱了。这次停步要花 ${STUDENT.breathPenalty} 秒；走路或主动停下能提前缓解冲刺负荷。`,interaction:{kind:'hold',required:1.5,seconds:10,penalty:0},choices:[{label:'按住调整呼吸',detail:`耽误 ${STUDENT.breathPenalty} 秒 · 恢复体力`,seconds:STUDENT.breathPenalty}]},eventElapsed:0,eventOverdue:false};
     return deadline(n);
    }
   }
-  if(s.characterTime){const t={...s.characterTime};const running=s.phase==='station'&&s.stationRunning&&!s.event;const factor=characterMovementFactor(s,t.sprinting&&!t.exhausted);const profile=t.characterId==='worker'?{drain:5,recover:1.15,rest:3.5,fatigue:.001}:{drain:6,recover:.35,rest:2.5,fatigue:.003};const fatigueRecovery=t.fatigue>=80?.75:t.fatigue>=60?.85:1;t.energy=Math.max(0,Math.min(t.maxEnergy,t.energy+(t.sprinting&&!t.exhausted?-profile.drain:running?profile.recover:profile.rest)*dt*(t.characterId==='tourist'?fatigueRecovery:1)));if(t.energy<=.01){t.exhausted=true;t.sprinting=false;}else if(t.energy>=10)t.exhausted=false;t.fatigue=Math.max(0,Math.min(100,t.fatigue+(running?profile.fatigue*dt:-profile.fatigue*.25*dt)));n={...n,characterTime:t,stamina:t.energy};}
+  if(s.characterTime){const t=tickCharacterTime(s.characterTime,dt,s.phase==='station'&&s.stationRunning&&!s.event&&!s.stationMap?.block);n={...n,characterTime:t,stamina:t.energy};}
   if(s.parent){
    const running=s.phase==='station'&&s.stationRunning&&!s.event&&!s.parent.runner.blocked;
    n.parent=tickParent(s.parent,s.phase,dt,s.phase==='metro'?0:dt*clockRate(s),running);
    n.stamina=n.parent.energy;
-   if(s.phase==='station'&&!s.event){const block=parentBlockPrompt(n.parent);if(block)return deadline({...n,event:block,eventElapsed:0,eventOverdue:false,stationRunning:false,parent:{...n.parent,sprinting:false}});}
+   if(s.phase==='station'&&!s.event&&!s.stationMap?.block){const block=parentBlockPrompt(n.parent);if(block)return deadline(stopSprint({...n,event:block,eventElapsed:0,eventOverdue:false}));}
   }
   if(s.event){
    n.eventElapsed+=dt;
@@ -307,7 +389,8 @@ function reduceCore(s:Run,a:Action):Run{
     return deadline(n);
    }
    if(n.eventElapsed>=(s.event.interaction?.seconds??10)){
-    if(s.event.id==='elder-block')n=choice(n,s.event.choices[0],'没选，自动绕开老人');
+    if(s.event.id==='metro-announcement'){const seated=s.event.choices[1];n=choice(applyMetroAnnouncement(n,seated),seated,'还坐着等下一站');}
+    else if(s.event.id==='elder-block')n=choice(n,s.event.choices[0],'没选，自动绕开老人');
     else if(s.event.id==='escalator-choice')n=choice(n,s.event.choices[1],'没选，走中间的 2 号扶梯');
     else if(s.event.id==='escalator-ride')n=choice(n,s.event.choices.at(-1)!,'跟着扶梯上楼');
     else if(s.event.id==='tourist-wake')n=recoverMetro({...applyCharacterEvent(n,'tourist-wake','再睡一下'),event:null,eventElapsed:0},'闹钟没叫醒，坐过一站后折返',s.event.interaction?.penalty??80,'arrival');
@@ -315,9 +398,39 @@ function reduceCore(s:Run,a:Action):Run{
    }
    return deadline(n);
   }
+  if(s.phase==='station'&&s.stationMap?.block){
+   const map=s.stationMap,block=map.block!,waiting=['queue','waiting','yielding'].includes(block.mode);
+   if(!waiting){
+    if(block.queues.length)n.stationMap={...map,block:{...block,queues:advanceMapQueues(block.queues,dt*clockRate(s)/TIME_SCALE)}};
+    return deadline(n);
+   }
+   const waitingDt=Math.min(dt,Math.max(0,block.duration-block.elapsed)),progress=block.elapsed+waitingDt,elapsed=block.duration-progress<1e-9?block.duration:progress,waited=block.waited+waitingDt*clockRate(s);
+   // The frame remainder runs at normal time once the queue has stopped at the tray.
+   n.remaining+=(dt-waitingDt)*(clockRate(s)-1);
+   const queues=advanceMapQueues(block.queues,(waitingDt*clockRate(s)+dt-waitingDt)/TIME_SCALE);
+   n.stationMap={...map,block:{...block,elapsed,waited,queues}};
+   if(n.student)n.student={...n.student,environmentLoss:n.student.environmentLoss+waitingDt*clockRate(s)};
+   if(elapsed>=block.duration){
+    if(block.mode==='queue')n.stationMap={...n.stationMap,block:{...n.stationMap.block!,mode:'tray'}};
+    else {n.stationMap=clearMapObstacle(n.stationMap);n.stationRunning=n.stationMap.path.length>0&&(!n.stationMap.manual||!!n.stationMap.driveHeld);n.logs=[...n.logs,{title:'前面的人让开，继续赶路',seconds:waited,eventId:block.id}];}
+   }
+   return deadline(n);
+  }
   if(s.phase==='station'&&s.stationJourney.length){
    const beat=s.stationJourney[s.stationBeat];
-   if(beat&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked&&!s.characterTime?.exhausted){
+   if(s.stationMap){
+    if(beat&&s.stationRunning){
+     const speed=s.parent?parentMovementFactor(s.parent,s.parent.sprinting):characterMovementFactor(s,s.student?s.student.sprinting:!!s.characterTime?.sprinting);
+     const result=advanceOnMap(s,Math.min(dt,.25)*speed*s.stationMap.legDistance/beat.seconds);
+     n.stationMap=result.map;
+     n.stationProgress=Math.max(0,Math.min(.99,1-pathLength(result.map.position,mapPath(n,result.map.position,mapTaskPoint(n)))/Math.max(1,result.map.legDistance)));
+     if(result.encounter)n=enterMapTask(n);
+     if(result.obstruction){n=stopSprint(n);if(n.student)n.student={...n.student,runner:{...n.student.runner,collisions:n.student.runner.collisions+1}};if(n.characterTime)n.characterTime={...n.characterTime,runner:{...n.characterTime.runner,collisions:n.characterTime.runner.collisions+1}};if(n.parent)n.parent={...n.parent,runner:{...n.parent.runner,collisions:n.parent.runner.collisions+1}};}
+     if(!result.map.path.length)n=stopSprint(n);
+    }
+    return deadline(n);
+   }
+   if(beat&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked){
     n.stationProgress=Math.min(1,s.stationProgress+Math.min(dt,.25)*(s.parent?parentMovementFactor(s.parent,s.parent.sprinting):characterMovementFactor(s,s.student?s.student.sprinting:!!s.characterTime?.sprinting))/beat.seconds);
     const wave=runnerWave(s);
     if(wave&&n.stationProgress>=wave.at&&(n.student||n.characterTime||n.parent)){
@@ -341,9 +454,10 @@ function reduceCore(s:Run,a:Action):Run{
    let next=Math.min(stopProgress,old+dt/METRO_SECONDS);
    if(stopProgress-next<1e-9)next=stopProgress;
    const incident=s.metroIncident;
-   const checkpoint=incident&&!s.seen.includes(incident.id)&&old<.14&&next>=.14;
+   const incidentAt=metroIncidentCheckpoint(s.route!,incident);
+   const checkpoint=incident&&!s.seen.includes(incident.id)&&old<incidentAt&&next>=incidentAt;
    const sleepCheckpoint=!checkpoint&&s.characterTime?.characterId==='tourist'&&!s.seen.includes('tourist-sleep')&&old<.2&&next>=.2;
-   if(checkpoint)next=.14;
+   if(checkpoint)next=incidentAt;
    else if(sleepCheckpoint)next=.2;
    const movingSeconds=(next-old)*METRO_SECONDS;
    n.remaining=s.remaining-(next-old)*s.metroDuration-Math.max(0,dt-movingSeconds)*clockRate(s);
@@ -352,7 +466,10 @@ function reduceCore(s:Run,a:Action):Run{
    if(n.student&&s.student)n.student.elapsedGame=s.student.elapsedGame+s.remaining-n.remaining;
    if(checkpoint){n.event=incident;n.eventElapsed=0;}
    if(sleepCheckpoint){n.event=characterEventPrompt(n,'tourist-sleep')??null;n.eventElapsed=0;}
-   if(next>=stopProgress){n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;}
+   if(next>=stopProgress){
+    n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;
+    if(n.metroStopIndex===s.route!.stops.length-1&&s.metroAnnouncement?.mode==='seated'&&s.metroAnnouncement.miss)return recoverMetro({...n,metroAnnouncement:undefined,metroMisses:n.metroMisses+1},'坐过站了，折返重新下车',BALANCE.metroAnnouncement.missSeconds,'arrival');
+   }
   }
   // At ordinary stops, doing nothing means staying on. Missing a required exit
   // costs time and returns to that stop, without charging the journey twice.
@@ -362,13 +479,13 @@ function reduceCore(s:Run,a:Action):Run{
  return s;
 }
 export type RecordEntry={title?:string;stationPlaystyle?:string;reason?:string;id:string;city:string;character:string;success:boolean;extreme:boolean;margin:number;elapsed:number;date:string};
-export function readRecords():RecordEntry[]{try{const v=JSON.parse(localStorage.getItem('catch-train-records')||'[]');return Array.isArray(v)?v.filter(r=>r&&typeof r.id==='string'&&typeof r.success==='boolean').slice(0,30):[];}catch{return [];}}
-export function saveRecord(run:Run){const records=readRecords();if(!records.some(r=>r.id===run.id)){records.unshift({title:summarizeRun(run).title,stationPlaystyle:summarizeRun(run).stationPlaystyle,reason:summarizeRun(run).summary,id:run.id,city:run.city.name,character:run.character.name,success:run.success,extreme:run.success&&run.gateRemaining<30,margin:run.gateRemaining,elapsed:run.elapsed,date:new Date().toLocaleDateString('zh-CN')});try{localStorage.setItem('catch-train-records',JSON.stringify(records.slice(0,30)));}catch{/* optional storage */}}}
+export function readRecords():RecordEntry[]{try{const v=JSON.parse(readGameStorage('catch-train-records')||'[]');return Array.isArray(v)?v.filter(r=>r&&typeof r.id==='string'&&typeof r.success==='boolean').slice(0,30):[];}catch{return [];}}
+export function saveRecord(run:Run){const records=readRecords();if(!records.some(r=>r.id===run.id)){records.unshift({title:summarizeRun(run).title,stationPlaystyle:summarizeRun(run).stationPlaystyle,reason:summarizeRun(run).summary,id:run.id,city:run.city.name,character:run.character.name,success:run.success,extreme:run.success&&run.gateRemaining<30,margin:run.gateRemaining,elapsed:run.elapsed,date:new Date().toLocaleDateString('zh-CN')});try{writeGameStorage('catch-train-records',JSON.stringify(records.slice(0,30)));}catch{/* optional storage */}}}
 
 // Reading and choosing run at real time; travel keeps its compressed game clock.
-export function clockRate(s:Run){return !s.event&&s.phase==='station'&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked&&!s.characterTime?.exhausted?TIME_SCALE:1;}
+export function clockRate(s:Run){if(s.stationMap?.block)return s.stationMap.block.mode==='queue'?TIME_SCALE:1;return !s.event&&s.phase==='station'&&s.stationRunning&&!s.student?.runner.blocked&&!s.characterTime?.runner.blocked&&!s.parent?.runner.blocked?TIME_SCALE:1;}
 export function reducer(s:Run,a:Action):Run{
- let n=reduceCore(s,a);
+ let n=trackMapChildDelay(s,reduceCore(s,a));
  if(n.logs.length>s.logs.length){const eventId=s.event?.id??(a.type==='PREP_PICK'?'prepare-'+PREPARATIONS[s.student?.prep??0]?.id:a.type==='ALIGHT'?'metro-door':'metro-route');n={...n,logs:n.logs.map((l,i)=>i<s.logs.length?l:{...l,eventId:l.eventId??eventId})};}
  if(a.type!=='TICK'||!s.student||!n.student||n===s)return trackTransition(s,n,a);
  const charged=(n.student.decisionLoss-s.student.decisionLoss)+(n.student.environmentLoss-s.student.environmentLoss);

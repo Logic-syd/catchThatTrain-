@@ -1,0 +1,13 @@
+.run-reaction{display:flex;align-items:center;gap:10px;background:#f2ecd9;border:1px solid #e2d4b4;border-radius:16px;padding:7px 10px;margin:9px 0 12px}
+.run-reaction>.little-you{flex:0 0 78px;width:78px;height:74px}
+.run-reaction>div{min-width:0;flex:1}.run-reaction b{font-size:17px;line-height:1.4;color:#775635}.run-reaction p{font-size:12px;line-height:1.5;margin:4px 0 0;color:#99784f}
+.run-reaction.effort-strained{background:#fff0da;border-color:#e0a66b}.run-reaction.effort-strained b{color:#b26938}
+.run-reaction.effort-exhausted{background:#ffebe1;border-color:#d5876b}.run-reaction.effort-exhausted b{color:#ad4c36}
+.run-breath{display:flex;align-items:center;gap:8px;margin-top:5px}.run-breath>span{font-size:10px;color:#a67648;white-space:nowrap}.run-breath meter{height:8px;width:100%;accent-color:#c9965d}.effort-strained .run-breath meter{accent-color:#cb674b}
+.map-journey .hold-run-controls{grid-template-columns:1fr 1fr;gap:12px}.map-journey .hold-run-controls button{min-height:76px;flex-wrap:wrap;padding:11px 8px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.hold-run-controls .map-walk{background:#e4a175;color:#fffbed;box-shadow:0 4px #bb7c56}.hold-run-controls .map-sprint{background:#9daf81;box-shadow:0 4px #7b8f61}
+.hold-run-controls button[aria-pressed=true]{filter:saturate(1.15);box-shadow:0 1px #886342;transform:translateY(3px)}.hold-run-controls small{width:100%;font-size:11px;font-weight:500}
+.hold-run-tip{font-size:10px;text-align:center;color:#a68b65;margin:9px 0 0}
+.station-journey.map-journey .travel-avatar .little-you{width:62px;height:66px}
+@media(max-height:700px){.run-reaction{margin:7px 0 9px;padding:5px 8px;gap:7px}.run-reaction>.little-you{width:63px;height:62px;flex-basis:63px}.run-reaction b{font-size:15px}.run-reaction p{font-size:11px}.map-journey .hold-run-controls button{min-height:66px}.hold-run-tip{margin-top:7px}}
+@media(max-width:350px){.run-reaction>.little-you{width:57px;flex-basis:57px;height:60px}.run-reaction b{font-size:14px}.hold-run-controls button{font-size:16px}}

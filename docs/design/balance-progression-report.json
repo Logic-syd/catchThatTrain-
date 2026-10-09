@@ -1,0 +1,752 @@
+{
+  "scenario": {
+    "date": "2026-10-09",
+    "samples": 8,
+    "reading": 5,
+    "policy": "paced",
+    "seed": 921,
+    "seedStep": 83,
+    "minimumOperations": 12,
+    "navigationMistakeMultiplier": {
+      "student": 1,
+      "worker": 1.2,
+      "tourist": 1.4,
+      "mom": 1.6
+    },
+    "note": "Known routes/queues, prepared characters. Scenario success is not human first-play success."
+  },
+  "rows": [
+    {
+      "character": "student",
+      "station": "shanghai",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 23,
+      "maxOperationsOnSuccess": 26,
+      "gateMargin": [
+        105,
+        151
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "shanghai",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 23,
+      "maxOperationsOnSuccess": 26,
+      "gateMargin": [
+        52,
+        98
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "student",
+      "station": "beijing",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 20,
+      "gateMargin": [
+        85,
+        99
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "beijing",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 20,
+      "gateMargin": [
+        33,
+        47
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "student",
+      "station": "guangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        150,
+        157
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "guangzhou",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        96,
+        103
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "student",
+      "station": "hangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 18,
+      "gateMargin": [
+        84,
+        85
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "hangzhou",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 18,
+      "gateMargin": [
+        41,
+        42
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "student",
+      "station": "wuhan",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        100,
+        107
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "wuhan",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        47,
+        55
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "student",
+      "station": "zhengzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        85,
+        91
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "student",
+      "station": "zhengzhou",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        33,
+        39
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "shanghai",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 24,
+      "maxOperationsOnSuccess": 27,
+      "gateMargin": [
+        28,
+        69
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "shanghai",
+      "mistakes": 1,
+      "clears": "2/8",
+      "minOperationsOnSuccess": 25,
+      "maxOperationsOnSuccess": 25,
+      "gateMargin": [
+        1,
+        1
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "beijing",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 19,
+      "maxOperationsOnSuccess": 20,
+      "gateMargin": [
+        55,
+        61
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "beijing",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "guangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        39,
+        46
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "guangzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "hangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 18,
+      "gateMargin": [
+        59,
+        62
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "hangzhou",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 18,
+      "gateMargin": [
+        6,
+        9
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "wuhan",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 22,
+      "maxOperationsOnSuccess": 22,
+      "gateMargin": [
+        77,
+        78
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "wuhan",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 22,
+      "maxOperationsOnSuccess": 22,
+      "gateMargin": [
+        8,
+        9
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "zhengzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 21,
+      "maxOperationsOnSuccess": 22,
+      "gateMargin": [
+        39,
+        46
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "worker",
+      "station": "zhengzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "shanghai",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 26,
+      "maxOperationsOnSuccess": 29,
+      "gateMargin": [
+        25,
+        61
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "shanghai",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "beijing",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        91,
+        101
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "beijing",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        12,
+        24
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "guangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 22,
+      "maxOperationsOnSuccess": 23,
+      "gateMargin": [
+        33,
+        42
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "guangzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "hangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 19,
+      "maxOperationsOnSuccess": 19,
+      "gateMargin": [
+        77,
+        78
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "hangzhou",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 19,
+      "maxOperationsOnSuccess": 19,
+      "gateMargin": [
+        13,
+        14
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "wuhan",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 23,
+      "maxOperationsOnSuccess": 23,
+      "gateMargin": [
+        66,
+        66
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "wuhan",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "zhengzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 21,
+      "maxOperationsOnSuccess": 22,
+      "gateMargin": [
+        44,
+        49
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "tourist",
+      "station": "zhengzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "shanghai",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 25,
+      "maxOperationsOnSuccess": 28,
+      "gateMargin": [
+        25,
+        63
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "shanghai",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "beijing",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 19,
+      "maxOperationsOnSuccess": 20,
+      "gateMargin": [
+        92,
+        99
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "beijing",
+      "mistakes": 1,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 19,
+      "maxOperationsOnSuccess": 20,
+      "gateMargin": [
+        2,
+        9
+      ],
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "guangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        9,
+        16
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "guangzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "hangzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 18,
+      "maxOperationsOnSuccess": 18,
+      "gateMargin": [
+        47,
+        49
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "hangzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "wuhan",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 24,
+      "maxOperationsOnSuccess": 24,
+      "gateMargin": [
+        85,
+        85
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "wuhan",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "zhengzhou",
+      "mistakes": 0,
+      "clears": "8/8",
+      "minOperationsOnSuccess": 20,
+      "maxOperationsOnSuccess": 21,
+      "gateMargin": [
+        64,
+        68
+      ],
+      "actualWrongTurns": [
+        0,
+        0
+      ]
+    },
+    {
+      "character": "mom",
+      "station": "zhengzhou",
+      "mistakes": 1,
+      "clears": "0/8",
+      "minOperationsOnSuccess": null,
+      "maxOperationsOnSuccess": null,
+      "gateMargin": null,
+      "actualWrongTurns": [
+        1,
+        1
+      ]
+    }
+  ]
+}

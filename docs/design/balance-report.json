@@ -1,0 +1,1913 @@
+{
+  "recordedAt": "2026-10-09",
+  "branch": "codex/bugfix-mobile-flow-events",
+  "note": "Fixed scripted strategies; route and queue costs are known. These are not human win rates. Non-student ledgerError is unavailable and is reported as null.",
+  "normal": {
+    "scenario": {
+      "samples": 8,
+      "reading": 5,
+      "mistakes": 0,
+      "hard": false,
+      "seed": 921,
+      "seedStep": 83,
+      "note": "Fixed strategies with known route and queue costs; not real-player win rates."
+    },
+    "rows": [
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1770,
+        "clears": "5/8",
+        "gateMargin": "5–22",
+        "meanRealSeconds": 243,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1770,
+        "clears": "8/8",
+        "gateMargin": "105–151",
+        "meanRealSeconds": 216,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1770,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 147,
+        "breathStops": 4,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1230,
+        "clears": "8/8",
+        "gateMargin": "4–11",
+        "meanRealSeconds": 182,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1230,
+        "clears": "8/8",
+        "gateMargin": "85–99",
+        "meanRealSeconds": 155,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1230,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 101,
+        "breathStops": 2,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "13–20",
+        "meanRealSeconds": 228,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "150–157",
+        "meanRealSeconds": 190,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 126,
+        "breathStops": 4,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1080,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 158,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1080,
+        "clears": "8/8",
+        "gateMargin": "84–85",
+        "meanRealSeconds": 151,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1080,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 94,
+        "breathStops": 2,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "0–1",
+        "meanRealSeconds": 205,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "100–107",
+        "meanRealSeconds": 175,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 126,
+        "breathStops": 3,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1470,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 179,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1470,
+        "clears": "8/8",
+        "gateMargin": "85–91",
+        "meanRealSeconds": 174,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1470,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 114,
+        "breathStops": 3,
+        "ledgerError": 0
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1860,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 244,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1860,
+        "clears": "8/8",
+        "gateMargin": "28–69",
+        "meanRealSeconds": 259,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1860,
+        "clears": "8/8",
+        "gateMargin": "55–78",
+        "meanRealSeconds": 253,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1380,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 177,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1380,
+        "clears": "8/8",
+        "gateMargin": "55–61",
+        "meanRealSeconds": 182,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1380,
+        "clears": "8/8",
+        "gateMargin": "83–90",
+        "meanRealSeconds": 174,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 218,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "39–46",
+        "meanRealSeconds": 233,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "13–20",
+        "meanRealSeconds": 239,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1200,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 172,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1200,
+        "clears": "8/8",
+        "gateMargin": "59–62",
+        "meanRealSeconds": 179,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1200,
+        "clears": "8/8",
+        "gateMargin": "89–91",
+        "meanRealSeconds": 170,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1740,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 212,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1740,
+        "clears": "8/8",
+        "gateMargin": "77–78",
+        "meanRealSeconds": 212,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1740,
+        "clears": "8/8",
+        "gateMargin": "113–114",
+        "meanRealSeconds": 203,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1620,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 196,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1620,
+        "clears": "8/8",
+        "gateMargin": "39–46",
+        "meanRealSeconds": 211,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1620,
+        "clears": "8/8",
+        "gateMargin": "58–65",
+        "meanRealSeconds": 206,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1980,
+        "clears": "2/8",
+        "gateMargin": "2–2",
+        "meanRealSeconds": 280,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1980,
+        "clears": "8/8",
+        "gateMargin": "25–61",
+        "meanRealSeconds": 285,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1980,
+        "clears": "8/8",
+        "gateMargin": "51–69",
+        "meanRealSeconds": 273,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1500,
+        "clears": "8/8",
+        "gateMargin": "48–54",
+        "meanRealSeconds": 209,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1500,
+        "clears": "8/8",
+        "gateMargin": "91–101",
+        "meanRealSeconds": 197,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1500,
+        "clears": "8/8",
+        "gateMargin": "122–129",
+        "meanRealSeconds": 191,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1950,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 245,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1950,
+        "clears": "8/8",
+        "gateMargin": "33–42",
+        "meanRealSeconds": 259,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1950,
+        "clears": "8/8",
+        "gateMargin": "32–39",
+        "meanRealSeconds": 261,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1290,
+        "clears": "8/8",
+        "gateMargin": "30–31",
+        "meanRealSeconds": 208,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1290,
+        "clears": "8/8",
+        "gateMargin": "77–78",
+        "meanRealSeconds": 194,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1290,
+        "clears": "8/8",
+        "gateMargin": "105–108",
+        "meanRealSeconds": 188,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "21–22",
+        "meanRealSeconds": 245,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "66–66",
+        "meanRealSeconds": 232,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "75–77",
+        "meanRealSeconds": 216,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 213,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "44–49",
+        "meanRealSeconds": 224,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "63–69",
+        "meanRealSeconds": 220,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1860,
+        "clears": "5/8",
+        "gateMargin": "16–33",
+        "meanRealSeconds": 270,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1860,
+        "clears": "8/8",
+        "gateMargin": "25–63",
+        "meanRealSeconds": 273,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1860,
+        "clears": "4/8",
+        "gateMargin": "3–7",
+        "meanRealSeconds": 279,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1350,
+        "clears": "8/8",
+        "gateMargin": "53–60",
+        "meanRealSeconds": 193,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1350,
+        "clears": "8/8",
+        "gateMargin": "92–99",
+        "meanRealSeconds": 181,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1350,
+        "clears": "8/8",
+        "gateMargin": "0–28",
+        "meanRealSeconds": 216,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "19–26",
+        "meanRealSeconds": 261,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "9–16",
+        "meanRealSeconds": 265,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 246,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1170,
+        "clears": "8/8",
+        "gateMargin": "6–7",
+        "meanRealSeconds": 194,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1170,
+        "clears": "8/8",
+        "gateMargin": "47–49",
+        "meanRealSeconds": 183,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1170,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 183,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1680,
+        "clears": "8/8",
+        "gateMargin": "37–38",
+        "meanRealSeconds": 228,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1680,
+        "clears": "8/8",
+        "gateMargin": "85–85",
+        "meanRealSeconds": 220,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1680,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 232,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "20–27",
+        "meanRealSeconds": 218,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "64–68",
+        "meanRealSeconds": 207,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 215,
+        "breathStops": 0,
+        "ledgerError": null
+      }
+    ]
+  },
+  "oneNavigationMistake": {
+    "scenario": {
+      "samples": 8,
+      "reading": 5,
+      "mistakes": 1,
+      "hard": false,
+      "seed": 921,
+      "seedStep": 83,
+      "note": "Fixed strategies with known route and queue costs; not real-player win rates."
+    },
+    "rows": [
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1770,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 213,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1770,
+        "clears": "8/8",
+        "gateMargin": "52–98",
+        "meanRealSeconds": 215,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1770,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 147,
+        "breathStops": 4,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1230,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 145,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1230,
+        "clears": "8/8",
+        "gateMargin": "33–47",
+        "meanRealSeconds": 155,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1230,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 101,
+        "breathStops": 2,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 197,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "96–103",
+        "meanRealSeconds": 189,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 126,
+        "breathStops": 4,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1080,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 141,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1080,
+        "clears": "8/8",
+        "gateMargin": "41–42",
+        "meanRealSeconds": 151,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1080,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 98,
+        "breathStops": 2,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 164,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "47–55",
+        "meanRealSeconds": 174,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 126,
+        "breathStops": 3,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1470,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 159,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1470,
+        "clears": "8/8",
+        "gateMargin": "33–39",
+        "meanRealSeconds": 173,
+        "breathStops": 0,
+        "ledgerError": 0
+      },
+      {
+        "character": "student",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1470,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 114,
+        "breathStops": 3,
+        "ledgerError": 0
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1860,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 228,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1860,
+        "clears": "5/8",
+        "gateMargin": "3–16",
+        "meanRealSeconds": 249,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1860,
+        "clears": "8/8",
+        "gateMargin": "0–24",
+        "meanRealSeconds": 252,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1380,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 152,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1380,
+        "clears": "7/8",
+        "gateMargin": "0–7",
+        "meanRealSeconds": 180,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1380,
+        "clears": "8/8",
+        "gateMargin": "30–37",
+        "meanRealSeconds": 173,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 201,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 210,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 209,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1200,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 158,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1200,
+        "clears": "8/8",
+        "gateMargin": "15–17",
+        "meanRealSeconds": 178,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1200,
+        "clears": "8/8",
+        "gateMargin": "46–48",
+        "meanRealSeconds": 169,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1740,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 188,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1740,
+        "clears": "8/8",
+        "gateMargin": "23–24",
+        "meanRealSeconds": 212,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1740,
+        "clears": "8/8",
+        "gateMargin": "61–62",
+        "meanRealSeconds": 202,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1620,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 186,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1620,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 187,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "worker",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1620,
+        "clears": "8/8",
+        "gateMargin": "4–11",
+        "meanRealSeconds": 205,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1980,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 254,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1980,
+        "clears": "4/8",
+        "gateMargin": "0–7",
+        "meanRealSeconds": 272,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1980,
+        "clears": "5/8",
+        "gateMargin": "8–15",
+        "meanRealSeconds": 265,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1500,
+        "clears": "2/8",
+        "gateMargin": "0–0",
+        "meanRealSeconds": 192,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1500,
+        "clears": "8/8",
+        "gateMargin": "37–48",
+        "meanRealSeconds": 197,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1500,
+        "clears": "8/8",
+        "gateMargin": "69–75",
+        "meanRealSeconds": 190,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1950,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 226,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1950,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 231,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1950,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 231,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1290,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 176,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1290,
+        "clears": "8/8",
+        "gateMargin": "33–34",
+        "meanRealSeconds": 194,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1290,
+        "clears": "8/8",
+        "gateMargin": "62–66",
+        "meanRealSeconds": 188,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 212,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "12–13",
+        "meanRealSeconds": 232,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "8/8",
+        "gateMargin": "21–23",
+        "meanRealSeconds": 216,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 194,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1710,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 199,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "tourist",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1710,
+        "clears": "8/8",
+        "gateMargin": "8–15",
+        "meanRealSeconds": 219,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "walk",
+        "initialGateBudget": 1860,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 244,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "paced",
+        "initialGateBudget": 1860,
+        "clears": "4/8",
+        "gateMargin": "3–8",
+        "meanRealSeconds": 258,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "shanghai",
+        "policy": "sprint",
+        "initialGateBudget": 1860,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 248,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "walk",
+        "initialGateBudget": 1350,
+        "clears": "6/8",
+        "gateMargin": "4–5",
+        "meanRealSeconds": 189,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "paced",
+        "initialGateBudget": 1350,
+        "clears": "8/8",
+        "gateMargin": "37–44",
+        "meanRealSeconds": 181,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "beijing",
+        "policy": "sprint",
+        "initialGateBudget": 1350,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 183,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 229,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 229,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "guangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1830,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 228,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "walk",
+        "initialGateBudget": 1170,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 160,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "paced",
+        "initialGateBudget": 1170,
+        "clears": "8/8",
+        "gateMargin": "2–4",
+        "meanRealSeconds": 183,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "hangzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1170,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 177,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "walk",
+        "initialGateBudget": 1680,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 204,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "paced",
+        "initialGateBudget": 1680,
+        "clears": "8/8",
+        "gateMargin": "30–30",
+        "meanRealSeconds": 220,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "wuhan",
+        "policy": "sprint",
+        "initialGateBudget": 1680,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 207,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "walk",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 188,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "paced",
+        "initialGateBudget": 1560,
+        "clears": "8/8",
+        "gateMargin": "9–13",
+        "meanRealSeconds": 207,
+        "breathStops": 0,
+        "ledgerError": null
+      },
+      {
+        "character": "mom",
+        "station": "zhengzhou",
+        "policy": "sprint",
+        "initialGateBudget": 1560,
+        "clears": "0/8",
+        "gateMargin": "—",
+        "meanRealSeconds": 194,
+        "breathStops": 0,
+        "ledgerError": null
+      }
+    ]
+  },
+  "choiceComparisons": {
+    "scenario": {
+      "samples": 8,
+      "reading": 5,
+      "seed": 921,
+      "seedStep": 83,
+      "policy": "paced"
+    },
+    "rows": [
+      {
+        "name": "student-prepared",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          105,
+          151
+        ],
+        "bagMistakes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "student-unchecked",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          112,
+          168
+        ],
+        "bagMistakes": [
+          1,
+          2,
+          2,
+          0,
+          3,
+          1,
+          0,
+          2
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "student-hungry",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          165,
+          211
+        ],
+        "bagMistakes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "student-cake",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          22,
+          61
+        ],
+        "bagMistakes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "worker-fed",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          28,
+          69
+        ],
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "worker-no-meal",
+        "station": "shanghai",
+        "clears": "8/8",
+        "winningGateMargin": [
+          79,
+          119
+        ],
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "tourist-coffee",
+        "station": "guangzhou",
+        "clears": "8/8",
+        "winningGateMargin": [
+          33,
+          42
+        ],
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "tourist-no-coffee",
+        "station": "guangzhou",
+        "clears": "8/8",
+        "winningGateMargin": [
+          62,
+          72
+        ],
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "parent-prepared",
+        "station": "guangzhou",
+        "clears": "8/8",
+        "winningGateMargin": [
+          9,
+          16
+        ],
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "parent-no-toilet",
+        "station": "guangzhou",
+        "clears": "0/8",
+        "winningGateMargin": null,
+        "bagMistakes": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "toiletVisits": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    ]
+  }
+}
