@@ -95,7 +95,7 @@ export function simulateBalance(options:BalanceOptions):Run{
      if(burst>=4||energy()<=25||(s.student?.sprintStrain??0)>=4.5||(s.parent?.gap??0)>=5){burst=0;walking=3;}
      if(walking>0){walking=Math.max(0,walking-.1);sprint=false;}else{sprint=true;burst+=.1;}
     }
-    if(options.reference)sprint=referenceSprint(options.character??'student',movement.movingSeconds,energy(),s.student?.stats.energy??s.characterTime?.maxEnergy??s.parent!.maxEnergy,s.parent?.gap??0);
+    if(options.reference&&!options.policy)sprint=referenceSprint(options.character??'student',movement.movingSeconds,energy(),s.student?.stats.energy??s.characterTime?.maxEnergy??s.parent!.maxEnergy,s.parent?.gap??0);
     s=reducer(s,{type:sprint?'SPRINT_INPUT':'RUN_INPUT',held:true});advance(.1);continue;
    }
    s=reducer(s,{type:'PREPARE_DOOR'});advance(.1);

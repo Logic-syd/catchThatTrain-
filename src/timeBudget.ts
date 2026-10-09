@@ -27,7 +27,7 @@ export interface TimeBudget {
  /** Engine clock until departure; the closing lead is included exactly once. */
  departureBudgetSeconds:number;
  calibration:{
-  status:'legacy-unallocated'|'reference-v1';
+  status:'legacy-unallocated'|'reference-v2';
   mandatoryInteractionSeconds:number|null;
   expectedEnvironmentSeconds:number|null;
   errorBudgetSeconds:number|null;
@@ -76,5 +76,5 @@ export function buildReferenceTimeBudget(station:string,character:BudgetCharacte
  return {metroSeconds,stationWalkSeconds,legacyAllowanceSeconds:0,roundingSeconds:1,
   roundingAdjustmentSeconds:rounded-unrounded,hardReductionSeconds,gateClosingLeadSeconds,
   gateBudgetSeconds,departureBudgetSeconds:gateBudgetSeconds+gateClosingLeadSeconds,
-  calibration:{status:'reference-v1',mandatoryInteractionSeconds,expectedEnvironmentSeconds,errorBudgetSeconds}};
+  calibration:{status:'reference-v2',mandatoryInteractionSeconds,expectedEnvironmentSeconds,errorBudgetSeconds}};
 }

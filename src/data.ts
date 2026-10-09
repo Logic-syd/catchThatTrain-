@@ -1,9 +1,10 @@
+import {SPRINT} from './sprintConfig';
 export type CharacterConfig = { id: string; name: string; short: string; emoji: string; difficulty: number; speed: number; sprintSpeed: number; luggage: boolean; child: boolean; stroller: boolean; description: string; specialEvents: string[] };
 export const characters: CharacterConfig[] = [
- {id:'student',name:'背包大学生',short:'朋友家出来 · 精力满格 · 容易拖到最后',emoji:'🎓',difficulty:1,speed:1,sprintSpeed:1.9,luggage:false,child:false,stroller:false,description:'短途出游后从朋友家回学校。精力和手机都满格，只是总觉得还来得及。',specialEvents:['student']},
- {id:'worker',name:'打工人',short:'从家返工 · 妈妈塞满行李 · 路线熟',emoji:'🧳',difficulty:2,speed:.92,sprintSpeed:1.65,luggage:true,child:false,stroller:false,description:'假期结束，从家里返工。妈妈不断往箱子里塞东西，老板还在催你明早打卡。',specialEvents:['luggage','wheel','worker-boss-call']},
- {id:'tourist',name:'疲惫游客',short:'已退房 · 23,487 步 · 陌生城市',emoji:'📷',difficulty:3,speed:.88,sprintSpeed:1.55,luggage:true,child:false,stroller:false,description:'酒店已退房，旅行走了两万多步；必须赶回家上班。小箱子不重，但在陌生车站很容易碰壁。',specialEvents:['sign','lost','tourist-wayfinding']},
- {id:'mom',name:'带娃家长',short:'一个都不能少',emoji:'👩‍👧',difficulty:4,speed:.94,sprintSpeed:1.5,luggage:false,child:true,stroller:false,description:'你认得路，也跑得动。孩子会累、会尿急，冲太快还会掉队。',specialEvents:['toilet','child','toy']},
+ {id:'student',name:'背包大学生',short:'朋友家出来 · 精力满格 · 容易拖到最后',emoji:'🎓',difficulty:1,speed:1,sprintSpeed:SPRINT.multiplier.student,luggage:false,child:false,stroller:false,description:'短途出游后从朋友家回学校。精力和手机都满格，只是总觉得还来得及。',specialEvents:['student']},
+ {id:'worker',name:'打工人',short:'从家返工 · 妈妈塞满行李 · 路线熟',emoji:'🧳',difficulty:2,speed:.92,sprintSpeed:.92*SPRINT.multiplier.worker,luggage:true,child:false,stroller:false,description:'假期结束，从家里返工。妈妈不断往箱子里塞东西，老板还在催你明早打卡。',specialEvents:['luggage','wheel','worker-boss-call']},
+ {id:'tourist',name:'疲惫游客',short:'已退房 · 23,487 步 · 陌生城市',emoji:'📷',difficulty:3,speed:.88,sprintSpeed:.88*SPRINT.multiplier.tourist,luggage:true,child:false,stroller:false,description:'酒店已退房，旅行走了两万多步；必须赶回家上班。小箱子不重，但在陌生车站很容易碰壁。',specialEvents:['sign','lost','tourist-wayfinding']},
+ {id:'mom',name:'带娃家长',short:'一个都不能少',emoji:'👩‍👧',difficulty:4,speed:.94,sprintSpeed:.94*SPRINT.multiplier.mom,luggage:false,child:true,stroller:false,description:'你认得路，也跑得动。孩子会累、会尿急，冲太快还会掉队。',specialEvents:['toilet','child','toy']},
  {id:'family',name:'婴儿车与大箱子的家庭',short:'全家总动员',emoji:'👨‍👩‍👧',difficulty:5,speed:.7,sprintSpeed:1.35,luggage:true,child:true,stroller:true,description:'婴儿车不能走楼梯。寻找无障碍电梯，给全家留出转弯空间。',specialEvents:['lift','stroller','toilet']}
 ];
 export type MetroRoute = { id:string; lines:string[]; color:string; minutes:number; walk:number; transfers:number; risk:'low'|'medium'|'high'; tip:string; direction:string; opposite:string; stops:string[]; via?:string };

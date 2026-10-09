@@ -1,3 +1,4 @@
+import {SPRINT} from './sprintConfig';
 import type {Run} from './engine';
 import type {Choice,EventConfig} from './data';
 import type {RunnerState} from './runner';
@@ -26,7 +27,7 @@ const clamp=(n:number)=>Math.max(0,Math.min(100,n));
 export function parentMovementFactor(p:ParentState,sprinting=false){
  const energy=Math.max(.78,.82+p.energy/p.maxEnergy*.18);
  const child=p.childEnergy<20&&!p.carrying?.88:1;
- return .98*energy*child*(1-Math.max(0,p.load-30)*.003)*(p.carrying?.84:1)*(sprinting?(p.syncRemaining>0?1.7:1.48):1);
+ return .98*energy*child*(1-Math.max(0,p.load-30)*.003)*(p.carrying?.84:1)*(sprinting?(p.syncRemaining>0?SPRINT.parentSyncMultiplier:SPRINT.multiplier.mom):1);
 }
 export function tickParent(p:ParentState,phase:Run['phase'],dt:number,gameSeconds:number,running:boolean):ParentState{
  const sprint=phase==='station'&&running&&p.sprinting&&!p.exhausted;
@@ -39,7 +40,7 @@ export function tickParent(p:ParentState,phase:Run['phase'],dt:number,gameSecond
  const gap=p.carrying?0:Math.max(0,Math.min(10,p.gap+(sprint&&p.syncRemaining<=0?1.65:moving?-1.5:0)*dt));
  return {...p,energy,exhausted,childEnergy,patience,toilet,gap,childEnergyMin:Math.min(p.childEnergyMin,childEnergy),patienceMin:Math.min(p.patienceMin,patience),sprinting:exhausted?false:p.sprinting,
   carriedSeconds:p.carriedSeconds+(p.carrying&&moving?dt:0),syncRemaining:Math.max(0,p.syncRemaining-dt),blockCooldown:Math.max(0,p.blockCooldown-dt),
-  syncSprintSaved:p.syncSprintSaved+(sprint&&p.syncRemaining>0?dt*4*.22:0)};
+  syncSprintSaved:p.syncSprintSaved+(sprint&&p.syncRemaining>0?dt*4*(SPRINT.parentSyncMultiplier-SPRINT.multiplier.mom):0)};
 }
 export const parentPreparation=[
  {title:'孩子说“不想上厕所”',story:'出门前最后问一次。现在去一趟，会不会换来后面的安心？',options:[

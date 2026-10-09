@@ -1,3 +1,4 @@
+import {SPRINT} from './sprintConfig';
 import type {Run} from './engine';
 import {applyJourneyDecision,prepareNextJourney} from './journeyRules';
 import {mapDistance,mapPath,mapTaskPoint,pathLength,type MapPoint} from './stationMapTravel';
@@ -10,8 +11,8 @@ import type {StationBeat} from './stationJourney';
 // Grant maximum stats, permanent late sprint, free queue/reading/recovery and
 // every remaining shortcut. Only if even this bound exceeds the clock is loss certain.
 export function maximumTravelFactor(s:Run):number{
- if(s.student)return movementFactor({...s.student,stats:{agility:100,energy:100,focus:100,load:0},sprinting:true,exhausted:false,late:true});
- if(s.parent)return .98*1.7; // Synchronised sprint, no child/load/energy slowdown.
+ if(s.student)return movementFactor({...s.student,stats:{agility:100,energy:100,focus:100,load:0},sprinting:true,exhausted:false,late:true,sprintStrain:0});
+ if(s.parent)return .98*SPRINT.parentSyncMultiplier; // Synchronised sprint, no child/load/energy slowdown.
  const p=characterTimeProfiles[s.characterTime?.characterId??'worker'];
  return p.sprintSpeed*(s.characterTime?.characterId==='tourist'?1.05:1.1)/.75;
 }

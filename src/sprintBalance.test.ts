@@ -32,20 +32,21 @@ function play(city:string,mode:'walk'|'sprint'|'paced',seed=921,preparation=['sk
 }
 
 describe('student sprint pacing',()=>{
- it('walking and paced bursts work; sustained sprinting still incurs repeated costs under the new mistake allowance',()=>{
+ it('walking and paced bursts work while sustained sprinting exhausts the mistake allowance',()=>{
   for(const st of STATIONS)for(const seed of [921,84,12,453]){
    const walk=play(st.id,'walk',seed),sprint=play(st.id,'sprint',seed),paced=play(st.id,'paced',seed);
    expect(walk.success,`${st.id} seed ${seed} walking (beat ${walk.stationBeat}, remaining ${walk.remaining})`).toBe(true);
    expect(paced.success,`${st.id} seed ${seed} paced`).toBe(true);
    expect(paced.student!.breathStops,`${st.id} seed ${seed} paced breath`).toBe(0);
    expect(sprint.student!.breathStops,`${st.id} seed ${seed} all sprint breath`).toBeGreaterThanOrEqual(2);
+   expect(sprint.success,`${st.id}/${seed} held sprint`).toBe(false);
    if(!sprint.success){
    const outcome=summarizeRun(sprint);
    expect(outcome.title,`${st.id} seed ${seed} failure title`).toBe('前面冲太猛了');
    expect(outcome.reasons.join(' '),`${st.id} seed ${seed} failure reasons`).toContain('岔气');
    }
    const rush=play(st.id,'sprint',seed,['skip','skip','skip']);
-   // New tolerance can absorb these costs; rebalance sprinting separately.
+   expect(rush.success,`${st.id}/${seed} unprepared held sprint`).toBe(false);
    expect(rush.student!.breathStops,`${st.id} seed ${seed} no preparation, all sprint`).toBeGreaterThanOrEqual(2);
   }
  },30000);

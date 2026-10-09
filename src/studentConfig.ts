@@ -1,7 +1,8 @@
+import {SPRINT} from './sprintConfig';
 import type {RunnerState} from './runner';
 import type {CityConfig, EventConfig} from './data';
 export type Stats={agility:number;energy:number;focus:number;load:number};
-export const STUDENT={id:'student',baseStats:{agility:80,energy:90,focus:55,load:15} as Stats,badLuckBudget:180,lateThreshold:120,sprintMultiplier:1.9,lateSprint:1.15,lateRecovery:1.25,drain:8,recover:5,walkRecover:2.2,breathLimit:7,breathPenalty:105,cakeWalkDrain:2.7,cakeSprintDrain:2.2};
+export const STUDENT={id:'student',baseStats:{agility:80,energy:90,focus:55,load:15} as Stats,badLuckBudget:180,lateThreshold:120,sprintMultiplier:SPRINT.multiplier.student,lateSprint:SPRINT.studentLateMultiplier/SPRINT.multiplier.student,lateRecovery:1.25,drain:8,recover:5,walkRecover:2.2,breathLimit:7,breathPenalty:105,cakeWalkDrain:2.7,cakeSprintDrain:2.2};
 export const HONGQIAO={id:'shanghai-hongqiao',modifiers:{distance:1.2,crowd:1.1,security:1,navigation:1.05,verticalMovement:1},initial:35*60+30,hardReduction:360,studentHardReduction:120,normalStationTime:600,baseWalkingTime:360,metroTimeRatio:.42,transferWalkRatio:.65};
 export type Preparation={id:string;title:string;story:string;options:{id:string;label:string;detail:string;seconds:number;stats?:Partial<Stats>}[]};
 export const PREPARATIONS:Preparation[]=[
@@ -13,7 +14,12 @@ export const POCKETS=['前袋','侧袋','主袋','电脑夹层'];
 export type StudentState={eventTime:Record<string,number>;lateSprintSaved:number;exhaustedLateSeconds:number;runner:RunnerState;clockSpent:{journey:number;moving:number;handling:number;waiting:number};stats:Stats;prep:number;choices:Record<string,string>;cake:boolean;checkedID:boolean;breakfast:boolean;hungry:boolean;late:boolean;elapsedGame:number;stamina:number;exhausted:boolean;sprinting:boolean;sprintStrain:number;breathStops:number;doorReady:boolean;doorSavings:number;vertical:'escalator'|'stairs'|'lift';pocket:number;searched:number[];mapRead:boolean;observed:boolean;bagSeconds:number;bagMistakes:number;sprintSeconds:number;movingSeconds:number;sprintSaved:number;decisionLoss:number;environmentLoss:number;wrongTurns:number;stationStart:number;transferSeconds:number;queues:{people:number;seconds:number;hint:string}[]};
 export function studentState(rng:()=>number):StudentState{const offset=Math.floor(rng()*3);return {eventTime:{},lateSprintSaved:0,exhaustedLateSeconds:0,runner:{lane:1,wave:0,blocked:false,collisions:0,dodges:0,seed:Math.floor(rng()*3)},clockSpent:{journey:0,moving:0,handling:0,waiting:0},stats:{...STUDENT.baseStats},prep:0,choices:{},cake:false,checkedID:false,breakfast:false,hungry:false,late:false,elapsedGame:0,stamina:STUDENT.baseStats.energy,exhausted:false,sprinting:false,sprintStrain:0,breathStops:0,doorReady:false,doorSavings:0,vertical:'escalator',pocket:Math.floor(rng()*4),searched:[],mapRead:false,observed:false,bagSeconds:0,bagMistakes:0,sprintSeconds:0,movingSeconds:0,sprintSaved:0,decisionLoss:0,environmentLoss:0,wrongTurns:0,stationStart:0,transferSeconds:0,queues:[{people:6,seconds:24,hint:'前面只背小包，托盘已摆好'},{people:3,seconds:55,hint:'一家人带着几只箱子，正打开侧袋'},{people:8,seconds:32,hint:'队列长一些，两台机器都亮着灯'}].map((_,i,arr)=>arr[(i+offset)%arr.length])};}
 export function gameShanghai(city:CityConfig):CityConfig{return {...city,spawnStations:city.spawnStations.map(p=>({...p,routes:p.routes.map(r=>({...r,minutes:Math.round(r.minutes*HONGQIAO.metroTimeRatio),walk:r.transfers?Math.round(r.walk*HONGQIAO.transferWalkRatio):r.walk}))}))};}
-export function movementFactor(u:StudentState){const base=(.65+u.stats.agility/100*.4667)/(1+(u.stats.load-15)*.006);return base*(u.sprinting&&!u.exhausted?STUDENT.sprintMultiplier*(u.late?STUDENT.lateSprint:1):u.exhausted?.85:1);}
+export function studentSprintMultiplier(u:StudentState){
+ const peak=u.late?SPRINT.studentLateMultiplier:STUDENT.sprintMultiplier;
+ const fade=Math.min(1,Math.max(0,u.sprintStrain-SPRINT.studentFullSpeedSeconds)/(STUDENT.breathLimit-SPRINT.studentFullSpeedSeconds));
+ return 1+(peak-1)*(1-(1-SPRINT.studentMinimumGainFraction)*fade);
+}
+export function movementFactor(u:StudentState){const base=(.65+u.stats.agility/100*.4667)/(1+(u.stats.load-15)*.006);return base*(u.sprinting&&!u.exhausted?studentSprintMultiplier(u):u.exhausted?.85:1);}
 export function focusWindow(focus:number){return .7+focus/100*.6;}
 export function bagHint(u:StudentState){if(u.checkedID)return '出门前检查过：身份证就在前袋。';if(u.stats.focus>=75)return '刚才回想起来了，留意亮起的夹层。';if(u.stats.focus>=55)return `还记得：${u.pocket<2?'在一个外侧小袋里':'应该和大件物品放在一起'}。`;if(u.stats.focus>=35)return '记不清了，一层一层翻。';return '不会没带吧……先把每个夹层都找一遍。';}
 export function studentPrompt(id:string,u:StudentState,gate='12A'):EventConfig|undefined{

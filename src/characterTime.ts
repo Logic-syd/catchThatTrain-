@@ -1,3 +1,4 @@
+import {SPRINT} from './sprintConfig';
 import type {Run} from './engine';
 import {movementFactor} from './studentConfig';
 import type {RunnerState} from './runner';
@@ -25,9 +26,9 @@ export interface CharacterTimeState {
 export interface TimedChoice {id:string;label:string;detail:string;seconds:number;energy?:number;maxEnergy?:number;fatigue?:number;load?:number;focus?:number;set?:Partial<CharacterTimeState>}
 export interface TimedPrompt {eyebrow:string;title:string;story:string;choices:TimedChoice[]}
 export const characterTimeProfiles={
- student:{label:'背包大学生',agility:80,maxEnergy:90,energy:90,fatigue:0,load:15,focus:55,baseSpeed:1,sprintSpeed:1.9,walkRecovery:2.2,restRecovery:5,fatigueRecovery:0,description:'精力和手机都满格，唯一的问题是总觉得还来得及。'},
- worker:{label:'打工人',agility:60,maxEnergy:60,energy:60,fatigue:0,load:35,focus:85,baseSpeed:.9,sprintSpeed:1.65,sprintDrain:5,walkRecovery:1.15,restRecovery:3.5,fatiguePerSecond:.001,fatigueRecovery:0,description:'从家里返工，妈妈不断往箱子里塞东西；路线熟，负重是麻烦。'},
- tourist:{label:'疲惫游客',agility:55,maxEnergy:35,energy:35,fatigue:70,load:30,focus:50,baseSpeed:.86,sprintSpeed:1.55,sprintDrain:6,walkRecovery:.9,restRecovery:4.5,fatiguePerSecond:.003,fatigueRecovery:-.015,description:'已退房，在陌生城市走了两万多步；必须赶回家上班。'},
+ student:{label:'背包大学生',agility:80,maxEnergy:90,energy:90,fatigue:0,load:15,focus:55,baseSpeed:1,sprintSpeed:SPRINT.multiplier.student,walkRecovery:2.2,restRecovery:5,fatigueRecovery:0,description:'精力和手机都满格，唯一的问题是总觉得还来得及。'},
+ worker:{label:'打工人',agility:60,maxEnergy:60,energy:60,fatigue:0,load:35,focus:85,baseSpeed:.9,sprintSpeed:.9*SPRINT.multiplier.worker,sprintDrain:5,walkRecovery:1.15,restRecovery:3.5,fatiguePerSecond:.001,fatigueRecovery:0,description:'从家里返工，妈妈不断往箱子里塞东西；路线熟，负重是麻烦。'},
+ tourist:{label:'疲惫游客',agility:55,maxEnergy:35,energy:35,fatigue:70,load:30,focus:50,baseSpeed:.86,sprintSpeed:.86*SPRINT.multiplier.tourist,sprintDrain:6,walkRecovery:.9,restRecovery:4.5,fatiguePerSecond:.003,fatigueRecovery:-.015,description:'已退房，在陌生城市走了两万多步；必须赶回家上班。'},
 } as const;
 export function createCharacterTimeState(id:'worker'|'tourist',rng:()=>number=Math.random):CharacterTimeState{const p=characterTimeProfiles[id];return {characterId:id,prepStep:0,energy:p.energy,maxEnergy:p.maxEnergy,fatigue:p.fatigue,load:p.load,focus:p.focus,bossUnread:false,ignoredWork:false,bossCalls:0,bossCallsLeft:0,motherStayed:false,souvenirs:false,coffee:false,slept:false,sleeping:false,alarmStops:2,mapChecked:false,actualDelay:0,wrongWayRisk:rng()<.35,sprinting:false,exhausted:false,runner:{lane:1,wave:0,blocked:false,collisions:0,dodges:0,seed:Math.floor(rng()*3)},bossMayCall:rng()<.65};}
 export function timedPrompt(s:Run):TimedPrompt|undefined{

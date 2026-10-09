@@ -29,7 +29,7 @@ describe('actual countdown accounting for every character',()=>{
  it('all 48 opening budgets use calibrated reference costs and keep the departure lead separate',()=>{
   for(const city of ['shanghai','beijing','guangzhou','hangzhou','wuhan','zhengzhou'])for(const character of roles)for(const hard of [false,true]){
    const s=createCharacterStationRun(city,character,hard,()=>.6),b=s.timeBudget!,c=b.calibration;
-   expect(c.status).toBe('reference-v1');expect(b.legacyAllowanceSeconds).toBe(0);
+   expect(c.status).toBe('reference-v2');expect(b.legacyAllowanceSeconds).toBe(0);
    expect(b.metroSeconds+b.stationWalkSeconds+c.mandatoryInteractionSeconds!+c.expectedEnvironmentSeconds!+c.errorBudgetSeconds!+b.roundingAdjustmentSeconds-b.hardReductionSeconds).toBeCloseTo(s.initial-STOP_BEFORE,6);
    expect(b.departureBudgetSeconds).toBe(s.initial);
   }

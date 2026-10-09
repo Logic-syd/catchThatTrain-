@@ -3,7 +3,7 @@ import {BALANCE} from './balanceConfig';
 import {NORMAL_REFERENCE} from './referenceBudgets';
 import {buildReferenceTimeBudget} from './timeBudget';
 import {createCharacterStationRun,reducer,STOP_BEFORE} from './engine';
-import referenceReport from '../docs/design/reference-time-report.json';
+import referenceReport from '../docs/design/sprint-reference-report.json';
 import {simulateBalance} from '../scripts/simulateBalance';
 
 const roles=['student','worker','tourist','mom'] as const;

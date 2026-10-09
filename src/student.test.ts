@@ -10,7 +10,7 @@ function select(s:Run,i=0){return reducer(s,{type:'CHOICE',choice:s.event!.choic
 function at(id:string,options?:string[]){let s=station(options);s.stationBeat=s.stationJourney.findIndex(b=>b.id===id);s.stationProgress=.999;s.student={...s.student!,runner:{...s.student!.runner,wave:99}};s=reducer(s,{type:'RUN_INPUT',held:true});return tick(s,.1);}
 describe('Hongqiao student chapter',()=>{
  it('starts with 29:30 and three explicit choices, replay has fresh stats',()=>{
-  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1967);expect(s.student!.stats).toEqual(STUDENT.baseStats);
+  const s=createShanghaiRun();expect(s.remaining-STOP_BEFORE).toBe(1983);expect(s.student!.stats).toEqual(STUDENT.baseStats);
   const n=prepared(['take','check','eat']);expect(n.phase).toBe('route');expect(n.remaining).toBe(s.remaining-165);expect(n.student!.stats).toEqual({agility:80,energy:100,focus:70,load:20});
   expect(reducer(n,{type:'PREP_PICK',option:'eat',step:2})).toBe(n);expect(createShanghaiRun().student!.choices).toEqual({});
  });
@@ -25,7 +25,7 @@ describe('Hongqiao student chapter',()=>{
  it('sprinting moves faster, exhausts, cannot be spammed, then recovers',()=>{
   const start=station();start.stationJourney=[{id:'gates',stage:4,label:'long',seconds:100}];
   const walk=tick(reducer(start,{type:'RUN_INPUT',held:true}),4);const sprint=tick(reducer(start,{type:'SPRINT_INPUT',held:true}),4);
-  expect(sprint.stationProgress).toBeGreaterThan(walk.stationProgress*1.8);expect(sprint.student!.stamina).toBeLessThan(walk.student!.stamina);
+  expect(sprint.stationProgress).toBeGreaterThan(walk.stationProgress*1.4);expect(sprint.stationProgress).toBeLessThanOrEqual(walk.stationProgress*1.5);expect(sprint.student!.stamina).toBeLessThan(walk.student!.stamina);
   let drained=tick(reducer({...start,student:{...start.student!,stamina:1}},{type:'SPRINT_INPUT',held:true}),.3);expect(drained.student!.exhausted).toBe(true);
   drained=reducer(drained,{type:'SPRINT_INPUT',held:true});expect(drained.student!.sprinting).toBe(false);expect(tick(reducer(drained,{type:'RUN_INPUT',held:false}),6).student!.exhausted).toBe(false);
  });

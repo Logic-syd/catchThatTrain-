@@ -43,7 +43,7 @@ export default function StationRunControls({run,dispatch,blocked}:{run:Run;dispa
    {(['walk','sprint'] as const).map(kind=><button key={kind} className={kind==='walk'?'map-walk':'map-sprint'} disabled={blocked||(kind==='sprint'&&effort==='exhausted')} aria-pressed={moving&&(kind==='sprint'?sprint:!sprint)}
     onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);start(kind);}} onPointerUp={()=>release(kind)} onPointerCancel={()=>release(kind)} onLostPointerCapture={()=>release(kind)} onContextMenu={e=>e.preventDefault()}
     onKeyDown={e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();start(kind);}}} onKeyUp={()=>release(kind)}>
-    {kind==='walk'?<Footprints/>:<Zap/>}<span>{kind==='walk'?'按住赶路':effort==='exhausted'?'喘口气再冲':'按住冲刺'}</span><small>{kind==='walk'?'稳着走，调整呼吸':'更快，别一直猛冲'}</small>
+    {kind==='walk'?<Footprints/>:<Zap/>}<span>{kind==='walk'?'按住赶路':effort==='exhausted'?'喘口气再冲':'按住冲刺'}</span><small>{kind==='walk'?'稳着走，调整呼吸':run.student?'短冲更快，久冲会掉速':'更快，留意体力'}</small>
    </button>)}
   </div>
   <p className="hold-run-tip">松手＝停下喘气 · 空格赶路，Shift＋空格冲刺</p>
