@@ -1,4 +1,5 @@
 import type { EventConfig } from './data';
+import {GATE_QUEUE_SECONDS,type StationLuck} from './stationEncounters';
 export type Interaction={kind:'gate-number'|'tap'|'swipe'|'scan'|'gates'|'choice'|'identity'|'escalators'|'escalator-ride'|'outcome'|'hold';seconds:number;penalty:number;required?:number};
 export type Encounter={stage:number;id:string;x:number;y:number;label:string};
 export function createStationPlan(hard=false,rng=Math.random):Encounter[]{
@@ -17,7 +18,15 @@ export function identityPrompt(phase:'metro'|'station'):EventConfig{
 }
 const choices=(a:string,b:string,sa:number,sb:number)=>[{label:a,detail:sa?'−'+sa+' 秒':'不额外扣时',seconds:sa},{label:b,detail:'−'+sb+' 秒',seconds:sb}];
 const make=(id:string,title:string,description:string,cs:EventConfig['choices'],interaction:Interaction):EventConfig=>({id,title,description,phase:'station',choices:cs,interaction});
-export function stationPrompt(id:string,hard=false):EventConfig|undefined{
+function gateChoices(luck?:StationLuck):EventConfig['choices']{
+ const queues=luck?.gateQueues?.length===8&&luck.gateQueues.every(n=>Number.isFinite(n)&&n>=0)?luck.gateQueues:GATE_QUEUE_SECONDS;
+ return queues.map((waitSeconds,lane)=>{
+  // This lane-specific detour is additional to the common station journey.
+  const fixedWalkSeconds=Math.round((Math.abs(68+lane*72-320)+115)/42*4);
+  return {id:`lane-${lane+1}`,lane,label:`${lane+1} 号`,seconds:fixedWalkSeconds+waitSeconds,fixedWalkSeconds,waitSeconds,detail:`附加步行 ${fixedWalkSeconds} 秒 · 排队 ${waitSeconds} 秒 · 合计 ${fixedWalkSeconds+waitSeconds} 秒`};
+ });
+}
+export function stationPrompt(id:string,hard=false,luck?:StationLuck):EventConfig|undefined{
  const cases:Record<string,EventConfig>={
  'bag-snag':make('bag-snag','等等，背包被挂住了！','刚下地铁，肩带挂在栏杆上了。向上滑动背包，把肩带从挂钩上解下来。',[{label:'解开肩带，背好包',detail:'把包拿回来 · −8 秒',seconds:8}],{kind:'swipe',seconds:7,penalty:25}),
  'exit-closed':make('exit-closed','这出口，怎么封了？！','正前方拉起了围栏。铁路出发在左侧，机场接驳在右侧。',choices('← 跟着铁路标识走','→ 看人多，跟着走',12,65),{kind:'choice',seconds:8,penalty:60}),
@@ -25,17 +34,9 @@ export function stationPrompt(id:string,hard=false):EventConfig|undefined{
  'auntie':make('auntie','小伙子，虹桥往哪走？','阿姨举着手机挡住路。指一下「铁路出发」，大家都能走。',choices('指向「铁路出发 ↑」','跟着她的手机导航走',8,50),{kind:'choice',seconds:7,penalty:40}),
  'broken-lift':make('broken-lift','电梯坏了。是真的坏了。','「维修中」贴在门上。你没带箱子，旁边的楼梯能走。',choices('不等了！跑楼梯','再等另一部电梯',18,65),{kind:'choice',seconds:7,penalty:60}),
  'security':make('security','滴——背包要开一下。','安检员：剪刀不能随身带上车。点出剪刀，交给工作人员处理。',[{label:'交出剪刀，继续赶车',detail:'按要求处理禁限带物品',seconds:20}],{kind:'scan',seconds:8,penalty:55}),
- 'suitcase':make('suitcase','谁的箱子卡住通道啦！','向上滑，把箱子提过门槛。用键盘也可以点「提起来」。',[{label:'提过去了！',detail:'通道恢复',seconds:5}],{kind:'swipe',seconds:6,penalty:35}),
- 'gates':make('gates','八条通道，哪条最快？','都通往 12A。步行时间 + 排队时间，选总耗时最短的一条。',[
- {label:'1 号',detail:'步行 8 秒 · 排队 65 秒',seconds:73},
- {label:'2 号',detail:'步行 12 秒 · 排队 48 秒',seconds:60},
- {label:'3 号',detail:'步行 18 秒 · 排队 35 秒',seconds:53},
- {label:'4 号',detail:'步行 21 秒 · 排队 4 秒',seconds:25},
- {label:'5 号',detail:'步行 25 秒 · 排队 32 秒',seconds:57},
- {label:'6 号',detail:'步行 30 秒 · 排队 5 秒',seconds:35},
- {label:'7 号',detail:'步行 10 秒 · 排队 65 秒',seconds:75},
- {label:'8 号',detail:'步行 35 秒 · 排队 10 秒',seconds:45}],{kind:'gates',seconds:10,penalty:80}),
- 'old-ticket':make('old-ticket','等一下，这是昨天的票？！','游戏剧情：你点错了日期。站务员帮你查到了今天同车次的余票，赶快确认。',[{label:'核对今天日期，重新出票',detail:'游戏内办理，不涉及真实购票 · −60 秒',seconds:60},{label:'拿旧票再试一次',detail:'被闸机退回后再办理 · −100 秒',seconds:100}],{kind:'choice',seconds:8,penalty:100})
+ 'suitcase':make('suitcase','谁的箱子卡住通道啦！','向上滑，把箱子提过门槛。键盘可聚焦箱子后按 Enter 或空格。',[{label:'提过去了！',detail:'通道恢复',seconds:5}],{kind:'swipe',seconds:6,penalty:35}),
+ 'gates':make('gates','八条通道，哪条最快？','都通往 12A。比较附加步行与排队的合计时间；这段步行不包含在公共通道里。',gateChoices(luck),{kind:'gates',seconds:10,penalty:80}),
+ 'old-ticket':make('old-ticket','手机里怎么还是昨天的票？','手机打开了昨天保存的车票。今天的车票也在手机里，先核对日期再切换；拿旧票去扫会被退回。',[{id:'current-ticket',label:'核对日期，打开今天的车票',detail:'检查日期并切换车票 · 花 8 游戏秒',seconds:8},{id:'stale-ticket',label:'拿旧票再试一次',detail:'旧票被退回，等待工作人员核对 · 花 60 游戏秒',seconds:60}],{kind:'choice',seconds:8,penalty:60})
  };
  if(id==='old-ticket'&&!hard)return undefined;
  const result=cases[id];
@@ -46,6 +47,5 @@ export function stationPrompt(id:string,hard=false):EventConfig|undefined{
   result.interaction={kind:'choice',seconds:6,penalty:35};
   result.choices=[{label:'借过！我要赶车！',detail:'提醒他们让开 · −5 秒',seconds:5},{label:'从旁边绕过去',detail:'绕开人群 · −2 秒',seconds:2,detour:{x:390,y:1150,label:'从右边绕过扶梯口'}}];
  }
- if(id==='gates'&&result){const queues=[65,48,35,4,32,5,65,10].map(v=>({v,order:Math.random()})).sort((a,b)=>a.order-b.order).map(x=>x.v);result.choices=result.choices.map((c,i)=>({...c,lane:i,seconds:queues[i],detail:'\u6b65\u884c '+Math.round((Math.abs(68+i*72-320)+115)/42*4)+' \u79d2 \u00b7 \u6392\u961f '+queues[i]+' \u79d2'}));}
  return result;
 }

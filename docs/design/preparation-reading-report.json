@@ -1,0 +1,490 @@
+{
+  "metadata": {
+    "baseRevision": "f92b217+choice-fix",
+    "seed": 921,
+    "runCount": 48,
+    "note": "Extended deadline, reference preparation and movement, 5 versus 8 seconds per new prompt. Source-level ledger diagnosis, not human pass probability."
+  },
+  "rows": [
+    {
+      "role": "student",
+      "station": "shanghai",
+      "extraSeconds": 62.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1677.451,
+          "penalties": [],
+          "interactionSeconds": 122.343
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1740.401,
+          "penalties": [],
+          "interactionSeconds": 188.293
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "beijing",
+      "extraSeconds": 44.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1143.546,
+          "penalties": [],
+          "interactionSeconds": 86.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1188.496,
+          "penalties": [],
+          "interactionSeconds": 134.806
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "guangzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1602.592,
+          "penalties": [],
+          "interactionSeconds": 92.73
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1650.542,
+          "penalties": [],
+          "interactionSeconds": 143.68
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "hangzhou",
+      "extraSeconds": 41.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1004.456,
+          "penalties": [],
+          "interactionSeconds": 80.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1046.406,
+          "penalties": [],
+          "interactionSeconds": 125.806
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "wuhan",
+      "extraSeconds": 50.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1479.757,
+          "penalties": [],
+          "interactionSeconds": 100.096
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1530.707,
+          "penalties": [],
+          "interactionSeconds": 154.046
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "zhengzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1402.03,
+          "penalties": [],
+          "interactionSeconds": 91.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1449.98,
+          "penalties": [],
+          "interactionSeconds": 142.806
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "shanghai",
+      "extraSeconds": 66.35,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1857.318,
+          "penalties": [],
+          "interactionSeconds": 131.98
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1923.668,
+          "penalties": [],
+          "interactionSeconds": 200.93
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "beijing",
+      "extraSeconds": 44.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1323.9,
+          "penalties": [],
+          "interactionSeconds": 89.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1368.85,
+          "penalties": [],
+          "interactionSeconds": 137.943
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "guangzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1815.431,
+          "penalties": [],
+          "interactionSeconds": 95.867
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1863.381,
+          "penalties": [],
+          "interactionSeconds": 146.817
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "hangzhou",
+      "extraSeconds": 41.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1149.619,
+          "penalties": [],
+          "interactionSeconds": 83.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1191.569,
+          "penalties": [],
+          "interactionSeconds": 128.943
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "wuhan",
+      "extraSeconds": 53.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1682.492,
+          "penalties": [],
+          "interactionSeconds": 109.733
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1736.442,
+          "penalties": [],
+          "interactionSeconds": 166.683
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "zhengzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1621.507,
+          "penalties": [],
+          "interactionSeconds": 94.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1669.457,
+          "penalties": [],
+          "interactionSeconds": 145.943
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "shanghai",
+      "extraSeconds": 68.101,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1911.534,
+          "penalties": [],
+          "interactionSeconds": 137.58
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1979.635,
+          "penalties": [],
+          "interactionSeconds": 209.53
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "beijing",
+      "extraSeconds": 44.44,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1374.691,
+          "penalties": [],
+          "interactionSeconds": 90.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1419.131,
+          "penalties": [],
+          "interactionSeconds": 138.543
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "guangzhou",
+      "extraSeconds": 50.065,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1883.239,
+          "penalties": [],
+          "interactionSeconds": 101.467
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1933.303,
+          "penalties": [],
+          "interactionSeconds": 155.417
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "hangzhou",
+      "extraSeconds": 41.881,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1189.771,
+          "penalties": [],
+          "interactionSeconds": 84.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1231.652,
+          "penalties": [],
+          "interactionSeconds": 129.543
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "wuhan",
+      "extraSeconds": 53.844,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1738.819,
+          "penalties": [],
+          "interactionSeconds": 110.333
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1792.663,
+          "penalties": [],
+          "interactionSeconds": 167.283
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "zhengzhou",
+      "extraSeconds": 47.057,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1644.443,
+          "penalties": [],
+          "interactionSeconds": 95.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1691.499,
+          "penalties": [],
+          "interactionSeconds": 146.543
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "shanghai",
+      "extraSeconds": 68.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1834.448,
+          "penalties": [],
+          "interactionSeconds": 136.24
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1903.398,
+          "penalties": [],
+          "interactionSeconds": 208.19
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "beijing",
+      "extraSeconds": 44.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1247.509,
+          "penalties": [],
+          "interactionSeconds": 89.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1292.459,
+          "penalties": [],
+          "interactionSeconds": 137.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "guangzhou",
+      "extraSeconds": 38.35,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1775.104,
+          "penalties": [],
+          "interactionSeconds": 97.667
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1813.454,
+          "penalties": [],
+          "interactionSeconds": 148.617
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "hangzhou",
+      "extraSeconds": 41.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1119.002,
+          "penalties": [],
+          "interactionSeconds": 83.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1160.952,
+          "penalties": [],
+          "interactionSeconds": 128.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "wuhan",
+      "extraSeconds": 59.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1648.938,
+          "penalties": [],
+          "interactionSeconds": 118.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1708.888,
+          "penalties": [],
+          "interactionSeconds": 181.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "zhengzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1488.526,
+          "penalties": [],
+          "interactionSeconds": 96.493
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1536.476,
+          "penalties": [],
+          "interactionSeconds": 147.443
+        }
+      ]
+    }
+  ]
+}

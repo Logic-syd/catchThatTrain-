@@ -1,4 +1,5 @@
 import {STATIONS} from './stations';
+import {STUDENT_PREPARATION_TOTAL} from './studentConfig';
 export type Category='general'|'student'|'worker'|'tourist'|'mother'|'family'|'station';
 export type Rarity='common'|'uncommon'|'rare'|'legendary';
 export type Rule={field:string;op:'eq'|'gte'|'lte'|'lt'|'gt';value:number|boolean|string}|{all:Rule[]}|{any:Rule[]};
@@ -55,7 +56,7 @@ export const ACHIEVEMENTS:Achievement[]=[
  a('family-lift','电梯受害者','电梯延误是关键败因。','family',all(fail,c('liftDecisive')),1,'once','uncommon'),
  a('family-tough','这家人命真硬','至少 3 项负面系统同时影响，仍成功。','family',all(win,c('negativeSystems',3,'gte')),1,'once','rare'),
  a('family-heavy','重装上阵','负重至少 90，仍成功。','family',all(win,c('load',90,'gte')),1,'once','rare'),
- a('secret-student','大学生的时间观','主动准备至少花费 120 秒，并有失误，仍压哨成功。','student',all(clutch,c('extraPreparationSeconds',120,'gte'),f('errors',1,'gte')),1,'once','legendary',{hidden:true}),
+ a('secret-student','大学生的时间观',`主动准备至少花费 ${STUDENT_PREPARATION_TOTAL} 秒，并有失误，仍压哨成功。`,'student',all(clutch,c('extraPreparationSeconds',STUDENT_PREPARATION_TOTAL,'gte'),f('errors',1,'gte')),1,'once','legendary',{hidden:true}),
  a('secret-disaster-win','这都能赶上？','戏剧性指数至少 100，仍然成功。','general',all(win,f('dramaScore',100,'gte')),1,'once','legendary',{hidden:true}),
  a('secret-disaster-loss','今天真不该出门','戏剧性指数至少 100，最终失败。','general',all(fail,f('dramaScore',100,'gte')),1,'once','rare',{hidden:true}),
  a('secret-tea','奶茶误我','奶茶的单项时间损失足以填补失败差距。','student',all(fail,c('tea'),c('teaDecisive')),1,'once','rare',{hidden:true}),

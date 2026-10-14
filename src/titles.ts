@@ -1,4 +1,5 @@
 import type {GameResult} from './gameResult';
+import {STUDENT_PREPARATION_COSTS,STUDENT_PREPARATION_TOTAL} from './studentConfig';
 import type {CharacterId} from './resultMetrics';
 export interface TitleConfig{id:string;name:string;result:'success'|'failure'|'any';priority:number;characterId?:CharacterId;rarity:number;tieBreakOrder:number;condition:(r:GameResult)=>boolean;decisive?:(r:GameResult)=>boolean}
 const flag=(r:GameResult,k:string)=>r.characterStats[k]===true;
@@ -22,14 +23,14 @@ export const TITLE_CONFIGS:TitleConfig[]=[
  title('student_clock','大学生的时间观','success',875,r=>flag(r,'tea')&&flag(r,'breakfast')&&r.errors>0,'student'),
  title('student_theory','理论上果然来得及','success',870,r=>r.initialMarginRatio!==null&&r.initialMarginRatio<.1,'student'),
  title('student_runner','年轻就是能跑','success',860,r=>value(r,'lateSprintSaved')>=20&&decisiveEvent(r,/sprint-late/),'student'),
- title('student_management','极限时间管理大师','success',845,r=>value(r,'extraPreparationSeconds')>=120&&r.resultMarginSeconds<120,'student'),
+ title('student_management','极限时间管理大师','success',845,r=>value(r,'extraPreparationSeconds')>=STUDENT_PREPARATION_TOTAL&&r.resultMarginSeconds<120,'student'),
  title('student_tea','奶茶党永不认输','success',830,r=>flag(r,'tea'),'student'),
  title('student_food','吃完再走也来得及','success',820,r=>flag(r,'breakfast'),'student'),
  title('student_bag','包里有谱','success',810,r=>flag(r,'checkedID')&&flag(r,'idFound'),'student'),
  title('student_bag_wrong','包里到底装了什么','failure',870,r=>value(r,'bagMistakes')>=3,'student'),
  title('student_id','身份证去哪了','failure',860,r=>decisiveEvent(r,/identity/)||r.timeImpacts.filter(i=>i.deltaSeconds<0).sort((a,b)=>a.deltaSeconds-b.deltaSeconds).slice(0,2).some(i=>i.eventId==='identity-search'&&i.deltaSeconds<=-10),'student',r=>decisiveEvent(r,/identity/)),
- title('student_tea_loss','奶茶误我','failure',840,r=>flag(r,'tea')&&decisiveEvent(r,/prepare-tea/)&&Math.abs(r.resultMarginSeconds)<=120,'student',r=>decisiveEvent(r,/prepare-tea/)),
- title('student_food_loss','饭团的代价','failure',830,r=>flag(r,'breakfast')&&decisiveEvent(r,/prepare-breakfast/)&&Math.abs(r.resultMarginSeconds)<=60,'student'),
+ title('student_tea_loss','奶茶误我','failure',840,r=>flag(r,'tea')&&decisiveEvent(r,/prepare-tea/)&&Math.abs(r.resultMarginSeconds)<=STUDENT_PREPARATION_COSTS.tea,'student',r=>decisiveEvent(r,/prepare-tea/)),
+ title('student_food_loss','饭团的代价','failure',830,r=>flag(r,'breakfast')&&decisiveEvent(r,/prepare-breakfast/)&&Math.abs(r.resultMarginSeconds)<=STUDENT_PREPARATION_COSTS.breakfast,'student'),
  title('student_bed','再躺五分钟的后果','failure',806,r=>Math.abs(r.resultMarginSeconds)<=30,'student'),
  title('student_theory_loss','理论计算失败','failure',805,r=>r.initialMarginRatio!==null&&r.initialMarginRatio<.1,'student'),
  title('worker_gifts','土特产也不能拦我','success',840,r=>flag(r,'localGifts'),'worker'),
@@ -96,7 +97,7 @@ export const TITLE_CONFIGS:TitleConfig[]=[
  title('navigation_loss','路线选错了','failure',490,r=>loss(r,'navigation')>0&&loss(r,'navigation')>=Math.max(loss(r,'decision'),loss(r,'operation'))),
  title('detour','多跑的每一步都算数','failure',480,r=>loss(r,'navigation')>=60),
  title('direction','看错方向了','failure',470,r=>r.wrongTurns>0||r.wrongDirections>0),
- title('optional_delay','早知道不折腾了','failure',460,r=>value(r,'extraPreparationSeconds')>=120),
+ title('optional_delay','早知道不折腾了','failure',460,r=>value(r,'extraPreparationSeconds')>=(r.characterId==='student'?STUDENT_PREPARATION_TOTAL:120)),
  title('bad_luck','今天不宜赶车','failure',705,r=>r.timeImpacts.some(i=>!i.avoidable&&i.deltaSeconds<=-60)&&r.errors===0),
  title('success_default','赶上了','success',0,()=>true),
  title('failure_default','下次早点出门吧','failure',0,()=>true)

@@ -1,0 +1,6725 @@
+{
+  "metadata": {
+    "referenceSource": "3ae6fd3:docs/design/reference-time-report.json",
+    "sourceRevision": "working-tree",
+    "policy": {
+      "version": 1,
+      "readingSeconds": 5,
+      "followupSeconds": 0.75,
+      "tapSeconds": 0.28,
+      "arrivalSeconds": 0.6,
+      "sprintDuty": {
+        "student": 0.15,
+        "worker": 0.1,
+        "tourist": 0.06,
+        "mom": 0.08
+      },
+      "preparation": {
+        "student": [
+          "skip",
+          "check",
+          "eat"
+        ],
+        "worker": [
+          "take-gifts",
+          "eat",
+          "reply"
+        ],
+        "tourist": [
+          "coffee",
+          "keep"
+        ],
+        "mom": [
+          "toilet-first",
+          "snacks-pack"
+        ]
+      },
+      "measurementAllowance": 14400
+    },
+    "measurementExtensionApplied": 0,
+    "samplesPerRoleAndStation": 32,
+    "actualRuns": 768,
+    "errorBudgetSeconds": {
+      "student": 240,
+      "worker": 180,
+      "tourist": 135,
+      "mom": 90
+    },
+    "note": "Real-deadline validation of one declared reference policy; not human success rates. Hard budgets retain previous reductions and are audited separately. Continuous-sprint rebalance is deferred."
+  },
+  "errors": [],
+  "groups": [
+    {
+      "role": "student",
+      "city": "shanghai",
+      "reference": {
+        "metroSeconds": 1116.35,
+        "stationWalkSeconds": 336.44,
+        "mandatoryInteractionSeconds": 236.87,
+        "expectedEnvironmentSeconds": 36.54
+      },
+      "normalRequiredSeconds": 1726.2,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1967,
+      "hardOpeningSeconds": 1877,
+      "roundingSeconds": 0.8,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.812,
+      "minGateMargin": 207.749,
+      "maxGateMargin": 267.149,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1721.451,
+          "gateMargin": 245.549,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1704.251,
+          "gateMargin": 262.749,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1749.451,
+          "gateMargin": 217.549,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1748.551,
+          "gateMargin": 218.449,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1713.751,
+          "gateMargin": 253.249,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1704.551,
+          "gateMargin": 262.449,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1749.751,
+          "gateMargin": 217.249,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1712.851,
+          "gateMargin": 254.149,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1719.651,
+          "gateMargin": 247.349,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1704.851,
+          "gateMargin": 262.149,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1711.651,
+          "gateMargin": 255.349,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1749.151,
+          "gateMargin": 217.849,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1719.951,
+          "gateMargin": 247.049,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1715.251,
+          "gateMargin": 251.749,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1740.351,
+          "gateMargin": 226.649,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1759.251,
+          "gateMargin": 207.749,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1699.851,
+          "gateMargin": 267.149,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1715.551,
+          "gateMargin": 251.449,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1740.651,
+          "gateMargin": 226.349,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1723.551,
+          "gateMargin": 243.449,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1737.551,
+          "gateMargin": 229.449,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1715.851,
+          "gateMargin": 251.149,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1712.551,
+          "gateMargin": 254.449,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1749.751,
+          "gateMargin": 217.249,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1704.551,
+          "gateMargin": 262.449,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1718.651,
+          "gateMargin": 248.349,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1748.851,
+          "gateMargin": 218.149,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1747.251,
+          "gateMargin": 219.749,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1704.851,
+          "gateMargin": 262.149,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1732.751,
+          "gateMargin": 234.249,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1749.151,
+          "gateMargin": 217.849,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1711.951,
+          "gateMargin": 255.049,
+          "operations": 23,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "city": "beijing",
+      "reference": {
+        "metroSeconds": 771.78,
+        "stationWalkSeconds": 199.92,
+        "mandatoryInteractionSeconds": 207.97,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1194.06,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1435,
+      "hardOpeningSeconds": 1345,
+      "roundingSeconds": 0.94,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.926,
+      "minGateMargin": 226.154,
+      "maxGateMargin": 258.054,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1191.546,
+          "gateMargin": 243.454,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1197.746,
+          "gateMargin": 237.254,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1191.546,
+          "gateMargin": 243.454,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1190.946,
+          "gateMargin": 244.054,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1191.746,
+          "gateMargin": 243.254,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1197.946,
+          "gateMargin": 237.054,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1191.746,
+          "gateMargin": 243.254,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1191.146,
+          "gateMargin": 243.854,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1190.346,
+          "gateMargin": 244.654,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1198.146,
+          "gateMargin": 236.854,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1190.346,
+          "gateMargin": 244.654,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1191.346,
+          "gateMargin": 243.654,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1190.546,
+          "gateMargin": 244.454,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1208.446,
+          "gateMargin": 226.554,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1176.946,
+          "gateMargin": 258.054,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1201.446,
+          "gateMargin": 233.554,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1177.146,
+          "gateMargin": 257.854,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1208.646,
+          "gateMargin": 226.354,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1177.146,
+          "gateMargin": 257.854,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1201.646,
+          "gateMargin": 233.354,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1207.946,
+          "gateMargin": 227.054,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1208.846,
+          "gateMargin": 226.154,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1190.946,
+          "gateMargin": 244.054,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1191.746,
+          "gateMargin": 243.254,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1197.946,
+          "gateMargin": 237.054,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1197.346,
+          "gateMargin": 237.654,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1191.146,
+          "gateMargin": 243.854,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1190.346,
+          "gateMargin": 244.654,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1198.146,
+          "gateMargin": 236.854,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1197.546,
+          "gateMargin": 237.454,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1191.346,
+          "gateMargin": 243.654,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1190.546,
+          "gateMargin": 244.454,
+          "operations": 19,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "city": "guangzhou",
+      "reference": {
+        "metroSeconds": 1053.61,
+        "stationWalkSeconds": 347.31,
+        "mandatoryInteractionSeconds": 210.25,
+        "expectedEnvironmentSeconds": 33.19
+      },
+      "normalRequiredSeconds": 1644.36,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1885,
+      "hardOpeningSeconds": 1795,
+      "roundingSeconds": 0.64,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.646,
+      "minGateMargin": 226.408,
+      "maxGateMargin": 253.308,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1641.392,
+          "gateMargin": 243.608,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1647.592,
+          "gateMargin": 237.408,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1641.392,
+          "gateMargin": 243.608,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1640.692,
+          "gateMargin": 244.308,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1641.492,
+          "gateMargin": 243.508,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1647.692,
+          "gateMargin": 237.308,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1641.492,
+          "gateMargin": 243.508,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1640.792,
+          "gateMargin": 244.208,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1640.392,
+          "gateMargin": 244.608,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1647.792,
+          "gateMargin": 237.208,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1640.392,
+          "gateMargin": 244.608,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1640.892,
+          "gateMargin": 244.108,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1640.492,
+          "gateMargin": 244.508,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1658.392,
+          "gateMargin": 226.608,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1631.692,
+          "gateMargin": 253.308,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1651.392,
+          "gateMargin": 233.608,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1631.792,
+          "gateMargin": 253.208,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1658.492,
+          "gateMargin": 226.508,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1631.792,
+          "gateMargin": 253.208,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1651.492,
+          "gateMargin": 233.508,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1657.692,
+          "gateMargin": 227.308,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1658.592,
+          "gateMargin": 226.408,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1640.692,
+          "gateMargin": 244.308,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1641.492,
+          "gateMargin": 243.508,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1648.092,
+          "gateMargin": 236.908,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1647.392,
+          "gateMargin": 237.608,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1640.792,
+          "gateMargin": 244.208,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1640.392,
+          "gateMargin": 244.608,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1647.792,
+          "gateMargin": 237.208,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1647.492,
+          "gateMargin": 237.508,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1640.892,
+          "gateMargin": 244.108,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1640.492,
+          "gateMargin": 244.508,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "city": "hangzhou",
+      "reference": {
+        "metroSeconds": 641.49,
+        "stationWalkSeconds": 212.22,
+        "mandatoryInteractionSeconds": 196.81,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1056.29,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1297,
+      "hardOpeningSeconds": 1207,
+      "roundingSeconds": 0.71,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.704,
+      "minGateMargin": 225.344,
+      "maxGateMargin": 248.344,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1055.256,
+          "gateMargin": 241.744,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1054.456,
+          "gateMargin": 242.544,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1055.256,
+          "gateMargin": 241.744,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1054.656,
+          "gateMargin": 242.344,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1055.456,
+          "gateMargin": 241.544,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1054.656,
+          "gateMargin": 242.344,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1055.456,
+          "gateMargin": 241.544,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1054.856,
+          "gateMargin": 242.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1054.056,
+          "gateMargin": 242.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1054.856,
+          "gateMargin": 242.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1054.056,
+          "gateMargin": 242.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1055.056,
+          "gateMargin": 241.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1054.256,
+          "gateMargin": 242.744,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1065.156,
+          "gateMargin": 231.844,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1048.656,
+          "gateMargin": 248.344,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1065.156,
+          "gateMargin": 231.844,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1048.856,
+          "gateMargin": 248.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1065.356,
+          "gateMargin": 231.644,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1048.856,
+          "gateMargin": 248.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1065.356,
+          "gateMargin": 231.644,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1071.656,
+          "gateMargin": 225.344,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1064.756,
+          "gateMargin": 232.244,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1053.856,
+          "gateMargin": 243.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1055.456,
+          "gateMargin": 241.544,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1054.656,
+          "gateMargin": 242.344,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1054.056,
+          "gateMargin": 242.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1054.856,
+          "gateMargin": 242.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1054.056,
+          "gateMargin": 242.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1054.856,
+          "gateMargin": 242.144,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1054.256,
+          "gateMargin": 242.744,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1055.056,
+          "gateMargin": 241.944,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1054.256,
+          "gateMargin": 242.744,
+          "operations": 18,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "city": "wuhan",
+      "reference": {
+        "metroSeconds": 1058.75,
+        "stationWalkSeconds": 247.57,
+        "mandatoryInteractionSeconds": 216.05,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1528.14,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1769,
+      "hardOpeningSeconds": 1679,
+      "roundingSeconds": 0.86,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.853,
+      "minGateMargin": 224.843,
+      "maxGateMargin": 255.643,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1527.757,
+          "gateMargin": 241.243,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1526.957,
+          "gateMargin": 242.043,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1527.757,
+          "gateMargin": 241.243,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1527.157,
+          "gateMargin": 241.843,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1527.957,
+          "gateMargin": 241.043,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1527.157,
+          "gateMargin": 241.843,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1527.957,
+          "gateMargin": 241.043,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1527.357,
+          "gateMargin": 241.643,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1526.557,
+          "gateMargin": 242.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1527.357,
+          "gateMargin": 241.643,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1526.557,
+          "gateMargin": 242.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1527.557,
+          "gateMargin": 241.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1526.757,
+          "gateMargin": 242.243,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1537.657,
+          "gateMargin": 231.343,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1513.957,
+          "gateMargin": 255.043,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1537.657,
+          "gateMargin": 231.343,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1514.157,
+          "gateMargin": 254.843,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1537.857,
+          "gateMargin": 231.143,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1513.357,
+          "gateMargin": 255.643,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1537.857,
+          "gateMargin": 231.143,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1544.157,
+          "gateMargin": 224.843,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1538.057,
+          "gateMargin": 230.943,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1527.157,
+          "gateMargin": 241.843,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1527.957,
+          "gateMargin": 241.043,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1527.157,
+          "gateMargin": 241.843,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1526.557,
+          "gateMargin": 242.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1527.357,
+          "gateMargin": 241.643,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1526.557,
+          "gateMargin": 242.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1527.357,
+          "gateMargin": 241.643,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1526.757,
+          "gateMargin": 242.243,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1527.557,
+          "gateMargin": 241.443,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1526.757,
+          "gateMargin": 242.243,
+          "operations": 21,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "city": "zhengzhou",
+      "reference": {
+        "metroSeconds": 959.67,
+        "stationWalkSeconds": 265.09,
+        "mandatoryInteractionSeconds": 209.37,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1448.52,
+      "errorBudgetSeconds": 240,
+      "openingSeconds": 1689,
+      "hardOpeningSeconds": 1599,
+      "roundingSeconds": 0.48,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 240.48,
+      "minGateMargin": 226.47,
+      "maxGateMargin": 249.97,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1445.23,
+          "gateMargin": 243.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1451.43,
+          "gateMargin": 237.57,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1445.23,
+          "gateMargin": 243.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1444.63,
+          "gateMargin": 244.37,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1445.43,
+          "gateMargin": 243.57,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1451.63,
+          "gateMargin": 237.37,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1445.43,
+          "gateMargin": 243.57,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1444.83,
+          "gateMargin": 244.17,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1444.03,
+          "gateMargin": 244.97,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1451.83,
+          "gateMargin": 237.17,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1444.03,
+          "gateMargin": 244.97,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1445.03,
+          "gateMargin": 243.97,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1444.23,
+          "gateMargin": 244.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1462.13,
+          "gateMargin": 226.87,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1439.03,
+          "gateMargin": 249.97,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1455.13,
+          "gateMargin": 233.87,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1439.23,
+          "gateMargin": 249.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1462.33,
+          "gateMargin": 226.67,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1439.23,
+          "gateMargin": 249.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1455.33,
+          "gateMargin": 233.67,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1461.63,
+          "gateMargin": 227.37,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1462.53,
+          "gateMargin": 226.47,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1444.63,
+          "gateMargin": 244.37,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1445.43,
+          "gateMargin": 243.57,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1451.63,
+          "gateMargin": 237.37,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1451.03,
+          "gateMargin": 237.97,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1444.83,
+          "gateMargin": 244.17,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1444.03,
+          "gateMargin": 244.97,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1451.83,
+          "gateMargin": 237.17,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1451.23,
+          "gateMargin": 237.77,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1444.23,
+          "gateMargin": 244.77,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1444.23,
+          "gateMargin": 244.77,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "shanghai",
+      "reference": {
+        "metroSeconds": 1165.78,
+        "stationWalkSeconds": 462.41,
+        "mandatoryInteractionSeconds": 216.5,
+        "expectedEnvironmentSeconds": 36.54
+      },
+      "normalRequiredSeconds": 1881.23,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 2062,
+      "hardOpeningSeconds": 1972,
+      "roundingSeconds": 0.77,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.77,
+      "minGateMargin": 146.482,
+      "maxGateMargin": 207.882,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1875.718,
+          "gateMargin": 186.282,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1858.918,
+          "gateMargin": 203.082,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1905.718,
+          "gateMargin": 156.282,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1904.818,
+          "gateMargin": 157.182,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1868.018,
+          "gateMargin": 193.982,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1859.218,
+          "gateMargin": 202.782,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1906.018,
+          "gateMargin": 155.982,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1867.118,
+          "gateMargin": 194.882,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1873.918,
+          "gateMargin": 188.082,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1859.518,
+          "gateMargin": 202.482,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1865.918,
+          "gateMargin": 196.082,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1905.418,
+          "gateMargin": 156.582,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1874.218,
+          "gateMargin": 187.782,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1869.918,
+          "gateMargin": 192.082,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1895.418,
+          "gateMargin": 166.582,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1915.518,
+          "gateMargin": 146.482,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1854.118,
+          "gateMargin": 207.882,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1870.218,
+          "gateMargin": 191.782,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1895.718,
+          "gateMargin": 166.282,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1877.818,
+          "gateMargin": 184.182,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1891.818,
+          "gateMargin": 170.182,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1870.518,
+          "gateMargin": 191.482,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1866.818,
+          "gateMargin": 195.182,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1906.018,
+          "gateMargin": 155.982,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1859.218,
+          "gateMargin": 202.782,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1872.918,
+          "gateMargin": 189.082,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1905.118,
+          "gateMargin": 156.882,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1903.918,
+          "gateMargin": 158.082,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1859.118,
+          "gateMargin": 202.882,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1889.018,
+          "gateMargin": 172.982,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1905.418,
+          "gateMargin": 156.582,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1866.218,
+          "gateMargin": 195.782,
+          "operations": 24,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "beijing",
+      "reference": {
+        "metroSeconds": 883,
+        "stationWalkSeconds": 275.67,
+        "mandatoryInteractionSeconds": 181.11,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1354.17,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 1535,
+      "hardOpeningSeconds": 1445,
+      "roundingSeconds": 0.83,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.822,
+      "minGateMargin": 165.8,
+      "maxGateMargin": 200.5,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1351.9,
+          "gateMargin": 183.1,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1358.1,
+          "gateMargin": 176.9,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1351.9,
+          "gateMargin": 183.1,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1351.3,
+          "gateMargin": 183.7,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1352.1,
+          "gateMargin": 182.9,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1358.3,
+          "gateMargin": 176.7,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1352.1,
+          "gateMargin": 182.9,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1351.5,
+          "gateMargin": 183.5,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1350.7,
+          "gateMargin": 184.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1358.5,
+          "gateMargin": 176.5,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1350.7,
+          "gateMargin": 184.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1351.7,
+          "gateMargin": 183.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1350.9,
+          "gateMargin": 184.1,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1368.8,
+          "gateMargin": 166.2,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1334.5,
+          "gateMargin": 200.5,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1361.8,
+          "gateMargin": 173.2,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1334.7,
+          "gateMargin": 200.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1369,
+          "gateMargin": 166,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1334.7,
+          "gateMargin": 200.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1362,
+          "gateMargin": 173,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1368.3,
+          "gateMargin": 166.7,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1369.2,
+          "gateMargin": 165.8,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1351.3,
+          "gateMargin": 183.7,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1352.1,
+          "gateMargin": 182.9,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1358.3,
+          "gateMargin": 176.7,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1357.7,
+          "gateMargin": 177.3,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1351.5,
+          "gateMargin": 183.5,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1350.7,
+          "gateMargin": 184.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1358.5,
+          "gateMargin": 176.5,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1357.9,
+          "gateMargin": 177.1,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1351.7,
+          "gateMargin": 183.3,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1351.3,
+          "gateMargin": 183.7,
+          "operations": 19,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "guangzhou",
+      "reference": {
+        "metroSeconds": 1140.11,
+        "stationWalkSeconds": 482.64,
+        "mandatoryInteractionSeconds": 183.38,
+        "expectedEnvironmentSeconds": 33.19
+      },
+      "normalRequiredSeconds": 1839.32,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 2020,
+      "hardOpeningSeconds": 1930,
+      "roundingSeconds": 0.68,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.681,
+      "minGateMargin": 165.769,
+      "maxGateMargin": 202.269,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1837.031,
+          "gateMargin": 182.969,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1843.631,
+          "gateMargin": 176.369,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1837.031,
+          "gateMargin": 182.969,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1836.731,
+          "gateMargin": 183.269,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1837.131,
+          "gateMargin": 182.869,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1843.731,
+          "gateMargin": 176.269,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1837.131,
+          "gateMargin": 182.869,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1836.831,
+          "gateMargin": 183.169,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1836.431,
+          "gateMargin": 183.569,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1843.831,
+          "gateMargin": 176.169,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1836.431,
+          "gateMargin": 183.569,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1836.931,
+          "gateMargin": 183.069,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1836.531,
+          "gateMargin": 183.469,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1854.031,
+          "gateMargin": 165.969,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1817.731,
+          "gateMargin": 202.269,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1847.031,
+          "gateMargin": 172.969,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1817.831,
+          "gateMargin": 202.169,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1854.131,
+          "gateMargin": 165.869,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1817.831,
+          "gateMargin": 202.169,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1847.131,
+          "gateMargin": 172.869,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1853.731,
+          "gateMargin": 166.269,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1854.231,
+          "gateMargin": 165.769,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1836.731,
+          "gateMargin": 183.269,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1837.131,
+          "gateMargin": 182.869,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1843.731,
+          "gateMargin": 176.269,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1843.431,
+          "gateMargin": 176.569,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1836.831,
+          "gateMargin": 183.169,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1836.431,
+          "gateMargin": 183.569,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1843.831,
+          "gateMargin": 176.169,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1843.531,
+          "gateMargin": 176.469,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1836.931,
+          "gateMargin": 183.069,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1836.531,
+          "gateMargin": 183.469,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "hangzhou",
+      "reference": {
+        "metroSeconds": 711.52,
+        "stationWalkSeconds": 291.82,
+        "mandatoryInteractionSeconds": 169.95,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1179.06,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 1360,
+      "hardOpeningSeconds": 1270,
+      "roundingSeconds": 0.94,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.941,
+      "minGateMargin": 165.581,
+      "maxGateMargin": 189.181,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1178.019,
+          "gateMargin": 181.981,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1177.219,
+          "gateMargin": 182.781,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1178.019,
+          "gateMargin": 181.981,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1177.419,
+          "gateMargin": 182.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1178.219,
+          "gateMargin": 181.781,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1177.419,
+          "gateMargin": 182.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1178.219,
+          "gateMargin": 181.781,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1177.619,
+          "gateMargin": 182.381,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1176.819,
+          "gateMargin": 183.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1177.619,
+          "gateMargin": 182.381,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1176.819,
+          "gateMargin": 183.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1177.819,
+          "gateMargin": 182.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1177.019,
+          "gateMargin": 182.981,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1187.919,
+          "gateMargin": 172.081,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1171.419,
+          "gateMargin": 188.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1187.919,
+          "gateMargin": 172.081,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1170.819,
+          "gateMargin": 189.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1188.119,
+          "gateMargin": 171.881,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1171.619,
+          "gateMargin": 188.381,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1188.119,
+          "gateMargin": 171.881,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1194.419,
+          "gateMargin": 165.581,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1188.319,
+          "gateMargin": 171.681,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1177.419,
+          "gateMargin": 182.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1177.819,
+          "gateMargin": 182.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1177.419,
+          "gateMargin": 182.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1176.819,
+          "gateMargin": 183.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1177.619,
+          "gateMargin": 182.381,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1176.819,
+          "gateMargin": 183.181,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1177.619,
+          "gateMargin": 182.381,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1177.019,
+          "gateMargin": 182.981,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1177.419,
+          "gateMargin": 182.581,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1177.019,
+          "gateMargin": 182.981,
+          "operations": 18,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "wuhan",
+      "reference": {
+        "metroSeconds": 1165.85,
+        "stationWalkSeconds": 341.09,
+        "mandatoryInteractionSeconds": 195.69,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1708.4,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 1889,
+      "hardOpeningSeconds": 1799,
+      "roundingSeconds": 0.6,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.605,
+      "minGateMargin": 164.508,
+      "maxGateMargin": 195.908,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1708.092,
+          "gateMargin": 180.908,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1707.292,
+          "gateMargin": 181.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1708.092,
+          "gateMargin": 180.908,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1707.492,
+          "gateMargin": 181.508,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1708.292,
+          "gateMargin": 180.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1707.492,
+          "gateMargin": 181.508,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1708.292,
+          "gateMargin": 180.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1707.692,
+          "gateMargin": 181.308,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1706.892,
+          "gateMargin": 182.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1707.692,
+          "gateMargin": 181.308,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1706.892,
+          "gateMargin": 182.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1707.892,
+          "gateMargin": 181.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1707.092,
+          "gateMargin": 181.908,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1717.992,
+          "gateMargin": 171.008,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1693.092,
+          "gateMargin": 195.908,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1717.992,
+          "gateMargin": 171.008,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1693.292,
+          "gateMargin": 195.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1718.192,
+          "gateMargin": 170.808,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1693.292,
+          "gateMargin": 195.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1718.192,
+          "gateMargin": 170.808,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1724.492,
+          "gateMargin": 164.508,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1718.392,
+          "gateMargin": 170.608,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1707.492,
+          "gateMargin": 181.508,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1708.292,
+          "gateMargin": 180.708,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1707.492,
+          "gateMargin": 181.508,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1706.892,
+          "gateMargin": 182.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1707.692,
+          "gateMargin": 181.308,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1706.892,
+          "gateMargin": 182.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1707.692,
+          "gateMargin": 181.308,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1707.092,
+          "gateMargin": 181.908,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1707.892,
+          "gateMargin": 181.108,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1707.092,
+          "gateMargin": 181.908,
+          "operations": 22,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "city": "zhengzhou",
+      "reference": {
+        "metroSeconds": 1054.41,
+        "stationWalkSeconds": 369.42,
+        "mandatoryInteractionSeconds": 212.51,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1650.73,
+      "errorBudgetSeconds": 180,
+      "openingSeconds": 1831,
+      "hardOpeningSeconds": 1741,
+      "roundingSeconds": 0.27,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 180.264,
+      "minGateMargin": 165.793,
+      "maxGateMargin": 194.493,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1647.907,
+          "gateMargin": 183.093,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1654.107,
+          "gateMargin": 176.893,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1647.907,
+          "gateMargin": 183.093,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1647.307,
+          "gateMargin": 183.693,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1648.107,
+          "gateMargin": 182.893,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1654.307,
+          "gateMargin": 176.693,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1648.107,
+          "gateMargin": 182.893,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1647.507,
+          "gateMargin": 183.493,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1646.707,
+          "gateMargin": 184.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1654.507,
+          "gateMargin": 176.493,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1646.707,
+          "gateMargin": 184.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1647.707,
+          "gateMargin": 183.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1646.907,
+          "gateMargin": 184.093,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1664.807,
+          "gateMargin": 166.193,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1636.507,
+          "gateMargin": 194.493,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1657.807,
+          "gateMargin": 173.193,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1636.707,
+          "gateMargin": 194.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1665.007,
+          "gateMargin": 165.993,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1636.707,
+          "gateMargin": 194.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1658.007,
+          "gateMargin": 172.993,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1664.307,
+          "gateMargin": 166.693,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1665.207,
+          "gateMargin": 165.793,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1647.307,
+          "gateMargin": 183.693,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1648.107,
+          "gateMargin": 182.893,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1654.307,
+          "gateMargin": 176.693,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1653.707,
+          "gateMargin": 177.293,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1647.507,
+          "gateMargin": 183.493,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1646.707,
+          "gateMargin": 184.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1654.507,
+          "gateMargin": 176.493,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1653.907,
+          "gateMargin": 177.093,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1647.707,
+          "gateMargin": 183.293,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1646.907,
+          "gateMargin": 184.093,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "shanghai",
+      "reference": {
+        "metroSeconds": 1180.94,
+        "stationWalkSeconds": 496.5,
+        "mandatoryInteractionSeconds": 210.77,
+        "expectedEnvironmentSeconds": 56.54
+      },
+      "normalRequiredSeconds": 1944.75,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 2080,
+      "hardOpeningSeconds": 1990,
+      "roundingSeconds": 0.25,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.253,
+      "minGateMargin": 101.066,
+      "maxGateMargin": 163.566,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1941.134,
+          "gateMargin": 138.866,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1921.534,
+          "gateMargin": 158.466,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1969.134,
+          "gateMargin": 110.866,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1968.234,
+          "gateMargin": 111.766,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1931.834,
+          "gateMargin": 148.166,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1921.834,
+          "gateMargin": 158.166,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1969.434,
+          "gateMargin": 110.566,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1930.934,
+          "gateMargin": 149.066,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1939.334,
+          "gateMargin": 140.666,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1922.134,
+          "gateMargin": 157.866,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1930.134,
+          "gateMargin": 149.866,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1968.834,
+          "gateMargin": 111.166,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1939.634,
+          "gateMargin": 140.366,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1932.534,
+          "gateMargin": 147.466,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1958.134,
+          "gateMargin": 121.866,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1978.934,
+          "gateMargin": 101.066,
+          "operations": 30,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1916.434,
+          "gateMargin": 163.566,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1932.834,
+          "gateMargin": 147.166,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1958.434,
+          "gateMargin": 121.566,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1941.634,
+          "gateMargin": 138.366,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1957.334,
+          "gateMargin": 122.666,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1933.134,
+          "gateMargin": 146.866,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1930.634,
+          "gateMargin": 149.366,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1969.434,
+          "gateMargin": 110.566,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1921.834,
+          "gateMargin": 158.166,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1937.134,
+          "gateMargin": 142.866,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1968.534,
+          "gateMargin": 111.466,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1967.334,
+          "gateMargin": 112.666,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1922.134,
+          "gateMargin": 157.866,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1952.434,
+          "gateMargin": 127.566,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1968.834,
+          "gateMargin": 111.166,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1930.034,
+          "gateMargin": 149.966,
+          "operations": 26,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "beijing",
+      "reference": {
+        "metroSeconds": 917.12,
+        "stationWalkSeconds": 295.86,
+        "mandatoryInteractionSeconds": 170.99,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1398.36,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 1534,
+      "hardOpeningSeconds": 1444,
+      "roundingSeconds": 0.64,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.631,
+      "minGateMargin": 120.409,
+      "maxGateMargin": 155.809,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1396.291,
+          "gateMargin": 137.709,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1402.491,
+          "gateMargin": 131.509,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1396.291,
+          "gateMargin": 137.709,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1395.691,
+          "gateMargin": 138.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1396.091,
+          "gateMargin": 137.909,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1402.691,
+          "gateMargin": 131.309,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1396.491,
+          "gateMargin": 137.509,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1395.491,
+          "gateMargin": 138.509,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1394.691,
+          "gateMargin": 139.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1402.891,
+          "gateMargin": 131.109,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1394.691,
+          "gateMargin": 139.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1396.091,
+          "gateMargin": 137.909,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1394.891,
+          "gateMargin": 139.109,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1413.191,
+          "gateMargin": 120.809,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1378.191,
+          "gateMargin": 155.809,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1406.191,
+          "gateMargin": 127.809,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1378.391,
+          "gateMargin": 155.609,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1413.391,
+          "gateMargin": 120.609,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1378.391,
+          "gateMargin": 155.609,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1406.391,
+          "gateMargin": 127.609,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1412.791,
+          "gateMargin": 121.209,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1413.591,
+          "gateMargin": 120.409,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1395.691,
+          "gateMargin": 138.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1396.091,
+          "gateMargin": 137.909,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1402.691,
+          "gateMargin": 131.309,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1402.091,
+          "gateMargin": 131.909,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1395.491,
+          "gateMargin": 138.509,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1394.691,
+          "gateMargin": 139.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1402.891,
+          "gateMargin": 131.109,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1402.291,
+          "gateMargin": 131.709,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1395.691,
+          "gateMargin": 138.309,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1394.891,
+          "gateMargin": 139.109,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "guangzhou",
+      "reference": {
+        "metroSeconds": 1166.65,
+        "stationWalkSeconds": 515.7,
+        "mandatoryInteractionSeconds": 178.26,
+        "expectedEnvironmentSeconds": 53.19
+      },
+      "normalRequiredSeconds": 1913.8,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 2049,
+      "hardOpeningSeconds": 1959,
+      "roundingSeconds": 0.2,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.199,
+      "minGateMargin": 120.961,
+      "maxGateMargin": 154.561,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1911.639,
+          "gateMargin": 137.361,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1917.439,
+          "gateMargin": 131.561,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1911.639,
+          "gateMargin": 137.361,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1911.339,
+          "gateMargin": 137.661,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1911.739,
+          "gateMargin": 137.261,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1917.539,
+          "gateMargin": 131.461,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1911.739,
+          "gateMargin": 137.261,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1911.439,
+          "gateMargin": 137.561,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1911.039,
+          "gateMargin": 137.961,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1917.639,
+          "gateMargin": 131.361,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1911.039,
+          "gateMargin": 137.961,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1911.539,
+          "gateMargin": 137.461,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1911.139,
+          "gateMargin": 137.861,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1927.839,
+          "gateMargin": 121.161,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1894.439,
+          "gateMargin": 154.561,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1920.839,
+          "gateMargin": 128.161,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1894.539,
+          "gateMargin": 154.461,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1927.939,
+          "gateMargin": 121.061,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1894.539,
+          "gateMargin": 154.461,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1920.939,
+          "gateMargin": 128.061,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1927.639,
+          "gateMargin": 121.361,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1928.039,
+          "gateMargin": 120.961,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1911.339,
+          "gateMargin": 137.661,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1911.739,
+          "gateMargin": 137.261,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1917.539,
+          "gateMargin": 131.461,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1917.239,
+          "gateMargin": 131.761,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1911.439,
+          "gateMargin": 137.561,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1911.039,
+          "gateMargin": 137.961,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1917.639,
+          "gateMargin": 131.361,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1917.339,
+          "gateMargin": 131.661,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1911.539,
+          "gateMargin": 137.461,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1911.139,
+          "gateMargin": 137.861,
+          "operations": 22,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "hangzhou",
+      "reference": {
+        "metroSeconds": 733,
+        "stationWalkSeconds": 313.2,
+        "mandatoryInteractionSeconds": 159.83,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1211.8,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 1347,
+      "hardOpeningSeconds": 1257,
+      "roundingSeconds": 0.2,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.201,
+      "minGateMargin": 119.529,
+      "maxGateMargin": 144.929,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1210.971,
+          "gateMargin": 136.029,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1210.171,
+          "gateMargin": 136.829,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1210.971,
+          "gateMargin": 136.029,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1210.371,
+          "gateMargin": 136.629,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1210.771,
+          "gateMargin": 136.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1210.371,
+          "gateMargin": 136.629,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1211.171,
+          "gateMargin": 135.829,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1210.571,
+          "gateMargin": 136.429,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1209.771,
+          "gateMargin": 137.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1210.571,
+          "gateMargin": 136.429,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1209.771,
+          "gateMargin": 137.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1210.771,
+          "gateMargin": 136.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1209.971,
+          "gateMargin": 137.029,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1220.871,
+          "gateMargin": 126.129,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1202.071,
+          "gateMargin": 144.929,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1220.871,
+          "gateMargin": 126.129,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1202.271,
+          "gateMargin": 144.729,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1221.071,
+          "gateMargin": 125.929,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1202.271,
+          "gateMargin": 144.729,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1221.071,
+          "gateMargin": 125.929,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1227.471,
+          "gateMargin": 119.529,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1221.271,
+          "gateMargin": 125.729,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1210.371,
+          "gateMargin": 136.629,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1210.771,
+          "gateMargin": 136.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1210.371,
+          "gateMargin": 136.629,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1209.771,
+          "gateMargin": 137.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1210.571,
+          "gateMargin": 136.429,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1209.771,
+          "gateMargin": 137.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1210.571,
+          "gateMargin": 136.429,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1209.971,
+          "gateMargin": 137.029,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1210.771,
+          "gateMargin": 136.229,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1209.171,
+          "gateMargin": 137.829,
+          "operations": 19,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "wuhan",
+      "reference": {
+        "metroSeconds": 1198.71,
+        "stationWalkSeconds": 368.84,
+        "mandatoryInteractionSeconds": 185.57,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1758.89,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 1894,
+      "hardOpeningSeconds": 1804,
+      "roundingSeconds": 0.11,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.116,
+      "minGateMargin": 118.681,
+      "maxGateMargin": 151.681,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1758.819,
+          "gateMargin": 135.181,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1757.619,
+          "gateMargin": 136.381,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1758.819,
+          "gateMargin": 135.181,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1758.219,
+          "gateMargin": 135.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1759.019,
+          "gateMargin": 134.981,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1758.219,
+          "gateMargin": 135.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1759.019,
+          "gateMargin": 134.981,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1758.419,
+          "gateMargin": 135.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1757.219,
+          "gateMargin": 136.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1758.419,
+          "gateMargin": 135.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1757.219,
+          "gateMargin": 136.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1758.619,
+          "gateMargin": 135.381,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1757.419,
+          "gateMargin": 136.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1768.719,
+          "gateMargin": 125.281,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1742.319,
+          "gateMargin": 151.681,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1768.719,
+          "gateMargin": 125.281,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1742.519,
+          "gateMargin": 151.481,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1768.919,
+          "gateMargin": 125.081,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1742.519,
+          "gateMargin": 151.481,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1768.919,
+          "gateMargin": 125.081,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1775.319,
+          "gateMargin": 118.681,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1769.119,
+          "gateMargin": 124.881,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1758.219,
+          "gateMargin": 135.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1759.019,
+          "gateMargin": 134.981,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1758.219,
+          "gateMargin": 135.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1757.219,
+          "gateMargin": 136.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1758.419,
+          "gateMargin": 135.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1757.219,
+          "gateMargin": 136.781,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1758.419,
+          "gateMargin": 135.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1757.419,
+          "gateMargin": 136.581,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1758.619,
+          "gateMargin": 135.381,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1757.419,
+          "gateMargin": 136.581,
+          "operations": 23,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "city": "zhengzhou",
+      "reference": {
+        "metroSeconds": 1083.48,
+        "stationWalkSeconds": 395.07,
+        "mandatoryInteractionSeconds": 172.39,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1665.33,
+      "errorBudgetSeconds": 135,
+      "openingSeconds": 1801,
+      "hardOpeningSeconds": 1711,
+      "roundingSeconds": 0.67,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 135.667,
+      "minGateMargin": 120.857,
+      "maxGateMargin": 150.257,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1662.443,
+          "gateMargin": 138.557,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1668.643,
+          "gateMargin": 132.357,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1662.843,
+          "gateMargin": 138.157,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1661.843,
+          "gateMargin": 139.157,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1663.043,
+          "gateMargin": 137.957,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1668.843,
+          "gateMargin": 132.157,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1663.043,
+          "gateMargin": 137.957,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1662.043,
+          "gateMargin": 138.957,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1661.243,
+          "gateMargin": 139.757,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1669.043,
+          "gateMargin": 131.957,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1661.243,
+          "gateMargin": 139.757,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1662.243,
+          "gateMargin": 138.757,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1661.443,
+          "gateMargin": 139.557,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1679.343,
+          "gateMargin": 121.657,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1650.743,
+          "gateMargin": 150.257,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1672.343,
+          "gateMargin": 128.657,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1650.943,
+          "gateMargin": 150.057,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1679.543,
+          "gateMargin": 121.457,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1650.943,
+          "gateMargin": 150.057,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1672.943,
+          "gateMargin": 128.057,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1678.943,
+          "gateMargin": 122.057,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1680.143,
+          "gateMargin": 120.857,
+          "operations": 23,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1661.843,
+          "gateMargin": 139.157,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1663.043,
+          "gateMargin": 137.957,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1668.843,
+          "gateMargin": 132.157,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1668.243,
+          "gateMargin": 132.757,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1662.043,
+          "gateMargin": 138.957,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1661.243,
+          "gateMargin": 139.757,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1669.043,
+          "gateMargin": 131.957,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1668.443,
+          "gateMargin": 132.557,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1662.643,
+          "gateMargin": 138.357,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1661.443,
+          "gateMargin": 139.557,
+          "operations": 21,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "shanghai",
+      "reference": {
+        "metroSeconds": 1125.25,
+        "stationWalkSeconds": 417.79,
+        "mandatoryInteractionSeconds": 235.86,
+        "expectedEnvironmentSeconds": 41.22
+      },
+      "normalRequiredSeconds": 1820.12,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1911,
+      "hardOpeningSeconds": 1836,
+      "roundingSeconds": 0.88,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.883,
+      "minGateMargin": 46.352,
+      "maxGateMargin": 119.352,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1827.648,
+          "gateMargin": 83.352,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1796.348,
+          "gateMargin": 114.652,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1838.348,
+          "gateMargin": 72.652,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1837.448,
+          "gateMargin": 73.552,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1800.448,
+          "gateMargin": 110.552,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1791.648,
+          "gateMargin": 119.352,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1855.148,
+          "gateMargin": 55.852,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1799.548,
+          "gateMargin": 111.452,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1809.348,
+          "gateMargin": 101.652,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1813.448,
+          "gateMargin": 97.552,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1803.348,
+          "gateMargin": 107.652,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1838.048,
+          "gateMargin": 72.952,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1804.648,
+          "gateMargin": 106.352,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1807.348,
+          "gateMargin": 103.652,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1846.148,
+          "gateMargin": 64.852,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1864.648,
+          "gateMargin": 46.352,
+          "operations": 29,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1794.348,
+          "gateMargin": 116.652,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1824.148,
+          "gateMargin": 86.852,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1846.048,
+          "gateMargin": 64.952,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1815.248,
+          "gateMargin": 95.752,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1822.248,
+          "gateMargin": 88.752,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1802.948,
+          "gateMargin": 108.052,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1799.248,
+          "gateMargin": 111.752,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1855.148,
+          "gateMargin": 55.852,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1796.648,
+          "gateMargin": 114.352,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1805.348,
+          "gateMargin": 105.652,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1854.248,
+          "gateMargin": 56.752,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1853.048,
+          "gateMargin": 57.952,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1791.948,
+          "gateMargin": 119.052,
+          "operations": 26,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1817.848,
+          "gateMargin": 93.152,
+          "operations": 27,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1833.048,
+          "gateMargin": 77.952,
+          "operations": 28,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1798.648,
+          "gateMargin": 112.352,
+          "operations": 25,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "beijing",
+      "reference": {
+        "metroSeconds": 791.81,
+        "stationWalkSeconds": 238.06,
+        "mandatoryInteractionSeconds": 201.11,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1245.37,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1336,
+      "hardOpeningSeconds": 1261,
+      "roundingSeconds": 0.63,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.626,
+      "minGateMargin": 75.991,
+      "maxGateMargin": 106.291,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1242.709,
+          "gateMargin": 93.291,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1248.909,
+          "gateMargin": 87.091,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1242.709,
+          "gateMargin": 93.291,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1242.109,
+          "gateMargin": 93.891,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1242.909,
+          "gateMargin": 93.091,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1249.109,
+          "gateMargin": 86.891,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1242.909,
+          "gateMargin": 93.091,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1242.309,
+          "gateMargin": 93.691,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1241.509,
+          "gateMargin": 94.491,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1249.309,
+          "gateMargin": 86.691,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1241.509,
+          "gateMargin": 94.491,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1242.509,
+          "gateMargin": 93.491,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1241.709,
+          "gateMargin": 94.291,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1259.609,
+          "gateMargin": 76.391,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1229.709,
+          "gateMargin": 106.291,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1252.609,
+          "gateMargin": 83.391,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1229.909,
+          "gateMargin": 106.091,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1259.809,
+          "gateMargin": 76.191,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1229.909,
+          "gateMargin": 106.091,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1252.809,
+          "gateMargin": 83.191,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1259.109,
+          "gateMargin": 76.891,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1260.009,
+          "gateMargin": 75.991,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1241.709,
+          "gateMargin": 94.291,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1242.909,
+          "gateMargin": 93.091,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1249.109,
+          "gateMargin": 86.891,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1248.509,
+          "gateMargin": 87.491,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1242.309,
+          "gateMargin": 93.691,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1241.509,
+          "gateMargin": 94.491,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1249.309,
+          "gateMargin": 86.691,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1248.709,
+          "gateMargin": 87.291,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1242.509,
+          "gateMargin": 93.491,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1241.709,
+          "gateMargin": 94.291,
+          "operations": 19,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "guangzhou",
+      "reference": {
+        "metroSeconds": 1069.18,
+        "stationWalkSeconds": 479.37,
+        "mandatoryInteractionSeconds": 185.18,
+        "expectedEnvironmentSeconds": 33.19
+      },
+      "normalRequiredSeconds": 1766.92,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1857,
+      "hardOpeningSeconds": 1782,
+      "roundingSeconds": 0.08,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.071,
+      "minGateMargin": 74.696,
+      "maxGateMargin": 113.096,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1764.704,
+          "gateMargin": 92.296,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1771.304,
+          "gateMargin": 85.696,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1764.704,
+          "gateMargin": 92.296,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1764.404,
+          "gateMargin": 92.596,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1764.804,
+          "gateMargin": 92.196,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1771.404,
+          "gateMargin": 85.596,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1764.804,
+          "gateMargin": 92.196,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1764.504,
+          "gateMargin": 92.496,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1764.104,
+          "gateMargin": 92.896,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1771.504,
+          "gateMargin": 85.496,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1764.104,
+          "gateMargin": 92.896,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1764.604,
+          "gateMargin": 92.396,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1764.204,
+          "gateMargin": 92.796,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1782.104,
+          "gateMargin": 74.896,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1744.204,
+          "gateMargin": 112.796,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1775.104,
+          "gateMargin": 81.896,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1743.904,
+          "gateMargin": 113.096,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1782.204,
+          "gateMargin": 74.796,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1744.304,
+          "gateMargin": 112.696,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1775.204,
+          "gateMargin": 81.796,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1781.404,
+          "gateMargin": 75.596,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1782.304,
+          "gateMargin": 74.696,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1764.404,
+          "gateMargin": 92.596,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1764.804,
+          "gateMargin": 92.196,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1771.404,
+          "gateMargin": 85.596,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1771.104,
+          "gateMargin": 85.896,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1764.504,
+          "gateMargin": 92.496,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1764.104,
+          "gateMargin": 92.896,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1771.504,
+          "gateMargin": 85.496,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1771.204,
+          "gateMargin": 85.796,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1764.604,
+          "gateMargin": 92.396,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1764.204,
+          "gateMargin": 92.796,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "hangzhou",
+      "reference": {
+        "metroSeconds": 654.1,
+        "stationWalkSeconds": 267.05,
+        "mandatoryInteractionSeconds": 187.95,
+        "expectedEnvironmentSeconds": 5.77
+      },
+      "normalRequiredSeconds": 1114.87,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1205,
+      "hardOpeningSeconds": 1130,
+      "roundingSeconds": 0.13,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.133,
+      "minGateMargin": 75.198,
+      "maxGateMargin": 94.198,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1113.402,
+          "gateMargin": 91.598,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1112.602,
+          "gateMargin": 92.398,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1113.402,
+          "gateMargin": 91.598,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1112.802,
+          "gateMargin": 92.198,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1113.602,
+          "gateMargin": 91.398,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1112.802,
+          "gateMargin": 92.198,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1113.602,
+          "gateMargin": 91.398,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1113.002,
+          "gateMargin": 91.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1112.202,
+          "gateMargin": 92.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1113.002,
+          "gateMargin": 91.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1112.202,
+          "gateMargin": 92.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1113.202,
+          "gateMargin": 91.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1112.402,
+          "gateMargin": 92.598,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1123.302,
+          "gateMargin": 81.698,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1110.802,
+          "gateMargin": 94.198,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1123.302,
+          "gateMargin": 81.698,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1111.002,
+          "gateMargin": 93.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1123.502,
+          "gateMargin": 81.498,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1111.002,
+          "gateMargin": 93.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1123.502,
+          "gateMargin": 81.498,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1129.802,
+          "gateMargin": 75.198,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1123.702,
+          "gateMargin": 81.298,
+          "operations": 19,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1112.802,
+          "gateMargin": 92.198,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1113.602,
+          "gateMargin": 91.398,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1112.802,
+          "gateMargin": 92.198,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1112.202,
+          "gateMargin": 92.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1113.002,
+          "gateMargin": 91.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1112.202,
+          "gateMargin": 92.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1113.002,
+          "gateMargin": 91.998,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1112.402,
+          "gateMargin": 92.598,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1113.202,
+          "gateMargin": 91.798,
+          "operations": 18,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1112.402,
+          "gateMargin": 92.598,
+          "operations": 18,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "wuhan",
+      "reference": {
+        "metroSeconds": 1078.04,
+        "stationWalkSeconds": 320.15,
+        "mandatoryInteractionSeconds": 222.04,
+        "expectedEnvironmentSeconds": 10.46
+      },
+      "normalRequiredSeconds": 1630.69,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1721,
+      "hardOpeningSeconds": 1646,
+      "roundingSeconds": 0.31,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.315,
+      "minGateMargin": 67.562,
+      "maxGateMargin": 102.962,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1642.938,
+          "gateMargin": 78.062,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1625.638,
+          "gateMargin": 95.362,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1626.438,
+          "gateMargin": 94.562,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1625.838,
+          "gateMargin": 95.162,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1621.638,
+          "gateMargin": 99.362,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1620.838,
+          "gateMargin": 100.162,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1643.138,
+          "gateMargin": 77.862,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1621.038,
+          "gateMargin": 99.962,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1625.238,
+          "gateMargin": 95.762,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1642.538,
+          "gateMargin": 78.462,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1625.238,
+          "gateMargin": 95.762,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1626.238,
+          "gateMargin": 94.762,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1620.438,
+          "gateMargin": 100.562,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1636.738,
+          "gateMargin": 84.262,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1634.338,
+          "gateMargin": 86.662,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1653.238,
+          "gateMargin": 67.762,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1618.038,
+          "gateMargin": 102.962,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1653.438,
+          "gateMargin": 67.562,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1634.538,
+          "gateMargin": 86.462,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1636.938,
+          "gateMargin": 84.062,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1637.838,
+          "gateMargin": 83.162,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1632.138,
+          "gateMargin": 88.862,
+          "operations": 25,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1620.838,
+          "gateMargin": 100.162,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1643.138,
+          "gateMargin": 77.862,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1625.838,
+          "gateMargin": 95.162,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1620.238,
+          "gateMargin": 100.762,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1642.538,
+          "gateMargin": 78.462,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1641.738,
+          "gateMargin": 79.262,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1621.038,
+          "gateMargin": 99.962,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1620.438,
+          "gateMargin": 100.562,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1621.238,
+          "gateMargin": 99.762,
+          "operations": 24,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1620.438,
+          "gateMargin": 100.562,
+          "operations": 24,
+          "ledgerError": 0
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "city": "zhengzhou",
+      "reference": {
+        "metroSeconds": 976.73,
+        "stationWalkSeconds": 310.49,
+        "mandatoryInteractionSeconds": 184.01,
+        "expectedEnvironmentSeconds": 14.39
+      },
+      "normalRequiredSeconds": 1485.62,
+      "errorBudgetSeconds": 90,
+      "openingSeconds": 1576,
+      "hardOpeningSeconds": 1501,
+      "roundingSeconds": 0.38,
+      "completed": 32,
+      "total": 32,
+      "meanGateMargin": 90.383,
+      "minGateMargin": 76.174,
+      "maxGateMargin": 102.074,
+      "rows": [
+        {
+          "seed": 921,
+          "success": true,
+          "gateSpent": 1482.526,
+          "gateMargin": 93.474,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1004,
+          "success": true,
+          "gateSpent": 1488.726,
+          "gateMargin": 87.274,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1087,
+          "success": true,
+          "gateSpent": 1482.526,
+          "gateMargin": 93.474,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1170,
+          "success": true,
+          "gateSpent": 1481.926,
+          "gateMargin": 94.074,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1253,
+          "success": true,
+          "gateSpent": 1482.726,
+          "gateMargin": 93.274,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1336,
+          "success": true,
+          "gateSpent": 1488.926,
+          "gateMargin": 87.074,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1419,
+          "success": true,
+          "gateSpent": 1482.726,
+          "gateMargin": 93.274,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1502,
+          "success": true,
+          "gateSpent": 1482.126,
+          "gateMargin": 93.874,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1585,
+          "success": true,
+          "gateSpent": 1481.326,
+          "gateMargin": 94.674,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1668,
+          "success": true,
+          "gateSpent": 1489.126,
+          "gateMargin": 86.874,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1751,
+          "success": true,
+          "gateSpent": 1481.326,
+          "gateMargin": 94.674,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1834,
+          "success": true,
+          "gateSpent": 1482.326,
+          "gateMargin": 93.674,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 1917,
+          "success": true,
+          "gateSpent": 1481.526,
+          "gateMargin": 94.474,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2000,
+          "success": true,
+          "gateSpent": 1499.426,
+          "gateMargin": 76.574,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2083,
+          "success": true,
+          "gateSpent": 1473.926,
+          "gateMargin": 102.074,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2166,
+          "success": true,
+          "gateSpent": 1492.426,
+          "gateMargin": 83.574,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2249,
+          "success": true,
+          "gateSpent": 1474.126,
+          "gateMargin": 101.874,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2332,
+          "success": true,
+          "gateSpent": 1499.626,
+          "gateMargin": 76.374,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2415,
+          "success": true,
+          "gateSpent": 1474.126,
+          "gateMargin": 101.874,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2498,
+          "success": true,
+          "gateSpent": 1492.626,
+          "gateMargin": 83.374,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2581,
+          "success": true,
+          "gateSpent": 1498.926,
+          "gateMargin": 77.074,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2664,
+          "success": true,
+          "gateSpent": 1499.826,
+          "gateMargin": 76.174,
+          "operations": 22,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2747,
+          "success": true,
+          "gateSpent": 1481.926,
+          "gateMargin": 94.074,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2830,
+          "success": true,
+          "gateSpent": 1482.726,
+          "gateMargin": 93.274,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2913,
+          "success": true,
+          "gateSpent": 1488.926,
+          "gateMargin": 87.074,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 2996,
+          "success": true,
+          "gateSpent": 1488.326,
+          "gateMargin": 87.674,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3079,
+          "success": true,
+          "gateSpent": 1482.126,
+          "gateMargin": 93.874,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3162,
+          "success": true,
+          "gateSpent": 1481.326,
+          "gateMargin": 94.674,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3245,
+          "success": true,
+          "gateSpent": 1489.126,
+          "gateMargin": 86.874,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3328,
+          "success": true,
+          "gateSpent": 1488.526,
+          "gateMargin": 87.474,
+          "operations": 21,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3411,
+          "success": true,
+          "gateSpent": 1482.326,
+          "gateMargin": 93.674,
+          "operations": 20,
+          "ledgerError": 0
+        },
+        {
+          "seed": 3494,
+          "success": true,
+          "gateSpent": 1481.526,
+          "gateMargin": 94.474,
+          "operations": 20,
+          "ledgerError": 0
+        }
+      ]
+    }
+  ]
+}

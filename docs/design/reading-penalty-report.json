@@ -1,0 +1,949 @@
+{
+  "metadata": {
+    "baseRevision": "81f1c20",
+    "seed": 921,
+    "runCount": 48,
+    "note": "Extended deadline, reference preparation and movement, 5 versus 8 seconds per new prompt. Source-level ledger diagnosis, not human pass probability."
+  },
+  "rows": [
+    {
+      "role": "student",
+      "station": "shanghai",
+      "extraSeconds": 62.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1737.451,
+          "penalties": [],
+          "interactionSeconds": 122.343
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1800.401,
+          "penalties": [],
+          "interactionSeconds": 188.293
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "beijing",
+      "extraSeconds": 44.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1203.546,
+          "penalties": [],
+          "interactionSeconds": 86.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1248.496,
+          "penalties": [],
+          "interactionSeconds": 134.806
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "guangzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1662.592,
+          "penalties": [],
+          "interactionSeconds": 92.73
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1710.542,
+          "penalties": [],
+          "interactionSeconds": 143.68
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "hangzhou",
+      "extraSeconds": 41.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1064.456,
+          "penalties": [],
+          "interactionSeconds": 80.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1106.406,
+          "penalties": [],
+          "interactionSeconds": 125.806
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "wuhan",
+      "extraSeconds": 50.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1539.757,
+          "penalties": [],
+          "interactionSeconds": 100.096
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1590.707,
+          "penalties": [],
+          "interactionSeconds": 154.046
+        }
+      ]
+    },
+    {
+      "role": "student",
+      "station": "zhengzhou",
+      "extraSeconds": 47.95,
+      "extraOperationPenalty": 0,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1462.03,
+          "penalties": [],
+          "interactionSeconds": 91.856
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1509.98,
+          "penalties": [],
+          "interactionSeconds": 142.806
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "shanghai",
+      "extraSeconds": 206.35,
+      "extraOperationPenalty": 140,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1897.318,
+          "penalties": [],
+          "interactionSeconds": 131.98
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 2103.668,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "elder-detour-action:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "suitcase:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 200.93
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "beijing",
+      "extraSeconds": 119.95,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1363.9,
+          "penalties": [],
+          "interactionSeconds": 89.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1483.85,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 137.943
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "guangzhou",
+      "extraSeconds": 177.95,
+      "extraOperationPenalty": 130,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1855.431,
+          "penalties": [],
+          "interactionSeconds": 95.867
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 2033.381,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "security:TICK",
+              "deadline": "gate",
+              "seconds": 55
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 146.817
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "hangzhou",
+      "extraSeconds": 91.95,
+      "extraOperationPenalty": 50,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1189.619,
+          "penalties": [],
+          "interactionSeconds": 83.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1281.569,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 128.943
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "wuhan",
+      "extraSeconds": 118.95,
+      "extraOperationPenalty": 65,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1722.492,
+          "penalties": [],
+          "interactionSeconds": 109.733
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1841.442,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 166.683
+        }
+      ]
+    },
+    {
+      "role": "worker",
+      "station": "zhengzhou",
+      "extraSeconds": 122.95,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1661.507,
+          "penalties": [],
+          "interactionSeconds": 94.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1784.457,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 145.943
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "shanghai",
+      "extraSeconds": 208.101,
+      "extraOperationPenalty": 140,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1955.534,
+          "penalties": [],
+          "interactionSeconds": 137.58
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 2163.635,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "elder-detour-action:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "suitcase:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 209.53
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "beijing",
+      "extraSeconds": 119.44,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1404.691,
+          "penalties": [],
+          "interactionSeconds": 90.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1524.131,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 138.543
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "guangzhou",
+      "extraSeconds": 180.065,
+      "extraOperationPenalty": 130,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1927.239,
+          "penalties": [],
+          "interactionSeconds": 101.467
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 2107.303,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "security:TICK",
+              "deadline": "gate",
+              "seconds": 55
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 155.417
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "hangzhou",
+      "extraSeconds": 91.881,
+      "extraOperationPenalty": 50,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1219.771,
+          "penalties": [],
+          "interactionSeconds": 84.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1311.652,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 129.543
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "wuhan",
+      "extraSeconds": 118.844,
+      "extraOperationPenalty": 65,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1768.819,
+          "penalties": [],
+          "interactionSeconds": 110.333
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1887.663,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 167.283
+        }
+      ]
+    },
+    {
+      "role": "tourist",
+      "station": "zhengzhou",
+      "extraSeconds": 122.057,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1674.443,
+          "penalties": [],
+          "interactionSeconds": 95.593
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1796.499,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 146.543
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "shanghai",
+      "extraSeconds": 208.95,
+      "extraOperationPenalty": 140,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1834.448,
+          "penalties": [],
+          "interactionSeconds": 136.24
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 2043.398,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "elder-detour-action:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "suitcase:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 208.19
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "beijing",
+      "extraSeconds": 119.95,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1247.509,
+          "penalties": [],
+          "interactionSeconds": 89.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1367.459,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 137.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "guangzhou",
+      "extraSeconds": 168.35,
+      "extraOperationPenalty": 130,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1775.104,
+          "penalties": [],
+          "interactionSeconds": 97.667
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1943.454,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "security:TICK",
+              "deadline": "gate",
+              "seconds": 55
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 148.617
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "hangzhou",
+      "extraSeconds": 91.95,
+      "extraOperationPenalty": 50,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1119.002,
+          "penalties": [],
+          "interactionSeconds": 83.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1210.952,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 128.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "wuhan",
+      "extraSeconds": 124.95,
+      "extraOperationPenalty": 65,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1648.938,
+          "penalties": [],
+          "interactionSeconds": 118.993
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1773.888,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "escalator-operation:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 181.943
+        }
+      ]
+    },
+    {
+      "role": "mom",
+      "station": "zhengzhou",
+      "extraSeconds": 122.95,
+      "extraOperationPenalty": 75,
+      "runs": [
+        {
+          "reading": 5,
+          "gateSeconds": 1488.526,
+          "penalties": [],
+          "interactionSeconds": 96.493
+        },
+        {
+          "reading": 8,
+          "gateSeconds": 1611.476,
+          "penalties": [
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "bag-snag:TICK",
+              "deadline": "gate",
+              "seconds": 25
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "identity-search:TICK",
+              "deadline": "gate",
+              "seconds": 35
+            },
+            {
+              "category": "operationPenalty",
+              "phase": "station",
+              "source": "gate-scan:TICK",
+              "deadline": "gate",
+              "seconds": 15
+            }
+          ],
+          "interactionSeconds": 147.443
+        }
+      ]
+    }
+  ]
+}
