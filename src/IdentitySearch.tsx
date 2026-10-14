@@ -1,3 +1,4 @@
+import {localizeNode,translate} from './i18n';
 import {useState} from 'react';
 import type {Run,Action} from './engine';
 const names:Record<string,string>={wallet:'钱包',phone:'手机',keys:'钥匙',headphones:'耳机',bottle:'水杯',umbrella:'雨伞',notebook:'笔记本',pen:'笔',glasses:'眼镜',charger:'充电宝',tissue:'纸巾',snack:'饼干',lipstick:'润唇膏',comb:'梳子',watch:'手表',camera:'相机',sock:'袜子',sanitizer:'洗手液',id:'身份证',bank:'银行卡',metro:'交通卡',student:'学生证',photo:'照片',receipt:'小票'};
@@ -27,32 +28,32 @@ function CardArt({id}:{id:string}){
  const colors:Record<string,string>={id:'#dce9de',bank:'#b7c8b0',metro:'#dcbe89',student:'#b6cbda',photo:'#fff8e8',receipt:'#f6efd9'};
  return <g>
  <rect width="96" height="60" rx="5" fill={colors[id]} stroke="#baa785" strokeWidth="1.2"/>
- {id==='id'?<><path d="M5 15q35-20 86 32M3 30q30-19 88 14" stroke="#bdd4c5" fill="none" strokeWidth="3"/><text x="8" y="12" fontSize="6" fill="#7b937f">居民身份证</text><rect x="62" y="17" width="27" height="33" rx="2" fill="#f1e9d3"/><circle cx="76" cy="28" r="7" fill="#967b5f"/><path d="M66 48v-7q10-14 20 0v7" fill="#859f94"/><path d="M9 24h26M9 32h41M9 40h33M9 48h40" stroke="#91a99a" strokeWidth="2"/><text x="8" y="56" fontSize="4" fill="#91a99a">仅为游戏示意</text></>
+ {localizeNode(id==='id'?<><path d="M5 15q35-20 86 32M3 30q30-19 88 14" stroke="#bdd4c5" fill="none" strokeWidth="3"/><text x="8" y="12" fontSize="6" fill="#7b937f">{localizeNode("居民身份证")}</text><rect x="62" y="17" width="27" height="33" rx="2" fill="#f1e9d3"/><circle cx="76" cy="28" r="7" fill="#967b5f"/><path d="M66 48v-7q10-14 20 0v7" fill="#859f94"/><path d="M9 24h26M9 32h41M9 40h33M9 48h40" stroke="#91a99a" strokeWidth="2"/><text x="8" y="56" fontSize="4" fill="#91a99a">{localizeNode("仅为游戏示意")}</text></>
  :id==='photo'?<><rect x="7" y="6" width="82" height="45" fill="#c8dac7"/><path d="m9 45 23-25 20 17 16-21 20 29" fill="#a0b5a0"/><circle cx="72" cy="17" r="6" fill="#e8d7a0"/><path d="M27 48V37m21 11V37" stroke="#928373" strokeWidth="6"/></>
- :id==='receipt'?<><text x="32" y="14" fontSize="8" fill="#a6997e">便利店</text><path d="M12 23h72M12 30h50M12 37h69M12 44h62M12 51h72" stroke="#bfb295" strokeDasharray="3 2"/></>
- :<><text x="9" y="15" fontSize="8" fill="#6f795f">{names[id]}</text>{id==='bank'?<rect x="12" y="24" width="16" height="13" rx="3" fill="#ecdb9c"/>:<circle cx="76" cy="32" r="11" fill="#f4eed5" opacity=".7"/>}<path d="M10 46h53M10 51h31" stroke="#f8f2dd" strokeWidth="2"/><path d="m48 19 6 3-6 3m10-6 6 3-6 3" stroke="#8e9e7f" fill="none"/></>}
+ :id==='receipt'?<><text x="32" y="14" fontSize="8" fill="#a6997e">{localizeNode("便利店")}</text><path d="M12 23h72M12 30h50M12 37h69M12 44h62M12 51h72" stroke="#bfb295" strokeDasharray="3 2"/></>
+ :<><text x="9" y="15" fontSize="8" fill="#6f795f">{localizeNode(names[id])}</text>{localizeNode(id==='bank'?<rect x="12" y="24" width="16" height="13" rx="3" fill="#ecdb9c"/>:<circle cx="76" cy="32" r="11" fill="#f4eed5" opacity=".7"/>)}<path d="M10 46h53M10 51h31" stroke="#f8f2dd" strokeWidth="2"/><path d="m48 19 6 3-6 3m10-6 6 3-6 3" stroke="#8e9e7f" fill="none"/></>)}
  </g>;
 }
 export default function IdentitySearch({run,dispatch}:{run:Run;dispatch:React.Dispatch<Action>}){
  const [wrong,setWrong]=useState('');const wallet=run.identityStage==='wallet';
  const pick=(id:string)=>{const correct=id===(wallet?'wallet':'id');setWrong(correct?'':'这是'+names[id]+'，再找找！−5 秒');dispatch({type:'ID_PICK',item:id});};
  return <div className="identity-search">
- <div className="search-steps"><span className={wallet?'current':'complete'}>① 找钱包</span><i>→</i><span className={!wallet?'current':''}>② 找身份证</span></div>
+ <div className="search-steps"><span className={wallet?'current':'complete'}>{localizeNode("① 找钱包")}</span><i>→</i><span className={!wallet?'current':''}>{localizeNode("② 找身份证")}</span></div>
  <div className="search-picture" key={run.identityStage}>
- {wallet?<svg viewBox="0 0 360 318" aria-label="摊开的背包，里面散放着十八件物品">
+ {localizeNode(wallet?<svg viewBox="0 0 360 318" aria-label={translate("摊开的背包，里面散放着十八件物品")}>
  <rect x="2" y="2" width="356" height="314" rx="30" fill="#e4d0a8"/><rect x="12" y="12" width="336" height="294" rx="24" fill="#f3e5c6" stroke="#bc9d6e" strokeDasharray="4 5"/>
  <path d="M24 104q153 17 310-3M22 207q157-14 314 3" fill="none" stroke="#deccaa" strokeWidth="1.5"/><path d="M33 29q100-12 271 0" fill="none" stroke="#dfcda6" strokeWidth="3"/>
- {run.identityItems.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(8+i%6*58)+','+(23+Math.floor(i/6)*97+(i%3-1)*7)+')'}>
+ {localizeNode(run.identityItems.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={translate(names[id])} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(8+i%6*58)+','+(23+Math.floor(i/6)*97+(i%3-1)*7)+')'}>
  <rect x="0" y="-9" width="57" height="84" rx="15" fill="transparent"/>
- <g transform={'translate(1 4) rotate('+((i*17)%25-12)+' 28 28) scale(.82)'}><ObjectArt id={id}/></g></g>)}
- <text x="180" y="304" fontSize="8" textAnchor="middle" fill="#b59970">包里什么都有，偏偏钱包躲起来了。</text></svg>
- :<svg viewBox="0 0 360 280" aria-label="打开的钱包，找出六张卡片中的身份证">
+ <g transform={'translate(1 4) rotate('+((i*17)%25-12)+' 28 28) scale(.82)'}><ObjectArt id={id}/></g></g>))}
+ <text x="180" y="304" fontSize="8" textAnchor="middle" fill="#b59970">{localizeNode("包里什么都有，偏偏钱包躲起来了。")}</text></svg>
+ :<svg viewBox="0 0 360 280" aria-label={translate("打开的钱包，找出六张卡片中的身份证")}>
  <rect x="2" y="2" width="356" height="276" rx="28" fill="#d7b28d"/><rect x="10" y="10" width="340" height="260" rx="22" fill="#bd8b66" stroke="#e9caa1" strokeDasharray="3 4"/>
  <path d="M16 143h328" stroke="#9e704f" strokeWidth="3"/><path d="M25 221q160 20 312-2v38H25" fill="#ab7c57"/><path d="M30 247h297" stroke="#dcba91" strokeDasharray="3 4"/>
- {run.identityCards.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={names[id]} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(17+i%3*114)+','+(40+Math.floor(i/3)*112)+') rotate('+((i*11)%13-6)+' 48 30)'}>
- <rect x="-5" y="-12" width="106" height="84" rx="6" fill="transparent"/><CardArt id={id}/></g>)}
- </svg>}
+ {localizeNode(run.identityCards.map((id,i)=><g key={id} role="button" tabIndex={0} aria-label={translate(names[id])} onClick={()=>pick(id)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(id);}}} className="search-object" transform={'translate('+(17+i%3*114)+','+(40+Math.floor(i/3)*112)+') rotate('+((i*11)%13-6)+' 48 30)'}>
+ <rect x="-5" y="-12" width="106" height="84" rx="6" fill="transparent"/><CardArt id={id}/></g>))}
+ </svg>)}
  </div>
- <p className={'search-instruction '+(wrong?'mistake':'')} role="status">{wrong||(wallet?'直接点图里的钱包！':'钱包打开了，点出身份证！')}</p>
+ <p className={'search-instruction '+(wrong?'mistake':'')} role="status">{localizeNode(wrong||(wallet?'直接点图里的钱包！':'钱包打开了，点出身份证！'))}</p>
  </div>;
 }

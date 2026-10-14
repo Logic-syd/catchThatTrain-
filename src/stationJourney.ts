@@ -1,3 +1,5 @@
+import {withResourceFeedback,withActualEventCosts} from './resourceFeedback';
+import {TIME_SCALE} from './gameClock';
 import {stationFor,stationChallenge} from './stations';
 import {studentPrompt} from './studentConfig';
 import type { Run } from './engine';
@@ -6,6 +8,8 @@ import { elderPrompt, escalatorPrompt, escalatorRide } from './stationEncounters
 import { identityPrompt, stationPrompt } from './flow';
 import {characterEventPrompt} from './characterTime';
 import {parentStationPrompt} from './parent';
+import {STUDENT_DISTRACTIONS,studentDistractionPrompt,WORK_CHALLENGE_IDS} from './characterChallenges';
+import {touristMazePrompt} from './touristMaze';
 export type StationBeat={id:string;stage:number;label:string;seconds:number};
 export function buildStationJourney(s:Run):StationBeat[]{
  let beats:StationBeat[]=s.encounters.filter(e=>e.stage===0).map(e=>({id:e.id,stage:0,label:e.id==='bag-snag'?'背好包，冲出地铁':'穿过出站通道',seconds:2}));
@@ -37,15 +41,38 @@ export function buildStationJourney(s:Run):StationBeat[]{
   if(s.city.id==='hangzhou')insertAfter('hz-fork',add('hz-parent-lift',1,'左边近电梯维修，右边远电梯可靠',3));
   if(s.city.id==='wuhan'){insertAfter('wh-floor',add('wh-parent-duck',0,'孩子盯上了周黑鸭',3));insertAfter('wh-landing',add('wh-parent-duck-repeat',1,'“周黑鸭呢？”又停了一次',3));}
   if(s.city.id==='zhengzhou')insertAfter('zz-hometown',add('zz-parent-child',3,'在对称大厅牵好孩子',3));
+  beats.splice(Math.min(2,beats.length),0,add('child-shoelace',1,'孩子的鞋带又松了',1));
+  beats.splice(Math.floor(beats.length*.65),0,add('child-distraction',3,'孩子蹲在地上不肯走',1));
+ }
+ const before=(target:string,beat:StationBeat,fallback=1)=>{const i=beats.findIndex(b=>b.id===target);beats.splice(i>=0?i:Math.min(fallback,beats.length-3),0,beat);};
+ const after=(target:string,beat:StationBeat)=>{const i=beats.findIndex(b=>b.id===target);if(i>=0)beats.splice(i+1,0,beat);else before('security-queue',beat);};
+ if(s.student){
+  const d=STUDENT_DISTRACTIONS;
+  before('vertical-choice',add(d[0].id,0,d[0].title,1));
+  after('escalator-ride',add(d[1].id,2,d[1].title,1));
+  after('security-queue',add(d[2].id,2,d[2].title,1));
+  before('identity-search',add(d[3].id,3,d[3].title,1),beats.length-3);
+ }
+ if(s.characterTime?.characterId==='worker'){
+  before('vertical-choice',add(WORK_CHALLENGE_IDS[0],0,'手机又震了，公司还在追加要求',1));
+  after('escalator-ride',add(WORK_CHALLENGE_IDS[1],2,'公司又改了一次要求',1));
+  before('gates',add(WORK_CHALLENGE_IDS[2],4,'电话又响了，让你先别上车',1));
  }
  if(s.characterTime?.characterId==='worker'&&s.characterTime.bossUnread&&s.characterTime.bossCallsLeft>0){let i=Math.min(2,beats.length-1);beats.splice(i,0,add('worker-boss-call',beats[i].stage,'老板又发来工作消息',1));if(s.characterTime.bossCallsLeft>1){i=Math.max(4,Math.floor(beats.length*.65));beats.splice(i,0,add('worker-boss-call',beats[i].stage,'老板又催一次，还得处理',1));}}
  if(s.characterTime?.characterId==='tourist'&&['shanghai','guangzhou'].includes(s.city.id)){const i=Math.max(2,beats.findIndex(b=>b.stage>=3));beats.splice(i,0,add('tourist-wheel',3,'拖着走了一天的行李箱',1));}
+ if(s.touristMaze)beats.splice(1,0,add('tourist-maze',0,'在陌生的岔路寻找铁路出发',1));
  beats=beats.map(b=>b.id==='gates'?{...b,label:'赶到 '+s.gate+' 检票口'}:b);
- const weight=beats.reduce((a,b)=>a+b.seconds,0);const total=stationFor(s).walking/4;
+ const weight=beats.reduce((a,b)=>a+b.seconds,0);const total=stationFor(s).walking/TIME_SCALE;
  return beats.map(b=>({...b,seconds:b.seconds/weight*total}));
 }
-export function journeyPrompt(s:Run):EventConfig{
+export function journeyPrompt(s:Run,resourceDetails=true):EventConfig{
+ const event=baseJourneyPrompt(s);
+ return resourceDetails?withResourceFeedback(s,event):withActualEventCosts(s,event);
+}
+function baseJourneyPrompt(s:Run):EventConfig{
  const id=s.stationJourney[s.stationBeat].id;
+ if(id==='tourist-maze'&&s.touristMaze)return touristMazePrompt(s);
+ if(s.student){const distraction=studentDistractionPrompt(id,s.student);if(distraction)return distraction;}
  const parent=parentStationPrompt(s,id);if(parent)return parent;
  const challenge=stationChallenge(s,id);if(challenge)return challenge;
  if(s.student){const prompt=studentPrompt(id,s.student,s.gate);if(prompt){if(id==='vertical-choice'&&s.city.id==='wuhan')return {...prompt,title:'后面的人催着上楼，先选对换层方式',description:'这一班大家都赶时间。'+prompt.description,choices:prompt.choices.map(c=>({...c,stationDecision:{group:id,value:c.studentEffect??'escalator',category:'vertical',optimal:c.studentEffect==='stairs'?s.student!.stamina>=22:c.studentEffect==='lift'?s.student!.stamina<22:true}}))};if(id==='security-queue'&&s.city.id==='beijing')return {...prompt,title:'安检员催着摆托盘，先判断哪队快',description:'工作人员严格按流程放行。'+prompt.description};return prompt;}}
@@ -65,5 +92,5 @@ export function journeyPrompt(s:Run):EventConfig{
  if(id==='gate-scan')return {id,phase:'station',title:'闸机还没开，刷身份证！',description:`${(s.stationLane??3)+1} 号通道到了。按住读卡区，等绿灯亮起。`,interaction:{kind:'hold',seconds:8,penalty:15,required:1.2},choices:[{label:'按住刷身份证',detail:'绿灯亮起才放行',seconds:0}]};
  if(id==='board-train')return {id,phase:'station',title:'车门就在眼前！',description:'最后三步，连点冲上车！',interaction:{kind:'tap',seconds:6,penalty:10,required:3},choices:[{label:'上车！',detail:'赶上了',seconds:0}]};
  const persona=characterEventPrompt(s,id);if(persona)return persona;
- const prompt=stationPrompt(id,s.hard)??{id,phase:'station' as const,title:'工作消息终于静音了',description:'把手机收起来，继续赶路。',interaction:{kind:'choice' as const,seconds:8,penalty:0},choices:[{label:'继续往前',detail:'不再接听',seconds:0}]};return id==='gates'?{...prompt,description:prompt.description.replace('12A',s.gate)}:prompt;
+ const prompt=stationPrompt(id,s.hard,s.stationLuck)??{id,phase:'station' as const,title:'工作消息终于静音了',description:'把手机收起来，继续赶路。',interaction:{kind:'choice' as const,seconds:8,penalty:0},choices:[{label:'继续往前',detail:'不再接听',seconds:0}]};return id==='gates'?{...prompt,description:prompt.description.replace('12A',s.gate)}:prompt;
 }

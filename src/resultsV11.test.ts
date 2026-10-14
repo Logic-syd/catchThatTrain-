@@ -7,6 +7,7 @@ import {summarizeRun,resultTags} from './outcomes';
 import {ACHIEVEMENTS,awardResult,awardRun,freshProgress,migrateLegacy,readProgress,parseProfile,featuredUnlock,persistRun,PROFILE_KEY} from './achievements';
 import {matches} from './achievementConfig';
 import type {TimeImpact} from './resultMetrics';
+import {STUDENT_PREPARATION_COSTS} from './studentConfig';
 function base(extra:Partial<GameResult>={}):GameResult{return {...createGameResult({...createStationRun(),phase:'result',success:true,gateRemaining:60}),...extra,runId:extra.runId??crypto.randomUUID()};}
 const impact=(eventId:string,deltaSeconds:number,extra:Partial<TimeImpact>={}):TimeImpact=>({id:eventId,eventId,source:eventId,deltaSeconds,category:'decision',positive:deltaSeconds>0,avoidable:true,...extra});
 function analyzed(r:GameResult){return {...r,timeImpacts:analyzeFactors(r).impacts};}
@@ -20,8 +21,8 @@ describe('V1.1 causal settlement',()=>{
   expect(selectTitle(base({resultMarginSeconds:2,dramaScore:105})).name).toBe('这都能赶上？');
   expect(new Set(TITLE_CONFIGS.map(t=>t.id)).size).toBe(TITLE_CONFIGS.length);
  });
- it('tea is decisive with a 50s gap, but cannot alone fix a 240s gap (C/D)',()=>{
-  const tea=impact('prepare-tea',-120);const close=analyzed(base({success:false,resultMarginSeconds:-50,timeImpacts:[tea],characterStats:{tea:true}}));
+ it('tea is decisive with a 30s gap, but cannot alone fix a 240s gap (C/D)',()=>{
+  const tea=impact('prepare-tea',-STUDENT_PREPARATION_COSTS.tea);const close=analyzed(base({success:false,resultMarginSeconds:-30,timeImpacts:[tea],characterStats:{tea:true}}));
   expect(selectTitle(close).name).toBe('奶茶误我');expect(analyzeFactors(close).advice).toContain('足以赶上');
   const far=analyzed({...close,resultMarginSeconds:-240});expect(selectTitle(far).name).not.toBe('奶茶误我');expect(analyzeFactors(far).advice).toBeUndefined();
  });
@@ -53,8 +54,8 @@ describe('V1.1 causal settlement',()=>{
 describe('event-time telemetry',()=>{
  it('logs choice cost exactly once, with stable positive sign and no invented ID saving',()=>{
   let s=reducer(createStationRun(),{type:'START'});s=reducer(s,{type:'PREP_PICK',option:'buy',step:0});s=reducer(s,{type:'PREP_PICK',option:'check',step:1});
-  expect(s.metrics.impacts.filter(i=>i.eventId==='prepare-tea').map(i=>i.deltaSeconds)).toEqual([-120]);
-  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-30);
+  expect(s.metrics.impacts.filter(i=>i.eventId==='prepare-tea').map(i=>i.deltaSeconds)).toEqual([-STUDENT_PREPARATION_COSTS.tea]);
+  expect(s.metrics.impacts.find(i=>i.eventId==='prepare-id')?.deltaSeconds).toBe(-STUDENT_PREPARATION_COSTS.id);
   expect(s.metrics.impacts.every(i=>i.positive===(i.deltaSeconds>0))).toBe(true);
   const o=summarizeRun({...s,phase:'result',success:true,gateRemaining:60});expect(o.result.timeImpacts.some(i=>i.deltaSeconds===28)).toBe(false);
  });

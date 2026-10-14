@@ -1,4 +1,4 @@
-import {describe,it,expect} from 'vitest';
+import {describe,it,expect,vi} from 'vitest';
 import {createCharacterStationRun,journeyRouteSeconds,reducer,type Run} from './engine';
 import {buildStationJourney,journeyPrompt} from './stationJourney';
 import {runnerWave} from './runner';
@@ -101,6 +101,8 @@ describe('带娃家长的车站事件',()=>{
   }
  });
  it('从出门、地铁到广州南检票的完整流程可以完成',()=>{
+  const random=vi.spyOn(Math,'random').mockReturnValue(.2);
+  try {
   let run=reducer(createCharacterStationRun('guangzhou','mom',false,()=>.2),{type:'START'});
   run=reducer(run,{type:'PARENT_PREP',option:'toilet-first',step:0});
   run=reducer(run,{type:'PARENT_PREP',option:'snacks-pack',step:1});
@@ -116,5 +118,6 @@ describe('带娃家长的车站事件',()=>{
   expect(run.seen).toContain('gz-parent-carry');
   expect(run.parent?.carriedSeconds).toBeGreaterThan(0);
   expect(createGameResult(run).characterStats.childToilet).toBe(true);
+  } finally {random.mockRestore();}
  });
 });

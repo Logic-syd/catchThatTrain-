@@ -12,8 +12,8 @@ export function planMetroIncident(route: MetroRoute, roll: number, variant: numb
   description: `${route.lines[0]}号线的门口挤满了行李。先把下车的路留出来。`,
   interaction: {kind:'choice',seconds:7,penalty:45},
   choices: [
-   {label:'借过，提前挪到另一扇门',detail:'绕过行李 · −12 秒',seconds:12},
-   {label:'留在原地，等大家先走',detail:'下车前再挤过去 · −40 秒',seconds:40}
+   {id:'move-door',label:'借过，提前挪到另一扇门',detail:'绕过行李 · −12 秒',seconds:12},
+   {id:'wait',label:'等大家先走，再挪到门边',detail:'等人群通过后靠门 · −40 秒',seconds:40,waitSeconds:40}
   ]
  };
  if (route.transfers) return {

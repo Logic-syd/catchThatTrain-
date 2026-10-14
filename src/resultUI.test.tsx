@@ -1,6 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {createStationRun,createCharacterStationRun} from './engine';
+import {STUDENT_PREPARATION_COSTS} from './studentConfig';
 import LobbyIntro from './LobbyIntro';
 import Results,{AchievementShelf} from './Results';
 import {awardRun,freshProgress,ACHIEVEMENTS,isCharacterUnlocked,parseProfile} from './achievements';
@@ -52,9 +53,16 @@ describe('result UI rendering',()=>{
   expect(html.match(/未发现的故事/g)).toHaveLength(7);expect(html).toContain('<progress');
  });
  it('failure deductions use prominent seconds; early failure identifies preparation',()=>{
-  const run={...createStationRun(),phase:'result' as const,success:false,remaining:180};run.metrics.endPhase='preparation';run.metrics.estimatedSecondsToGoal=50;
-  run.metrics.impacts=[{id:'tea',eventId:'prepare-tea',source:'买奶茶',category:'decision',deltaSeconds:-120,positive:false,avoidable:true}];run.student!.choices.tea='buy';
+  const run={...createStationRun(),phase:'result' as const,success:false,remaining:180};run.metrics.endPhase='preparation';run.metrics.estimatedSecondsToGoal=30;
+  run.metrics.impacts=[{id:'tea',eventId:'prepare-tea',source:'买奶茶',category:'decision',deltaSeconds:-STUDENT_PREPARATION_COSTS.tea,positive:false,avoidable:true}];run.student!.choices.tea='buy';
   const html=renderToStaticMarkup(<Results run={run} progress={freshProgress()} saved={false} replay={noop} share={noop} selectStation={noop}/>);
-  expect(html).toContain('奶茶误我');expect(html).toContain('止步出门准备');expect(html).toContain('class="time-loss">−120');expect(html).toContain('浏览器未允许保存');
+  expect(html).toContain('奶茶误我');expect(html).toContain('止步出门准备');expect(html).toContain(`class="time-loss">−${STUDENT_PREPARATION_COSTS.tea}`);expect(html).toContain('浏览器未允许保存');
+ });
+ it.each([[0,2],[1,0]])('reports %s actual calls rather than %s future calls', (bossCalls,bossCallsLeft)=>{
+  const run={...createCharacterStationRun('shanghai','worker'),phase:'result' as const,success:false};
+  run.characterTime={...run.characterTime!,bossCalls,bossCallsLeft,energyReserve:5,energyReserveUsed:5};
+  const html=renderToStaticMarkup(<Results run={run} progress={freshProgress()} saved replay={noop} share={noop} selectStation={noop}/>);
+  expect(html).toContain(bossCalls?'实际接到 1 次来电':'本局没有来电');
+  expect(html).toContain('精力储备<b>已用 5 · 剩余 5</b>');
  });
 });

@@ -37,8 +37,8 @@ describe('fixed station personalities and character tasks',()=>{
   expect(low.characterTime!.focus).toBe(start.characterTime!.focus-5);
   expect(low.characterTime!.energy).toBe(start.characterTime!.energy+5);
   const fullEnergy=select(select(full,'告诉他'),'说工资 5000');
-  expect(fullEnergy.characterTime!.energy).toBe(full.characterTime!.energy+5);
-  expect(fullEnergy.characterTime!.maxEnergy).toBe(full.characterTime!.maxEnergy+5);
+  expect(fullEnergy.characterTime!.energy).toBe(full.characterTime!.energy);
+  expect(fullEnergy.characterTime!.maxEnergy).toBe(full.characterTime!.maxEnergy);
  });
  it('unread boss messages interrupt twice unless the worker answers the first call',()=>{
   const base=createCharacterStationRun('hangzhou','worker',false,()=>.2);
@@ -70,9 +70,10 @@ describe('fixed station personalities and character tasks',()=>{
    let run:Run={...initial,phase:'station',remaining:2200,identityReady:true,stationJourney:buildStationJourney({...initial,identityReady:true})};
    for(let i=0;i<9000&&run.phase!=='result';i++){
     if(run.event){const options=run.event.choices;let option=options[0];
+     if(run.event.id==='tourist-maze')option=options.find(c=>c.id===(run.event!.description.includes('往左')?'left':run.event!.description.includes('往右')?'right':'sign'))!;
      if(run.event.id==='zz-number')option=options.find(c=>c.label===run.gate)!;
      if(run.event.id==='escalator-choice')option=options[0];
-     run=reducer(run,{type:'CHOICE',choice:option});
+     run=reducer(run,{type:'CHOICE',choice:option,eventRevision:run.event.revision});
     }else{
      const wave=runnerWave(run),lane=run.characterTime!.runner.lane;
      if(wave&&wave.lane===lane)run=reducer(run,{type:'CHANGE_LANE',direction:lane===2?-1:1});
