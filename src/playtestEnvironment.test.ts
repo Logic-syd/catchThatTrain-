@@ -18,6 +18,18 @@ describe('independent playtest deployment',()=>{
   const {SHARE_GAME_URL,challengeUrl}=await import('./shareChallenge');
   expect(new URL(challengeUrl(SHARE_GAME_URL,'hangzhou','赶上了',true)).pathname).toBe('/catchThatTrain-/test/');
  });
+ it('inherits public journey records while saving test journeys only in the test namespace',async()=>{
+  vi.stubEnv('VITE_PLAYTEST','true');
+  const publicRecords=JSON.stringify([{id:'public-run',success:true}]);
+  values.set('catch-train-records',publicRecords);
+  const {createCharacterStationRun,readRecords,saveRecord}=await import('./engine');
+  expect(readRecords().map(record=>record.id)).toEqual(['public-run']);
+  const run={...createCharacterStationRun('hangzhou'),id:'test-run'};
+  saveRecord(run);saveRecord(run);
+  expect(readRecords().map(record=>record.id)).toEqual(['test-run','public-run']);
+  expect(values.get('catch-train-records')).toBe(publicRecords);
+  expect(values.has('playtest:catch-train-records')).toBe(true);
+ });
  it('a failed test replay retains an earned character and never rewrites the public profile',async()=>{
   vi.stubEnv('VITE_PLAYTEST','true');
   values.set('train-rush:characters:v1',JSON.stringify(['student','worker']));

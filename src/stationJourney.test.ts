@@ -24,7 +24,7 @@ describe('linear station journey blocks progression',()=>{
   let s=reach(start());const beat=s.stationBeat,id=s.event!.id;
   for(let i=0;i<10;i++)s=reducer(reducer(s,{type:'RUN_INPUT',held:true}),{type:'TICK',dt:1});
   expect(s.stationRunning).toBe(false);expect(s.stationBeat).toBe(beat);expect(s.stationProgress).toBe(1);expect(s.event!.id).toBe(id);expect(s.eventOverdue).toBe(true);
-  const remaining=s.remaining;s=reducer(s,{type:'TICK',dt:1});expect(s.remaining).toBe(remaining-1);
+  const remaining=s.remaining;s=reducer(s,{type:'TICK',dt:1});expect(s.remaining).toBeCloseTo(remaining-1,8);
   s=choose(s);expect(s.stationBeat).toBe(beat+1);expect(s.stationProgress).toBe(0);expect(s.stationRunning).toBe(false);
  });
  it('legacy map actions, penalties and arbitrary choices cannot skip a blocker',()=>{

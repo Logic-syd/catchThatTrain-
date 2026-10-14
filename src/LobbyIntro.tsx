@@ -1,3 +1,4 @@
+import {getLanguage,localizeNode,translate} from './i18n';
 import type {Run} from './engine';
 import {characters} from './data';
 import {characterTimeProfiles} from './characterTime';
@@ -7,7 +8,7 @@ import {isCharacterUnlocked,type Progress,type PlayableCharacterId} from './achi
 import {useRef} from 'react';
 
 function StudentPortrait(){
- return <svg className="student-portrait" viewBox="0 0 100 118" role="img" aria-label="背着黄色双肩包、举拳给自己打气的大学生">
+ return <svg className="student-portrait" viewBox="0 0 100 118" role="img" aria-label={translate("背着黄色双肩包、举拳给自己打气的大学生")}>
   <ellipse cx="50" cy="110" rx="30" ry="5" fill="#d8c69e" opacity=".4"/>
   <g stroke="#776247" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
    <rect x="24" y="51" width="52" height="40" rx="14" fill="#d3b470" stroke="#aa8d56"/>
@@ -48,13 +49,13 @@ export default function LobbyIntro({run,progress,onSelect,studentSceneVariant}:{
  const values=stats?{agility:stats.agility,energy:stats.energy,focus:stats.focus,load:stats.load}:{agility:profile.agility,energy:run.parent?.energy??t?.energy??profile.energy,focus:profile.focus,load:run.parent?.load??t?.load??profile.load};
  const scene=id==='student'?studentLobbyScene(run.id,studentSceneVariant):intro.scene;
  return <div className="lobby-intro">
-  <div className="lobby-person">{id==='student'?<StudentPortrait/>:id==='mom'?<LittleYou characterId="mom" parentAppearance={run.parent?.appearance}/>:<span className="character-portrait-emoji" role="img" aria-label={run.character.name}>{run.character.emoji}</span>}<b>{run.character.name}</b></div>
+  <div className="lobby-person">{localizeNode(id==='student'?<StudentPortrait/>:id==='mom'?<LittleYou characterId="mom" parentAppearance={run.parent?.appearance}/>:<span className="character-portrait-emoji" role="img" aria-label={translate(run.character.name)}>{localizeNode(run.character.emoji)}</span>)}<b>{localizeNode(run.character.name)}</b></div>
   <div className="lobby-person-copy">
-   <div className={'student-speech speech-'+id}><h1>我一定会<span>赶上这趟车！</span></h1><p>{intro.quote}</p><small className="lobby-scene">{scene}{id==='student'?' · 高电量 · 高精力':''}</small></div>
-   <dl className="lobby-attributes" aria-label="人物属性，满分 100">
-    {(['agility','energy','focus','load'] as const).map((key,i)=><div key={key}><dt>{['敏捷','精力','专注','负重'][i]}</dt><dd>{values[key]}</dd></div>)}
+   <div className={'student-speech speech-'+id}><h1>{localizeNode("我一定会")}<span>{localizeNode("赶上这趟车！")}</span></h1><p>{localizeNode(intro.quote)}</p><small className="lobby-scene">{localizeNode(scene)}{localizeNode(id==='student'?' · 高电量 · 高精力':'')}</small></div>
+   <dl className="lobby-attributes" aria-label={translate("人物属性，满分 100")}>
+    {localizeNode((['agility','energy','focus','load'] as const).map((key,i)=><div key={key}><dt>{localizeNode(['敏捷','精力','专注','负重'][i])}</dt><dd>{localizeNode(values[key])}</dd></div>))}
    </dl>
   </div>
-  <div className="character-picker-shell"><div className="character-picker-heading"><b>选择人物</b><small>左右滑动查看 · 通关逐个解锁 →</small></div><div className="character-picker" ref={characterTrack} tabIndex={0} role="group" aria-label="选择赶车人物，左右滑动查看更多" onKeyDown={e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();characterTrack.current?.scrollBy({left:(e.key==='ArrowRight'?1:-1)*210,behavior:'smooth'});}}}>{characters.filter(c=>['student','worker','tourist','mom'].includes(c.id)).map(c=>{const characterId=c.id as PlayableCharacterId,unlocked=isCharacterUnlocked(progress,characterId);return <button key={c.id} className={(id===c.id?'selected ':'')+(!unlocked?'locked':'')} aria-pressed={id===c.id} disabled={!unlocked} onClick={()=>onSelect(characterId)}><span className="character-icon">{unlocked?c.emoji:'🔒'}</span><span className="difficulty-badge">{difficultyNames[c.difficulty]} <b>{c.difficulty}星</b></span><b>{c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':c.id==='mom'?'带娃家长':'大学生'}</b><small>{unlocked?characterIntro[characterId].card:characterId==='worker'?'大学生赶上一次后解锁':characterId==='tourist'?'打工人赶上一次后解锁':'游客赶上一次后解锁'}</small></button>;})}</div></div>
+  <div className="character-picker-shell"><div className="character-picker-heading"><b>{localizeNode("选择人物")}</b><small>{localizeNode("左右滑动查看 · 通关逐个解锁 →")}</small></div><div className="character-picker" ref={characterTrack} tabIndex={0} role="group" aria-label={translate("选择赶车人物，左右滑动查看更多")} onKeyDown={e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();characterTrack.current?.scrollBy({left:(e.key==='ArrowRight'?1:-1)*210,behavior:'smooth'});}}}>{localizeNode(characters.filter(c=>['student','worker','tourist','mom'].includes(c.id)).map(c=>{const characterId=c.id as PlayableCharacterId,unlocked=isCharacterUnlocked(progress,characterId);return <button key={c.id} className={(id===c.id?'selected ':'')+(!unlocked?'locked':'')} aria-pressed={id===c.id} disabled={!unlocked} onClick={()=>onSelect(characterId)}><span className="character-icon">{localizeNode(unlocked?c.emoji:'🔒')}</span><span className="difficulty-badge">{localizeNode(difficultyNames[c.difficulty])} <b>{localizeNode(c.difficulty)}{getLanguage()==='en'&&c.difficulty===1?' star':localizeNode("星")}</b></span><b>{localizeNode(c.id==='worker'?'打工人':c.id==='tourist'?'疲惫游客':c.id==='mom'?'带娃家长':'大学生')}</b><small>{localizeNode(unlocked?characterIntro[characterId].card:characterId==='worker'?'大学生赶上一次后解锁':characterId==='tourist'?'打工人赶上一次后解锁':'游客赶上一次后解锁')}</small></button>;}))}</div></div>
  </div>;
 }
