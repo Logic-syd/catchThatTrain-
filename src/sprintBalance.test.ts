@@ -24,8 +24,8 @@ function play(city:string,mode:'walk'|'sprint'|'paced',seed=921,preparation=['sk
 }
 
 describe('student sprint pacing',()=>{
- it.each(STATIONS)('$id: prepared continuous sprinting causes repeated breath stops while walking and paced bursts work',st=>{
-  for(const seed of [921,84,12,453]){
+ it.each(STATIONS.flatMap(st=>[921,84,12,453].map(seed=>({id:st.id,seed}))))('$id seed $seed: prepared continuous sprinting causes repeated breath stops while walking and paced bursts work',({id,seed})=>{
+   const st={id};
    const walk=play(st.id,'walk',seed),sprint=play(st.id,'sprint',seed),paced=play(st.id,'paced',seed);
    expect(walk.success,`${st.id} seed ${seed} walking`).toBe(true);
    expect(paced.success,`${st.id} seed ${seed} paced`).toBe(true);
@@ -38,7 +38,6 @@ describe('student sprint pacing',()=>{
    const rush=play(st.id,'sprint',seed,['skip','skip','skip']);
    expect(rush.student!.breathStops,`${st.id} seed ${seed} no preparation, all sprint breath`).toBeGreaterThan(0);
    expect(rush.student!.sprinting).toBe(false);
-  }
  });
  it('a breath stop blocks progress and resumes the same corridor after recovery',()=>{
   let s=createStationRun('shanghai',false,rng(921));s={...s,phase:'station',remaining:900,stationJourney:[{id:'gates',stage:4,label:'long corridor',seconds:100}],stationBeat:0,stationRunning:true};
