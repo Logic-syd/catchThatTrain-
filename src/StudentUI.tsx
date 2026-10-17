@@ -13,13 +13,13 @@ export function Preparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const u=run.student!,p=studentPreparation(u)!;
  return <section className="student-preparation preparation-story">
   <div className="preparation-progress"><span>{localizeNode("出门前 · ")}{u.prep+1} / 3</span><span className="preparation-progress-track" aria-hidden="true">{[0,1,2].map(i=><i key={i} className={i<=u.prep?'reached':''}/>)}</span></div>
-  <PreparationScene step={u.prep} cityId={run.city.id}/><div className="preparation-decision">
+  <div className="preparation-world"><PreparationScene step={u.prep} cityId={run.city.id}/><div className="preparation-decision">
   <h2>{localizeNode(preparationTitle(p.id,p.title))}</h2>
   <div className="event-buttons">{p.options.map(option=>{
    const o=preparationChoice(p.id,option);
    return <button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PREP_PICK',option:o.id,step:u.prep})}><span><strong>{localizeNode(o.label)}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>;
   })}</div>
-  <small>{localizeNode("时间一直在走。")}</small></div>
+  <small>{localizeNode("时间一直在走。")}</small></div></div>
  </section>;
 }
 export function CharacterPreparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){

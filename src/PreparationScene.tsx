@@ -6,7 +6,8 @@ import TeaShopIcon from './TeaShopIcon';
 export default function PreparationScene({step,cityId}:{step:number;cityId:string}){
  const bag=step===1, breakfast=step===2;
  return <div className={`preparation-scene preparation-scene--${bag?'bag':breakfast?'breakfast':'tea'}`} aria-hidden="true">
-  <svg className="preparation-street" viewBox="0 0 420 300" fill="none">
+  <svg className="preparation-street" viewBox="35 50 350 250" preserveAspectRatio="xMidYMin meet" fill="none">
+   <path d="M-500-1000H1000V234H-500Z" fill="#EEE6CD"/>
    <path d="M0 240V55h44v-25h62v36h32V19h78v53h33V40h95v34h76v166Z" fill="#E5DDC6" opacity=".6"/>
    <path d="M25 91h18m-18 25h18m40-64v20m0 18v20m80-63h20m-20 25h20m90-11h21m-21 25h21m53 18h22" stroke="#D1C6A9" strokeWidth="7"/>
    <path d="M0 234h420v66H0z" fill="#E0D4B5"/>
@@ -52,12 +53,12 @@ export default function PreparationScene({step,cityId}:{step:number;cityId:strin
      <g transform="translate(166 166) scale(.29)"><TeaShopIcon cityId={cityId} size={80}/></g>
     </g>}
    </>}
-   <path d="M355 171v72" stroke="#9B9475" strokeWidth="5"/>
+   <g transform="translate(-28 0)"><path d="M355 171v72" stroke="#9B9475" strokeWidth="5"/>
    <path d="M321 161h61l14 14-14 14h-61z" fill="#7D9478" stroke="#F8F0D5" strokeWidth="2"/>
-   <text x="351" y="180" fill="#FFFAE5" textAnchor="middle" fontSize="12" fontWeight="700">{localizeNode('地铁')}</text>
+   <text x="351" y="180" fill="#FFFAE5" textAnchor="middle" fontSize="12" fontWeight="700">{localizeNode('地铁')}</text></g>
    <path d="M28 216h35l-5 24H33z" fill="#B58965"/>
    <path d="M46 219v-38m0 26q-23 0-19-21 21 1 19 21m0-7q22-1 18-22-20 4-18 22" fill="#98A27A" stroke="#79896A" strokeWidth="2"/>
-   <foreignObject x="39" y="183" width="88" height="80"><div className="preparation-player"><LittleYou motion="waiting"/></div></foreignObject>
   </svg>
+  <div className="preparation-player"><LittleYou motion="waiting"/></div>
  </div>;
 }
