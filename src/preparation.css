@@ -183,3 +183,23 @@
   .phase-preparation .student-preparation .event-buttons small {line-height: 1.35;}
   .phase-preparation .play-footer {padding-block: 1px 3px;}
 }
+
+/* The tea-house artwork is the main visual, not a tiny title bullet. */
+.phase-preparation .preparation-tea .prep-art {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin: 2px 0 6px;
+}
+.phase-preparation .preparation-tea .prep-art > .tea-shop-icon {
+  width: clamp(80px, 15dvh, 120px);
+  height: clamp(80px, 15dvh, 120px);
+}
+.phase-preparation .preparation-tea h2 {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-bottom: 4px;
+}
+@media (max-height: 600px) {
+  .phase-preparation .preparation-tea .prep-art {margin: 0;}
+  .phase-preparation .preparation-tea .prep-art > .tea-shop-icon {width: 72px; height: 72px;}
+}

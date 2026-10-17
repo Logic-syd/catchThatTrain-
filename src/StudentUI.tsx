@@ -11,7 +11,7 @@ import HoldAction from './HoldAction';
 import {stationFor} from './stations';
 export function Preparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const u=run.student!,p=studentPreparation(u)!;
- return <section className="student-preparation">
+ return <section className={`student-preparation${u.prep===0?' preparation-tea':''}`}>
   <span className="chapter-sticker">{localizeNode("出门前 · ")}{u.prep+1} / 3</span>
   <div className="prep-art">{u.prep===0?<TeaShopIcon cityId={run.city.id} size={66}/>:u.prep===1?<Backpack size={66}/>:<span>🍙</span>}</div>
   <h2>{localizeNode(preparationTitle(p.id,p.title))}</h2>
