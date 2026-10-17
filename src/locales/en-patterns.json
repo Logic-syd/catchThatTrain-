@@ -130,5 +130,9 @@
   "处理「{0}」超出基础时间": "Extra time handling “{0}”",
   "基础操作预算 {0} 秒": "Basic action budget: {0} s",
   "记住本站路线和 {0}": "Remember this station’s route and gate {0}",
-  "{0}后折返": "Backtracking after {0}"
+  "{0}后折返": "Backtracking after {0}",
+  "航中路班次需在龙溪路换车，另等 {0} 秒": "Hangzhong-bound: change at Longxi Road; wait {0} s extra",
+  "等车 −{0} 秒，继续原路线": "Wait −{0} s; continue your route",
+  "不到火车站，折返 −{0} 秒": "Wrong terminus; return trip −{0} s",
+  "没及时醒来 · 坐过站并折返 {0} 秒 · {1}": "Woke too late · Passed stop; return {0} s · {1}"
 }

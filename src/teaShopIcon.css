@@ -1,0 +1,7 @@
+.tea-shop-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  overflow: visible;
+  filter: drop-shadow(0 2px 0 #805b3220);
+}

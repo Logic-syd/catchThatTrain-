@@ -4,6 +4,7 @@ import {describe,it,expect,vi} from 'vitest';
 import {cities,characters,events} from './data';
 import {stationPrompt,identityPrompt,createStationPlan} from './flow';
 import {planMetroIncident,transferStopIndex} from './metroFlow';
+import {needsMetroBranchExit} from './metroBranch';
 import {createRun,reducer,routeSeconds,TIME_SCALE,METRO_SECONDS,STOP_BEFORE,DOOR_SECONDS,projectedTime,formatTime,saveRecord,readRecords,type Run} from './engine';
 function started(){const s=createShanghaiRun(false,()=>.9);return reducer(reducer(s,{type:'START'}),{type:'ROUTE',route:s.city.spawnStations[0].routes[0]});}
 function ride(){return reducer(started(),{type:'DIRECTION',correct:true});}
@@ -12,9 +13,10 @@ function travel(s:Run){
  while(ticks<1000){
   if(s.phase==='arrival'){
    if(s.metroStopIndex===s.route!.stops.length-1)return {run:s,ticks};
-   s=reducer(s,{type:s.metroStopIndex===transferStopIndex(s.route!)?'ALIGHT':'CONTINUE_METRO'});
+   s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===transferStopIndex(s.route!)?'ALIGHT':'CONTINUE_METRO'});
   }else if(s.phase==='metro'){s=reducer(s,{type:'TICK',dt:.05});ticks++;}
   else if(s.phase==='transfer')s=reducer(s,{type:'TICK',dt:1.2});
+  else if(s.phase==='metro-platform'){const visit=s.metroBranch!.platformVisit;s=reducer(s,{type:'TICK',dt:1});s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});}
   else throw Error('Unexpected travel phase '+s.phase);
   if(s.event)throw Error('Use an incident-free run for travel helper');
  }

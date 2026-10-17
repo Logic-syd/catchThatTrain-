@@ -4,6 +4,7 @@ import {buildStationJourney} from './stationJourney';
 import {runnerWave} from './runner';
 import {eventHoldSeconds} from './eventTiming';
 import {focusWindow} from './studentConfig';
+import {needsMetroBranchExit} from './metroBranch';
 function init():Run{let s=createShanghaiRun();return {...s,phase:'station' as const,remaining:1500,stationJourney:buildStationJourney(s)};}
 function tick(s:Run,t:number){for(let i=0;i<Math.round(t*10);i++)s=reducer(s,{type:'TICK',dt:.1});return s;}
 function rng(seed:number){return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
@@ -130,7 +131,10 @@ describe('fair normal-mode budget and transparent accounting',()=>{
      s=inputTime(s,operation);
      s=reducer(s,{type:'CHOICE',choice:e.choices[index]});
     }else if(s.phase==='arrival'){
-     s=inputTime(s,.6);s=reducer(s,{type:s.metroStopIndex===s.route!.stops.length-1||!s.metroTransferred&&s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+     s=inputTime(s,.6);s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===s.route!.stops.length-1||!s.metroTransferred&&s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+    }else if(s.phase==='metro-platform'){
+     const visit=s.metroBranch!.platformVisit;
+     s=inputTime(s,1.2+.18);s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});
     }else if(s.phase==='station'){
      if(!s.stationRunning)s=reducer(s,{type:'RUN_INPUT',held:true});
      const wave=runnerWave(s);if(wave&&wave.lane===s.student!.runner.lane)s=reducer(s,{type:'CHANGE_LANE',direction:wave.lane===2?-1:1});

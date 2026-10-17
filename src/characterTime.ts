@@ -136,7 +136,7 @@ function rawCharacterEventPrompt(s:Run,id:string):EventConfig|undefined{
  const work=workChallengePrompt(id,t);if(work)return work;
  if(id==='worker-boss-call'&&t.bossCallsLeft>0)return {id,phase:'station' as const,title:t.bossCallsLeft===1?'老板又打来了：“你到底看没看消息？”':'手机又震了：老板发来一条语音',description:'你已经在赶车，工作群还在持续催。接电话会占用赶路时间。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'接起来，说明正在回程',detail:'花 35 秒 · 专注 +5',seconds:35},{label:'挂掉，继续赶车',detail:'不花时间 · 老板可能再打来',seconds:0}]};
  if(id==='tourist-sleep')return {id,phase:'metro' as const,title:'车厢晃得人睁不开眼，要睡一会吗？',description:'地铁照常行驶，补觉不增加路程时间。设好闹钟，响了就及时确认站名。',interaction:{kind:'choice' as const,seconds:12,penalty:20},choices:sleepChoices(t)};
- if(id==='tourist-wake')return {id,phase:'metro' as const,title:'到站了！闹钟响了，醒醒！',description:'点击按钮快速确认站名。反应慢了会被带过站，再花时间折返。',interaction:{kind:'tap' as const,seconds:3,penalty:80,required:1},choices:[{label:'醒醒！',detail:'立刻醒来，看清站名后决定是否下车',seconds:0},{label:'再睡一下',detail:'闹钟没叫醒你 · 坐过站并折返',seconds:80}]};
+ if(id==='tourist-wake')return {id,phase:'metro' as const,title:'到站了！闹钟响了，醒醒！',description:'点击按钮快速确认站名。反应慢了会被带过站，再花时间折返。',interaction:{kind:'tap' as const,seconds:3,penalty:80,required:1},choices:[{label:'醒醒！',detail:'立刻醒来，看清站名后决定是否下车',seconds:0},{label:'再睡一下',detail:'没及时醒来 · 坐过站并折返',seconds:80}]};
  if(id==='tourist-wheel')return {id,phase:'station' as const,title:'行李箱轮子卡住了！',description:'轮子卡住让箱子一直往旁边偏。调整后正常移动；硬拖的阻力持续到本局结束。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{id:'repair',label:'停下来调整轮子',detail:'多花 20 秒 · 恢复正常移动，不再有轮子额外消耗',seconds:20},{id:'drag',label:'先硬拖着赶路',detail:`不花时间 · 本局移动速度 −${amount((1-TOURIST_WHEEL_RULES.speedMultiplier)*100)}% · 实际移动每秒额外消耗 ${TOURIST_WHEEL_RULES.extraDrain} 精力`,seconds:0}]};
  if(id==='tourist-wayfinding')return {id,phase:'station' as const,title:t.mapChecked?'这里的指示牌怎么又变了？':'出口好多，哪个才是铁路出发？',description:t.focus<35?'走了一整天，字都看花了。陌生车站里人流也可能带错方向。':'先看清铁路出发标识，跟着人群不一定对。',interaction:{kind:'choice' as const,seconds:10,penalty:18},choices:[{label:'停一下，看楼层地图',detail:'花 12 秒确认方向 · 记住路线',seconds:12},{label:'跟着人流先走',detail:t.wrongWayRisk?'看着像近路，可能要折返':'顺着人流，不花确认时间',seconds:t.wrongWayRisk?42:0}]};
  return undefined;
@@ -167,7 +167,7 @@ export function refreshCharacterPrompt(t:CharacterTimeState,event:EventConfig):E
   }
   if(event.id==='tourist-wake'){
    if(matches('wake','醒醒！'))return {...c,id:'wake',detail:`立刻醒来，看清站名后决定是否下车 · ${energy(4)}`};
-   if(matches('oversleep','再睡一下'))return {...c,id:'oversleep',detail:`闹钟没叫醒你 · 坐过站并折返 ${c.seconds} 秒 · ${energy(-6)}`};
+   if(matches('oversleep','再睡一下'))return {...c,id:'oversleep',detail:`没及时醒来 · 坐过站并折返 ${c.seconds} 秒 · ${energy(-6)}`};
   }
   if(event.id==='tourist-wayfinding'){
    if(matches('map','停一下，看楼层地图'))return {...c,id:'map',detail:`花 ${c.seconds} 秒确认方向 · 记住路线 · ${focus(4)}`};

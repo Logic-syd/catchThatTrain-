@@ -5,6 +5,8 @@ import {buildStationJourney,journeyPrompt} from './stationJourney';
 import {CharacterPreparation,Preparation,StudentEnergy} from './StudentUI';
 import {createGameResult} from './gameResult';
 import {withResourceFeedback} from './resourceFeedback';
+import {timedPrompt} from './characterTime';
+import {studentPreparation} from './studentConfig';
 function station(s:Run):Run{
  const n={...s,phase:'station' as const,event:null,stationRunning:true,stationBeat:0,stationProgress:0,stationJourney:[{id:'gate-scan',stage:4,label:'长廊',seconds:100}],remaining:1500};
  if(n.student)n.student={...n.student,runner:{...n.student.runner,lane:0,wave:99}};
@@ -21,7 +23,8 @@ describe('准备与任务收益的引擎/UI完整链路',()=>{
  it('吃饭得到储备，进站冲刺才使用；日志和结算记录实际变化',()=>{
   let s=reducer(createCharacterStationRun('shanghai','worker',false,()=>.5),{type:'START'});
   s=reducer(s,{type:'PERSON_PICK',step:0,option:'leave-gifts'});
-  const html=renderToStaticMarkup(<CharacterPreparation run={s} dispatch={()=>{}}/>);expect(html).toContain('精力储备 +10');expect(html).toContain('精力已满');
+  const detail=timedPrompt(s)!.choices.find(c=>c.id==='eat')!.detail;expect(detail).toContain('精力储备 +10');expect(detail).toContain('精力已满');
+  const html=renderToStaticMarkup(<CharacterPreparation run={s} dispatch={()=>{}}/>);expect(html).toContain('留点后劲，赶路时用');expect(html).toContain('−60 秒');expect(html).not.toContain('精力储备 +10');
   const before=s.remaining;s=reducer(s,{type:'PERSON_PICK',step:1,option:'eat'});expect(s.remaining).toBe(before-60);expect(s.characterTime!.energyReserve).toBe(10);expect(s.characterTime!.maxEnergy).toBe(60);
   expect(s.logs.at(-1)!.resources!.energyReserve).toEqual({before:0,after:10});expect(reducer(s,{type:'PERSON_PICK',step:1,option:'eat'})).toBe(s);
   const rested=reducer({...station(s),stationRunning:false},{type:'TICK',dt:1});expect(rested.characterTime!.energyReserve).toBe(10);
@@ -40,7 +43,8 @@ describe('准备与任务收益的引擎/UI完整链路',()=>{
  it('奶茶后饭团仍有饱腹收益，身份证不再回满当前体力',()=>{
   let s=reducer(createCharacterStationRun('shanghai','student',false,()=>.5),{type:'START'});s=reducer(s,{type:'PREP_PICK',step:0,option:'buy'});s={...s,student:{...s.student!,stamina:30}};
   s=reducer(s,{type:'PREP_PICK',step:1,option:'check'});expect(s.student!.stamina).toBe(30);
-  const html=renderToStaticMarkup(<Preparation run={s} dispatch={()=>{}}/>);expect(html).toContain('本局精力上限 +0');expect(html).toContain('饱腹');
+  expect(studentPreparation(s.student!)!.options.find(o=>o.id==='eat')!.detail).toContain('本局精力上限 +0');
+  const html=renderToStaticMarkup(<Preparation run={s} dispatch={()=>{}}/>);expect(html).toContain('后半程不挨饿');expect(html).toContain('−25 秒');expect(html).not.toContain('本局精力上限');
   const fed=reducer(s,{type:'PREP_PICK',step:2,option:'eat'}),hungry=reducer(s,{type:'PREP_PICK',step:2,option:'skip'});
   expect(reducer({...station(fed),stage:3},{type:'TICK',dt:.1}).student!.stats.energy).toBe(100);
   expect(reducer({...station(hungry),stage:3},{type:'TICK',dt:.1}).student!.stats.energy).toBe(90);

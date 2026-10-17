@@ -15,15 +15,16 @@ import {STUDENT,PREPARATIONS,studentState,gameShanghai,movementFactor,studentPro
 import { cities, characters, events, type CityConfig, type CharacterConfig, type MetroRoute, type EventConfig, type Choice } from './data';
 import { identityPrompt, stationPrompt, createStationPlan, type Encounter } from './flow';
 import { planMetroIncident, transferStopIndex, METRO_INCIDENT_CHANCE } from './metroFlow';
+import {METRO_BRANCH,planMetroBranch,isMetroBranchStop,needsMetroBranchExit,metroBoardingChoice,type MetroBranchState,type MetroTerminal} from './metroBranch';
 import { createStationLuck, elderPrompt, elderOutcome, escalatorPrompt, escalatorRide, type StationLuck } from './stationEncounters';
 import {buildStationJourney,journeyPrompt,type StationBeat} from './stationJourney';
 import {applyParentChoice,applyParentPreparation,canParentSprint,createParentState,isParentBlock,parentBlockPrompt,parentToiletAfter,tickParent,type ParentState} from './parent';
 import {applyStudentDistraction} from './characterChallenges';
 import {applyMazeChoice,createTouristMaze,touristMazePrompt,type TouristMaze} from './touristMaze';
-import {isHongqiaoPrototype,isRoadsideBeat,roadsidePrompt,ROADSIDE_ART,type HongqiaoRunState} from './hongqiao';
-export type Phase='preparation'|'lobby'|'route'|'direction'|'wrong'|'metro'|'arrival'|'transfer'|'metro-recovery'|'station'|'result';
+import {isStudentJourney,isRoadsideBeat,roadsidePrompt,updateRoadsideNotices,ROADSIDE_ART,type HongqiaoRunState} from './hongqiao';
+export type Phase='preparation'|'lobby'|'route'|'direction'|'wrong'|'metro'|'arrival'|'transfer'|'metro-platform'|'metro-recovery'|'station'|'result';
 export type Log={title:string;seconds:number;eventId?:string;resources?:ResourceChanges};
-export type Run=HongqiaoRunState&{touristMaze?:TouristMaze;metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
+export type Run=HongqiaoRunState&{metroBranch?:MetroBranchState;touristMaze?:TouristMaze;metrics:RunMetrics;stationDecisions:StationDecision[];endEventId:string|null;student?:StudentState;characterTime?:CharacterTimeState;parent?:ParentState;id:string;city:CityConfig;character:CharacterConfig;spawn:number;hard:boolean;remaining:number;initial:number;departure:number;phase:Phase;route?:MetroRoute;metroProgress:number;metroDuration:number;elapsed:number;phaseElapsed:number;event:EventConfig|null;eventElapsed:number;seen:string[];logs:Log[];slow:number;gate:string;gatePassed:boolean;gateRemaining:number;stage:number;distance:number;success:boolean;stationEvents:number;stamina:number;stationLane:number|null;metroMisses:number;metroStopIndex:number;metroTransferred:boolean;metroIncidentRoll:number;metroIncidentVariant:number;metroIncident:EventConfig|null;metroRecoveryMessage:string;metroRecoveryTarget:'metro'|'arrival';identityEarly:boolean;identityReady:boolean;identityStage:"wallet"|"card";identityItems:string[];identityCards:string[];encounters:Encounter[];detour:{x:number;y:number;label:string}|null;stationLuck:StationLuck;escalatorLane:number|null;boost:number;stationJourney:StationBeat[];stationBeat:number;stationProgress:number;stationRunning:boolean;eventOverdue:boolean};
 export function pick<T>(array:T[],rng=Math.random):T{return array[Math.floor(rng()*array.length)]!;}
 export function routeSeconds(route:MetroRoute,character:CharacterConfig){return priceRoute(route,character.speed,character).total;}
 export function createRun(cityId?:string,characterId?:string,hard=false,first=false,rng=Math.random):Run{
@@ -72,11 +73,14 @@ export function randomEvent(s:Run,phase:'metro'|'station'):EventConfig{
  const pool=events.filter(e=>!s.seen.includes(e.id)&&(!e.character||e.character.includes(s.character.id))&&(e.phase===phase||e.phase==='both')&&!e.id.includes('-'));
  return pick(pool.length?pool:[events[0]]);
 }
-export type Action={type:'ROADSIDE_STOP';id:string}|{type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'DROP_TEA'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice;eventRevision?:number}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
-function finish(s:Run,success=false):Run{return {...s,endEventId:s.event?.id??null,phase:'result',event:null,success};}
+export type Action={type:'BOARD_METRO';terminal:MetroTerminal;visit:number}|{type:'ROADSIDE_STOP';id:string;revision:number}|{type:'PERSON_PICK';option:string;step:number}|{type:'PARENT_PREP';option:string;step:number}|{type:'PARENT_SYNC'}|{type:'PARENT_RELEASE'}|{type:'CHANGE_LANE';direction:-1|1}|{type:'PREP_PICK';option:string;step:number}|{type:'SPRINT_INPUT';held:boolean}|{type:'POCKET_PICK';pocket:number}|{type:'PREPARE_DOOR'}|{type:'OBSERVE'}|{type:'READ_MAP'}|{type:'DROP_TEA'}|{type:'START'}|{type:'NEW';run:Run}|{type:'ROUTE';route:MetroRoute}|{type:'DIRECTION';correct:boolean}|{type:'TICK';dt:number}|{type:'CHOICE';choice:Choice;eventRevision?:number}|{type:'ALIGHT'}|{type:'CONTINUE_METRO'}|{type:'STAGE';stage:number;distance:number}|{type:'STATION_EVENT';id?:string}|{type:'GATE'}|{type:'WIN'}|{type:'PENALTY';title:string;seconds:number}|{type:'STAMINA';value:number}|{type:'ID_PICK';item:string}|{type:'DETOUR_DONE'}|{type:'RUN_INPUT';held:boolean};
+function finish(s:Run,success=false):Run{
+ const branch=s.phase==='metro-platform'?'metro-branch-platform':s.phase==='metro-recovery'&&s.logs.at(-1)?.eventId==='metro-branch-missed'?'metro-branch-missed':null;
+ return {...s,endEventId:s.event?.id??branch,phase:'result',event:null,success};
+}
 function deadline(s:Run):Run{return s.remaining<=(s.gatePassed?0:STOP_BEFORE)?finish(s):s;}
 function choice(s:Run,c:Choice,title=s.event?.title||'途中耽误'):Run{
- const roadside=isHongqiaoPrototype(s)&&s.roadsideActive===s.event?.id&&!!s.roadsideActive;
+ const roadside=isStudentJourney(s)&&s.roadsideActive===s.event?.id&&!!s.roadsideActive;
  if(c.stationDecision){const d=c.stationDecision;let beats=s.stationJourney.filter(b=>!d.skip?.includes(b.id));
   const target=d.travelBeat?beats.findIndex(b=>b.id===d.travelBeat):s.stationBeat+1;
   if(d.travelScale&&beats[target])beats=beats.map((b,i)=>i===target?{...b,seconds:b.seconds*(d.travelScale??1)}:b);
@@ -108,13 +112,20 @@ function completeStationBeat(s:Run):Run{
  if(s.student)s={...s,student:{...s.student,sprinting:false,observed:false,runner:{...s.student.runner,wave:0,blocked:false}}};
  if(s.characterTime)s={...s,characterTime:{...s.characterTime,sprinting:false,runner:{...s.characterTime.runner,wave:0,blocked:false}}};
  if(s.parent)s={...s,parent:{...s.parent,sprinting:false,runner:{...s.parent.runner,wave:0,blocked:false}}};
- return {...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationProgress:0,stationRunning:isHongqiaoPrototype(s)&&!!s.stationAutoRun,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
+ return {...s,seen:[...new Set([...s.seen,beat.id])],stationBeat:index,stationProgress:0,stationRunning:isStudentJourney(s)&&!!s.stationAutoRun,detour:null,stage:s.stationJourney[index]?.stage??s.stage,distance:Math.round((s.stationJourney.length-index)*30),gatePassed:gate||s.gatePassed,gateRemaining:gate?s.remaining-STOP_BEFORE:s.gateRemaining};
 }
 function recoverMetro(s:Run,title:string,seconds:number,target:'metro'|'arrival'):Run{
  if(s.student)s={...s,student:{...s.student,decisionLoss:s.student.decisionLoss+seconds,wrongTurns:s.student.wrongTurns+(title.startsWith('坐过')?0:1),doorReady:false}};
  return deadline({...s,phase:'metro-recovery',phaseElapsed:0,metroRecoveryMessage:title,metroRecoveryTarget:target,remaining:s.remaining-seconds,logs:[...s.logs,{title,seconds}]});
 }
+function recoverMetroBranch(s:Run):Run{
+ const title='这班开往航中路，折返龙溪路换车',seconds=METRO_BRANCH.missSeconds;
+ if(s.student)s={...s,student:{...s.student,decisionLoss:s.student.decisionLoss+seconds,wrongTurns:s.student.wrongTurns+1,doorReady:false}};
+ const n=deadline({...s,metroBranch:{...s.metroBranch!,terminal:'hangzhong',waitPaid:false,misses:s.metroBranch!.misses+1},phase:'metro-recovery',phaseElapsed:0,event:null,eventElapsed:0,metroRecoveryMessage:title,metroRecoveryTarget:'arrival',remaining:s.remaining-seconds,logs:[...s.logs,{title,seconds,eventId:'metro-branch-missed'}]});
+ return n.phase==='result'?{...n,endEventId:'metro-branch-missed'}:n;
+}
 function continueMetro(s:Run):Run{
+ if(needsMetroBranchExit(s))return recoverMetroBranch(s);
  if(s.metroStopIndex===s.route!.stops.length-1)return recoverMetro({...s,metroMisses:s.metroMisses+1},'坐过火车站了，下一站折返',80,'arrival');
  if(s.metroStopIndex===transferStopIndex(s.route!)&&!s.metroTransferred)return recoverMetro(s,'错过计划换乘站，折返重新换乘',65,'arrival');
  return {...s,phase:'metro',phaseElapsed:0,student:s.student?{...s.student,doorReady:false}:undefined};
@@ -123,9 +134,9 @@ function reduceCore(s:Run,a:Action):Run{
  if(a.type==='NEW')return a.run;
  if(s.phase==='result')return s;
  if(a.type==='ROADSIDE_STOP'){
-  const prompt=roadsidePrompt(s);if(!prompt||prompt.id!==a.id)return s;
+  const prompt=roadsidePrompt(s);if(!prompt||prompt.id!==a.id||prompt.revision!==a.revision)return s;
   const action=ROADSIDE_ART[prompt.id].action;
-  return {...s,roadsideActive:prompt.id,stationRunning:false,student:{...s.student!,sprinting:false},event:{...prompt,revision:s.stationBeat,interaction:{kind:'hold',seconds:12,penalty:0,required:1},choices:prompt.choices.map(c=>c.id==='indulge'?{...c,label:action}:c)},eventElapsed:0,eventOverdue:false};
+  return {...s,roadsideNotice:undefined,roadsideActive:prompt.id,stationRunning:false,student:{...s.student!,sprinting:false},event:{...prompt,interaction:{kind:'hold',seconds:12,penalty:0,required:1},choices:prompt.choices.map(c=>c.id==='indulge'?{...c,label:action}:c)},eventElapsed:0,eventOverdue:false};
  }
  if(a.type==='CHOICE'&&s.event){
   if(s.event.revision!==undefined&&a.eventRevision!==s.event.revision)return s;
@@ -158,7 +169,7 @@ function reduceCore(s:Run,a:Action):Run{
   if(a.type==='SPRINT_INPUT'){
    if(s.phase!=='station'||s.event)return s;
    if(a.held&&(u.exhausted||u.stamina<=0||u.runner.blocked))return s;
-   return {...s,student:{...u,sprinting:a.held&&!u.exhausted&&!u.runner.blocked},stationRunning:a.held?true:s.stationRunning,...isHongqiaoPrototype(s)&&a.held?{stationAutoRun:true}:{}};
+   return {...s,student:{...u,sprinting:a.held&&!u.exhausted&&!u.runner.blocked},stationRunning:a.held?true:s.stationRunning,...isStudentJourney(s)&&a.held?{stationAutoRun:true}:{}};
   }
   if(a.type==='DROP_TEA')return {...s,student:{...u,tea:false}};
   if(a.type==='PREPARE_DOOR')return s.phase==='metro'&&!s.event?{...s,student:{...u,doorReady:true}}:s;
@@ -178,15 +189,24 @@ function reduceCore(s:Run,a:Action):Run{
   if(a.held&&(!canParentSprint(s.parent)||s.parent.runner.blocked))return s;
   return {...s,stationRunning:a.held||s.stationRunning,parent:{...s.parent,sprinting:a.held}};
  }
- if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,...isHongqiaoPrototype(s)?{stationAutoRun:a.held&&!s.event}:{},student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
+ if(a.type==='RUN_INPUT')return s.phase==='station'?{...s,stationRunning:a.held&&!s.event,...isStudentJourney(s)?{stationAutoRun:a.held&&!s.event}:{},student:s.student?{...s.student,sprinting:false}:undefined,characterTime:s.characterTime?{...s.characterTime,sprinting:false}:undefined,parent:s.parent?{...s.parent,sprinting:false}:undefined}:s;
  if(a.type==='START')return s.phase==='lobby'?{...s,phase:s.student||s.characterTime||s.parent?'preparation':'route',phaseElapsed:0}:s;
- if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
+ if(a.type==='ROUTE')return s.phase==='route'?{...s,route:a.route,metroBranch:planMetroBranch(a.route,s.metroIncidentVariant),metroIncident:planMetroIncident(a.route,s.metroIncidentRoll,s.metroIncidentVariant),metroDuration:journeyRouteSeconds(s,a.route),phase:'direction',phaseElapsed:0}:s;
  if(a.type==='DIRECTION'){if(s.phase!=='direction')return s;if(!a.correct)return {...s,phase:'wrong',phaseElapsed:0};return s.characterTime?.characterId==='tourist'?{...s,phase:'metro',phaseElapsed:0,event:characterEventPrompt(s,'tourist-sleep')??null,eventElapsed:0}:{...s,phase:'metro',phaseElapsed:0};}
  if(a.type==='CONTINUE_METRO')return s.phase==='arrival'&&!s.event?continueMetro(s):s;
+ if(a.type==='BOARD_METRO'){
+  if(s.phase!=='metro-platform'||s.event||s.metroBranch?.platformVisit!==a.visit)return s;
+  const boarding=metroBoardingChoice(s,a.terminal);if(!boarding)return s;
+  if(a.terminal==='hangzhong')return recoverMetroBranch(s);
+  const required=s.metroBranch.terminal==='hangzhong',seconds=boarding.seconds;
+  const n=deadline({...s,phase:'metro',phaseElapsed:0,metroBranch:{...s.metroBranch,terminal:'hongqiao',waitPaid:true},remaining:s.remaining-seconds,student:s.student?{...s.student,doorReady:false,environmentLoss:s.student.environmentLoss+(required?seconds:0),decisionLoss:s.student.decisionLoss+(required?0:seconds)}:undefined,logs:[...s.logs,{title:'在龙溪路等到开往虹桥火车站的列车',seconds,eventId:required?'metro-branch-wait':'metro-branch-extra-wait'}]});
+  return n.phase==='result'?{...n,endEventId:required?'metro-branch-wait':'metro-branch-extra-wait'}:n;
+ }
  if(a.type==='ALIGHT'){
   if(s.phase!=='arrival'||s.event)return s;
   if(s.student){const delay=s.student.doorReady?0:12;s=deadline({...s,remaining:s.remaining-delay,student:{...s.student,decisionLoss:s.student.decisionLoss+delay,doorSavings:s.student.doorSavings+(delay?0:12)},logs:[...s.logs,{title:delay?'没提前靠门，挤过人群':'提前靠门，快速下车',seconds:delay}]});if(s.phase==='result')return s;}
 
+  if(isMetroBranchStop(s))return {...s,phase:'metro-platform',phaseElapsed:0,metroBranch:{...s.metroBranch!,platformVisit:s.metroBranch!.platformVisit+1},student:s.student?{...s.student,doorReady:false}:undefined,logs:[...s.logs,{title:'在龙溪路下车，核对下一班终点',seconds:0,eventId:'metro-branch-platform'}]};
   if(s.metroStopIndex===transferStopIndex(s.route!)&&!s.metroTransferred)return {...s,phase:'transfer',event:s.student?{id:'transfer-run',title:'跟着换乘标识，跑过通道！',description:'连续点击六次，主动完成换乘。',phase:'metro',interaction:{kind:'tap',required:6,seconds:12,penalty:0},choices:[{label:'换乘完成',detail:'继续上车',seconds:0}]}:null,phaseElapsed:0,metroTransferred:true,logs:[...s.logs,{title:'在'+s.route!.stops[s.metroStopIndex]+'换乘'+s.route!.lines[1]+'号线',seconds:0}]};
   if(s.metroStopIndex===s.route!.stops.length-1)return {...s,phase:'station',phaseElapsed:0,event:null,stage:0,stationJourney:buildStationJourney(s),stationBeat:0,stationProgress:0,stationRunning:false,student:s.student?{...s.student,stationStart:s.remaining}:undefined};
   return recoverMetro(s,'在'+s.route!.stops[s.metroStopIndex]+'下早了，重新上车',60,'metro');
@@ -221,7 +241,7 @@ function reduceCore(s:Run,a:Action):Run{
   if(s.student&&s.event.id==='transfer-run'){if(!s.event.choices.some(c=>c.label===a.choice.label))return s;return {...s,phase:'metro',event:null,phaseElapsed:0,student:{...s.student,doorReady:false}};}
   if(s.student&&s.event.id==='student-breath'){
    const selected=s.event.choices.find(c=>c.label===a.choice.label);if(!selected)return s;
-   return deadline({...s,event:null,eventElapsed:0,eventOverdue:false,stationRunning:isHongqiaoPrototype(s)&&!!s.stationAutoRun,student:{...s.student,stamina:Math.min(s.student.stats.energy,Math.max(s.student.stamina,65)),sprinting:false,decisionLoss:s.student.decisionLoss+selected.seconds},remaining:s.remaining-selected.seconds,logs:[...s.logs,{title:'连续冲刺岔气，停下调整呼吸',seconds:selected.seconds,eventId:'student-breath'}]});
+   return deadline({...s,event:null,eventElapsed:0,eventOverdue:false,stationRunning:isStudentJourney(s)&&!!s.stationAutoRun,student:{...s.student,stamina:Math.min(s.student.stats.energy,Math.max(s.student.stamina,65)),sprinting:false,decisionLoss:s.student.decisionLoss+selected.seconds},remaining:s.remaining-selected.seconds,logs:[...s.logs,{title:'连续冲刺岔气，停下调整呼吸',seconds:selected.seconds,eventId:'student-breath'}]});
   }
 
   if(s.characterTime&&s.event){const selected=s.event.choices.find(c=>a.choice.id?c.id===a.choice.id:c.label===a.choice.label);if(!selected)return s;
@@ -345,10 +365,9 @@ function reduceCore(s:Run,a:Action):Run{
     }
     if(n.stationProgress>=1){
      if(isRoadsideBeat(n)){
-      const id=beat.id,alreadyStopped=n.seen.includes(id),sprinting=!!n.student?.sprinting;
+      const sprinting=!!n.student?.sprinting;
       n=completeStationBeat(n);
       if(n.student)n={...n,student:{...n.student,sprinting:sprinting&&n.stationRunning}};
-      if(!alreadyStopped)n={...n,logs:[...n.logs,{title:'路过'+ROADSIDE_ART[id].label+'，继续赶路',seconds:0,eventId:id}]};
      }else{n.event=journeyPrompt(n);n.eventElapsed=0;n.eventOverdue=false;n.stationRunning=false;if(n.student)n.student={...n.student,sprinting:false};if(n.parent)n.parent={...n.parent,sprinting:false};}
     }
    }
@@ -359,7 +378,10 @@ function reduceCore(s:Run,a:Action):Run{
    n={...n,phase:'direction',phaseElapsed:0,remaining:n.remaining-75,logs:[...s.logs,{title:'坐反方向，下一站折返',seconds:75}]};
   }
   if(s.phase==='transfer'&&!s.student&&n.phaseElapsed>=1.2)n={...n,phase:'metro',phaseElapsed:0};
-  if(s.phase==='metro-recovery'&&n.phaseElapsed>=2)n={...n,phase:s.metroRecoveryTarget,phaseElapsed:0};
+  if(s.phase==='metro-recovery'){
+   if(n.remaining<=(n.gatePassed?0:STOP_BEFORE))return deadline(n);
+   if(n.phaseElapsed>=2)n={...n,phase:s.metroRecoveryTarget,phaseElapsed:0};
+  }
   if(s.phase==='metro'){
    const old=s.metroProgress;
    const stopProgress=(s.metroStopIndex+1)/(s.route!.stops.length-1);
@@ -373,7 +395,16 @@ function reduceCore(s:Run,a:Action):Run{
    n.metroProgress=next;
    if(n.student&&s.student)n.student.elapsedGame=s.student.elapsedGame+s.remaining-n.remaining;
    if(checkpoint){n.event=incident;n.eventElapsed=0;}
-   if(next>=stopProgress){n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;if(s.characterTime?.sleeping&&n.metroStopIndex>=Math.max(1,s.route!.stops.length-1-s.characterTime.alarmStops)){n.event=characterEventPrompt(n,'tourist-wake')??null;n.eventElapsed=0;}}
+   if(next>=stopProgress){
+    n.phase='arrival';n.phaseElapsed=0;n.metroStopIndex=s.metroStopIndex+1;
+    if(s.characterTime?.sleeping){
+     const alarmDue=n.metroStopIndex>=Math.max(1,s.route!.stops.length-1-s.characterTime.alarmStops);
+     if(needsMetroBranchExit(n)||alarmDue){
+      n.event=characterEventPrompt(n,'tourist-wake')??null;n.eventElapsed=0;
+      if(!alarmDue&&n.event)n.event={...n.event,title:'龙溪路到了，先醒醒！',description:'这班开往航中路，别错过换车。'};
+     }
+    }
+   }
   }
   // At ordinary stops, doing nothing means staying on. Missing a required exit
   // costs time and returns to that stop, without charging the journey twice.
@@ -416,6 +447,7 @@ export function reducer(s:Run,a:Action):Run{
 function reduceAndRecord(s:Run,a:Action):Run{
  s=clearInactiveSprint(s);
  let n=settleWaiting(s,reduceCore(s,a),a,isStationMoving(s));
+ if(n!==s||a.type==='NEW')n=updateRoadsideNotices(n);
  if(s.student&&n.student&&s.phase==='station'&&a.type!=='NEW'&&n.remaining<s.remaining){
   n={...n,student:{...n.student,stationElapsedGame:(s.student.stationElapsedGame??0)+Math.max(0,s.remaining-n.remaining)}};
  }

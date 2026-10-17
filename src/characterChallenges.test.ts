@@ -6,10 +6,17 @@ import {STUDENT_DISTRACTIONS,WORK_CHALLENGE_IDS,applyStudentDistraction} from '.
 import {movementSpeed} from './timeModel';
 import {createGameResult} from './gameResult';
 import {parentBlockPrompt} from './parent';
+import {roadsidePrompt} from './hongqiao';
 function at(who:'student'|'worker'|'tourist'|'mom',id:string,station='shanghai'):Run{
  const base=createCharacterStationRun(station,who,false,()=>.5),stationJourney=buildStationJourney(base),stationBeat=stationJourney.findIndex(b=>b.id===id);
  expect(stationBeat).toBeGreaterThanOrEqual(0);
- const s={...base,phase:'station' as const,stationJourney,stationBeat,stationProgress:1};return {...s,event:journeyPrompt(s)};
+ const s={...base,phase:'station' as const,stationJourney,stationBeat,stationProgress:who==='student'?.25:1};
+ if(who==='student'&&STUDENT_DISTRACTIONS.some(d=>d.id===id)){
+  const visible=reducer(base,{type:'NEW',run:s}),notice=roadsidePrompt(visible)!;
+  expect(notice?.id).toBe(id);
+  return reducer(visible,{type:'ROADSIDE_STOP',id,revision:notice.revision!});
+ }
+ return {...s,event:journeyPrompt(s)};
 }
 function choose(s:Run,id:string){const c=s.event!.choices.find(c=>c.id===id)!;expect(c).toBeDefined();return reducer(s,{type:'CHOICE',choice:c,eventRevision:s.event!.revision});}
 describe('人物难点的完整状态链路',()=>{

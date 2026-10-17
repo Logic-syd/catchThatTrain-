@@ -1,5 +1,6 @@
 import {runnerWave} from './runner';
 import {describe,it,expect} from 'vitest';
+import {needsMetroBranchExit} from './metroBranch';
 import {createShanghaiRun,reducer,STOP_BEFORE,journeyRouteSeconds,type Run} from './engine';
 import {STUDENT,STUDENT_PREPARATION_TOTAL,movementFactor,studentPrompt} from './studentConfig';
 import {buildStationJourney} from './stationJourney';
@@ -69,7 +70,8 @@ describe('Hongqiao student chapter',()=>{
   for(let routeIndex=0;routeIndex<3;routeIndex++){
    let s=prepared(['skip','check','skip'],.9);s=reducer(s,{type:'ROUTE',route:s.city.spawnStations[0].routes[routeIndex]});s=reducer(s,{type:'DIRECTION',correct:true});
    for(let i=0;i<10000&&s.phase!=='station';i++){
-    if(s.phase==='arrival')s=reducer(s,{type:s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+    if(s.phase==='arrival')s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+    else if(s.phase==='metro-platform'){const visit=s.metroBranch!.platformVisit;s=tick(s,.8+.2);s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});}
     else if(s.event){expect(s.event.id).toBe('transfer-run');const held=tick(s,2);expect(held.phase).toBe('transfer');s=select(held);}
     else {s=reducer(s,{type:'PREPARE_DOOR'});s=tick(s,.1);}
    }

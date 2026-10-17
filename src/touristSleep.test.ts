@@ -2,6 +2,7 @@ import {describe,it,expect} from 'vitest';
 import {createCharacterStationRun,reducer,journeyRouteSeconds,type Run} from './engine';
 import {characterEventPrompt,applyCharacterEvent,TOURIST_SLEEP_OPTIONS,timedPrompt} from './characterTime';
 import {STATIONS} from './stations';
+import {needsMetroBranchExit} from './metroBranch';
 
 function boarded(city='shanghai',hard=false):Run{
  let s=reducer(createCharacterStationRun(city,'tourist',hard,()=>.5),{type:'START'});
@@ -14,7 +15,8 @@ function choose(s:Run,id:string){return reducer(s,{type:'CHOICE',choice:s.event!
 function travel(s:Run):Run{
  for(let i=0;i<1000&&s.phase!=='station'&&s.phase!=='result';i++){
   if(s.event){expect(s.event.id).toBe('tourist-wake');s=reducer(s,{type:'CHOICE',choice:s.event.choices[0]});}
-  else if(s.phase==='arrival')s=reducer(s,{type:s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+  else if(s.phase==='arrival')s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+  else if(s.phase==='metro-platform'){const visit=s.metroBranch!.platformVisit;s=reducer(s,{type:'TICK',dt:1});s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});}
   else s=reducer(s,{type:'TICK',dt:.1});
  }
  expect(s.phase).toBe('station');return s;

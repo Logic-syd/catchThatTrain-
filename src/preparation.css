@@ -1,0 +1,185 @@
+/* Fit the complete preparation decision into the available browser viewport.
+   Keep content in normal flow: larger accessibility text must remain reachable. */
+.phase-preparation {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.phase-preparation .game-header {
+  flex: 0 0 52px;
+  height: 52px;
+  width: 100%;
+}
+.phase-preparation .play-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0;
+}
+.phase-preparation .hud-wrap {
+  position: relative;
+  top: 0;
+  flex-shrink: 0;
+  min-height: 58px;
+  margin: 2px 12px 4px;
+  gap: 12px;
+}
+.phase-preparation .time-capsule {
+  min-width: 210px;
+  padding: 5px 20px;
+  border-radius: 22px;
+}
+.phase-preparation .time-capsule strong {font-size: 29px; line-height: 1.15;}
+.phase-preparation .time-capsule > div > span {font-size: 10px;}
+.phase-preparation .map-bubble {width: 44px; height: 44px;}
+.phase-preparation .student-preparation {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: clamp(6px, 1.3dvh, 12px) 10px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 10px 18px;
+}
+.phase-preparation .student-preparation > .chapter-sticker {
+  grid-column: 1 / -1;
+  justify-self: center;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0;
+  transform: none;
+}
+.phase-preparation .student-preparation .prep-art {
+  grid-column: 1;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1;
+}
+.phase-preparation .prep-art > svg {width: 32px; height: 32px;}
+.phase-preparation .prep-art > span {font-size: 32px;}
+.phase-preparation .student-preparation h2 {
+  grid-column: 2;
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.3;
+  text-align: left;
+}
+.phase-preparation .student-preparation > p {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #806b4f;
+}
+.phase-preparation .student-stats {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  text-align: center;
+}
+.phase-preparation .student-stats b {
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.phase-preparation .character-preparation .student-stats b {letter-spacing: 0;}
+.phase-preparation .student-preparation .event-buttons {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.phase-preparation .student-preparation .event-buttons button {
+  min-height: 60px;
+  margin: 0;
+  padding: 12px 14px;
+  gap: 10px;
+  border-radius: 18px;
+  box-shadow: 0 3px 0 #ded1ad;
+  color: #776044;
+}
+.phase-preparation .event-buttons button > span {flex: 1; min-width: 0;}
+.phase-preparation .event-buttons strong {font-size: 14px; line-height: 1.4;}
+.phase-preparation .student-preparation .event-buttons small {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  color: #806b4f;
+}
+.phase-preparation .choice-detail .choice-time-cost {
+  padding: 1px 4px;
+  margin: 0 3px 0 0;
+  font-size: 16px;
+  line-height: 1.25;
+}
+.phase-preparation .student-preparation > small {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.phase-preparation .character-origin,
+.phase-preparation .parent-origin {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 7px 10px;
+  gap: 5px 8px;
+  border-radius: 12px;
+}
+.phase-preparation .character-origin > span,
+.phase-preparation .character-origin > b {font-size: 12px; line-height: 1.35;}
+.phase-preparation .character-origin > small {font-size: 11px; line-height: 1.35;}
+.phase-preparation .parent-origin .little-you {width: 30px; height: 34px;}
+.phase-preparation .parent-origin b {font-size: 13px; line-height: 1.3;}
+.phase-preparation .parent-origin small {font-size: 11px; line-height: 1.4; margin-top: 2px;}
+.phase-preparation .play-footer {margin: 0; padding: 4px 12px 8px; font-size: 10px; line-height: 1.4;}
+/* Let the departure animation finish without covering the decision's facts. */
+.phase-preparation .ticket-flight {visibility: hidden;}
+
+@media (max-height: 700px) {
+  .phase-preparation .game-header {flex-basis: 44px; height: 44px;}
+  .phase-preparation .hud-wrap {min-height: 50px; margin-block: 0;}
+  .phase-preparation .time-capsule {padding-block: 4px;}
+  .phase-preparation .time-capsule strong {font-size: 26px;}
+  .phase-preparation .student-preparation {gap: 6px 8px; padding: 6px 14px;}
+  .phase-preparation .student-preparation h2 {font-size: 18px; line-height: 1.25;}
+  .phase-preparation .student-preparation > p {font-size: 12px; line-height: 1.4;}
+  .phase-preparation .student-stats {padding: 7px 8px; gap: 5px; font-size: 11px;}
+  .phase-preparation .student-stats b {font-size: 11px; margin-top: 3px;}
+  .phase-preparation .student-preparation .event-buttons {gap: 8px;}
+  .phase-preparation .student-preparation .event-buttons button {padding: 9px 11px;}
+  .phase-preparation .student-preparation .event-buttons small {margin-top: 3px; line-height: 1.4;}
+  .phase-preparation .play-footer {padding-block: 2px 5px;}
+}
+
+/* Short phones need the card width for information, not a decorative arrow. */
+@media (max-height: 600px) {
+  .phase-preparation .hud-wrap {min-height: 46px;}
+  .phase-preparation .time-capsule {padding-block: 3px;}
+  .phase-preparation .time-capsule strong {font-size: 24px;}
+  .phase-preparation .student-preparation {gap: 3px 8px; padding: 4px 12px;}
+  .phase-preparation .student-stats {padding-block: 4px;}
+  .phase-preparation .character-origin {gap: 2px 4px; padding: 4px 6px;}
+  .phase-preparation .character-origin > span,
+  .phase-preparation .character-origin > b {font-size: 11px; white-space: nowrap;}
+  .phase-preparation .student-preparation .event-buttons {gap: 6px;}
+  .phase-preparation .student-preparation .event-buttons button {padding: 6px 10px; min-height: 50px;}
+  .phase-preparation .event-buttons button > svg {display: none;}
+  .phase-preparation .student-preparation .event-buttons small {line-height: 1.35;}
+  .phase-preparation .play-footer {padding-block: 1px 3px;}
+}

@@ -1,7 +1,9 @@
 import {localizeNode} from './i18n';
 import ChoiceDetail from './ChoiceDetail';
+import {preparationTitle,preparationChoice} from './preparationCopy';
 import {useState,useEffect,type Dispatch} from 'react';
-import {Backpack,Coffee,Zap,ArrowRight} from 'lucide-react';
+import {Backpack,Zap,ArrowRight} from 'lucide-react';
+import TeaShopIcon from './TeaShopIcon';
 import {studentPreparation,POCKETS,STUDENT,STUDENT_PREPARATION_COSTS,bagHint,focusWindow} from './studentConfig';
 import {timedPrompt,characterMovementFactor,fatigueRecoveryFactor,TOURIST_WHEEL_RULES} from './characterTime';
 import {formatTime,journeyRouteSeconds,type Run,type Action} from './engine';
@@ -9,9 +11,29 @@ import HoldAction from './HoldAction';
 import {stationFor} from './stations';
 export function Preparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const u=run.student!,p=studentPreparation(u)!;
- return <section className="student-preparation"><span className="chapter-sticker">{localizeNode("出门前 · ")}{localizeNode(u.prep+1)} / 3</span><div className="prep-art">{localizeNode(u.prep===0?<Coffee size={66}/>:u.prep===1?<Backpack size={66}/>:<span>🍙</span>)}</div><h2>{localizeNode(p.title)}</h2><p>{localizeNode(p.story)}</p><div className="student-stats">{localizeNode((['agility','energy','focus','load'] as const).map((k,i)=><span key={k}>{localizeNode(['敏捷','精力','专注','负重'][i])}<b>{localizeNode('●'.repeat(Math.round(u.stats[k]/20)))}{localizeNode('○'.repeat(5-Math.round(u.stats[k]/20)))}</b></span>))}</div><div className="event-buttons">{localizeNode(p.options.map(o=><button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PREP_PICK',option:o.id,step:u.prep})}><span><strong>{localizeNode(o.label)}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>))}</div><small>{localizeNode("想一想也在花时间。准备得好，后面会轻松些。")}</small></section>;
+ return <section className="student-preparation">
+  <span className="chapter-sticker">{localizeNode("出门前 · ")}{u.prep+1} / 3</span>
+  <div className="prep-art">{u.prep===0?<TeaShopIcon cityId={run.city.id} size={66}/>:u.prep===1?<Backpack size={66}/>:<span>🍙</span>}</div>
+  <h2>{localizeNode(preparationTitle(p.id,p.title))}</h2>
+  <div className="event-buttons">{p.options.map(option=>{
+   const o=preparationChoice(p.id,option);
+   return <button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PREP_PICK',option:o.id,step:u.prep})}><span><strong>{localizeNode(o.label)}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>;
+  })}</div>
+  <small>{localizeNode("时间一直在走。")}</small>
+ </section>;
 }
-export function CharacterPreparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){const t=run.characterTime!,p=timedPrompt(run)!;return <section className="student-preparation character-preparation"><span className="chapter-sticker">{localizeNode(p.eyebrow)} · {localizeNode(t.prepStep+1)} / {localizeNode(t.characterId==='worker'?3:2)}</span>{localizeNode(t.prepStep===0&&<div className={'character-origin origin-'+t.characterId}>{localizeNode(t.characterId==='worker'?<><span>👩🏻</span><b>{localizeNode("这个也带上")}</b><span>🧳🥡</span><small>{localizeNode("家里玄关 · 明早 9:00 上班")}</small></>:<><span>{localizeNode("🏨 已退房")}</span><b>{localizeNode("👣 23,487 步")}</b><span>{localizeNode("🧳 小箱子")}</span><small>{localizeNode("陌生城市 · 今晚必须赶回家上班")}</small></>)}</div>)}<div className="prep-art">{localizeNode(run.character.emoji)}</div><h2>{localizeNode(p.title)}</h2><p>{localizeNode(p.story)}</p><div className="student-stats"><span>{localizeNode("精力")}<b>{localizeNode(Math.round(t.energy))} / {localizeNode(t.maxEnergy)}</b></span><span>{localizeNode("疲劳")}<b>{localizeNode(Math.round(t.fatigue))} / 100</b></span><span>{localizeNode("负重")}<b>{localizeNode(Math.round(t.load))} / 100</b></span><span>{localizeNode("专注")}<b>{localizeNode(Math.round(t.focus))} / 100</b></span></div><div className="event-buttons">{localizeNode(p.choices.map(c=><button className="soft-action" key={c.id} onClick={()=>dispatch({type:'PERSON_PICK',option:c.id,step:t.prepStep})}><span><strong>{localizeNode(c.label)}</strong><ChoiceDetail text={c.detail}/></span><ArrowRight size={20}/></button>))}</div><small>{localizeNode("这段选择会改变出发时的倒计时、精力和赶路速度。")}</small></section>;
+export function CharacterPreparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
+ const t=run.characterTime!,p=timedPrompt(run)!,taskId=`${t.characterId}-${t.prepStep}`;
+ return <section className="student-preparation character-preparation">
+  <span className="chapter-sticker">{localizeNode("出门前 · ")}{t.prepStep+1} / {t.characterId==='worker'?3:2}</span>
+  <div className="prep-art">{run.character.emoji}</div>
+  <h2>{localizeNode(preparationTitle(taskId,p.title))}</h2>
+  <div className="event-buttons">{p.choices.map(choice=>{
+   const c=preparationChoice(taskId,choice);
+   return <button className="soft-action" key={c.id} onClick={()=>dispatch({type:'PERSON_PICK',option:c.id,step:t.prepStep})}><span><strong>{localizeNode(c.label)}</strong><ChoiceDetail text={c.detail}/></span><ArrowRight size={20}/></button>;
+  })}</div>
+  <small>{localizeNode("时间一直在走。")}</small>
+ </section>;
 }
 export function StudentEnergy({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){if(run.characterTime){const t=run.characterTime,recoveryLoss=Math.round((1-fatigueRecoveryFactor(t.fatigue))*100);return <div className="student-energy character-energy"><div><Zap size={15}/><b>{localizeNode("精力 ")}{localizeNode(Math.ceil(t.energy))} / {localizeNode(t.maxEnergy)}</b><span>{localizeNode(t.characterId==='worker'?t.workPending?'公司消息还没说明，下次追问更久':t.bossUnread?'老板还在催消息；分点专注赶路':`已处理 ${t.workInterruptions} 次临时要求，手机还会响`:t.sprinting?'冲刺中，精力下降更快':t.wheelDamaged?'硬拖行李持续耗能，停步可恢复':recoveryLoss?`疲劳 ${Math.round(t.fatigue)} · 精力恢复降低 ${recoveryLoss}%`:'行走缓慢恢复，停步恢复更快')}</span></div><meter min={0} max={t.maxEnergy} value={t.energy}/>{localizeNode((t.energyReserve??0)>0&&<small>{localizeNode("精力储备 ")}{localizeNode(Number(t.energyReserve.toFixed(1)))}{localizeNode(" · 赶路时有缺口自动补充")}</small>)}{localizeNode(t.wheelDamaged&&<small>{localizeNode("轮子卡住：移动速度 −")}{localizeNode(Math.round((1-TOURIST_WHEEL_RULES.speedMultiplier)*100))}{localizeNode("% · 赶路每秒额外消耗 ")}{localizeNode(TOURIST_WHEEL_RULES.extraDrain)}{localizeNode(" 精力")}</small>)}<small>{localizeNode("负重 ")}{localizeNode(Math.round(t.load))}{localizeNode(" · 疲劳 ")}{localizeNode(Math.round(t.fatigue))} · {localizeNode(t.exhausted?'精力耗尽，无法冲刺':`当前步行速度 ${characterMovementFactor(run,false).toFixed(2)} 倍`)}</small></div>;}const u=run.student!;return <div className="student-energy"><div><Zap size={15}/><b>{localizeNode("体力 ")}{localizeNode(Math.ceil(u.stamina))} / {localizeNode(u.stats.energy)}</b><span>{localizeNode(u.exhausted?'跑不动了，恢复到 15 再冲':u.sprintStrain>=4.5?'快岔气了！松开冲刺，走路调整呼吸':u.hungry?'肚子饿了，精力上限 −10':u.sprinting?'正在消耗体力':'走路慢慢恢复，停下恢复更快')}</span></div><meter min={0} max={u.stats.energy} value={u.stamina}/><small>{localizeNode("冲刺负荷 ")}{localizeNode(Math.ceil(u.sprintStrain))} / {localizeNode(STUDENT.breathLimit)}{localizeNode(" · 走路或停下可缓解，到顶会岔气")}</small><small>{localizeNode("幸福感 ")}{localizeNode(u.happiness)}{localizeNode(" · 道德 ")}{localizeNode(u.morality)}</small>{localizeNode(u.tea&&<button onClick={()=>dispatch({type:'DROP_TEA'})}>{localizeNode("奶茶占手 · 喝完丢进垃圾桶")}</button>)}{localizeNode(u.late&&<small>{localizeNode("冲刺速度 +15% · 恢复 +25%")}</small>)}</div>;}
 export function StudentBag({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){

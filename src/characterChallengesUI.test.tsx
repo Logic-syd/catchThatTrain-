@@ -1,19 +1,27 @@
 import {describe,it,expect} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {createCharacterStationRun,type Run} from './engine';
+import {createCharacterStationRun,reducer,type Run} from './engine';
 import {buildStationJourney,journeyPrompt} from './stationJourney';
 import {EventSheet} from './App';
 import {ParentStatus} from './ParentUI';
 import {parentBlockPrompt} from './parent';
 import {CharacterChallengeSummary} from './CharacterChallengeUI';
+import {roadsidePrompt} from './hongqiao';
+import {STUDENT_DISTRACTIONS} from './characterChallenges';
 function at(who:'student'|'worker'|'tourist',id:string):Run{
  const base=createCharacterStationRun('shanghai',who,false,()=>.5),stationJourney=buildStationJourney(base),stationBeat=stationJourney.findIndex(b=>b.id===id);
- const s={...base,phase:'station' as const,stationJourney,stationBeat};return {...s,event:journeyPrompt(s)};
+ const s={...base,phase:'station' as const,stationJourney,stationBeat,stationProgress:.25};
+ if(who==='student'&&STUDENT_DISTRACTIONS.some(d=>d.id===id)){
+  const visible=reducer(base,{type:'NEW',run:s}),notice=roadsidePrompt(visible)!;
+  expect(notice?.id).toBe(id);
+  return reducer(visible,{type:'ROADSIDE_STOP',id,revision:notice.revision!});
+ }
+ return {...s,event:journeyPrompt(s)};
 }
 describe('人物难点的可见操作',()=>{
- it('shows tempting emotional gains, actual costs and the leave option',()=>{
+ it('an accepted temptation shows its emotional gain, actual cost, hold operation and cancel option',()=>{
   const s=at('student','student-cat'),html=renderToStaticMarkup(<EventSheet run={s} dispatch={()=>{}}/>);
-  expect(html).toContain('幸福感 +20');expect(html).toContain('30 游戏秒');expect(html).toContain('记住车票，继续赶路');
+  expect(html).toContain('幸福感 +20');expect(html).toContain('30 游戏秒');expect(html).toContain('按住摸摸小猫');expect(html).toContain('收手，继续赶车');
   expect(html).not.toContain('精力 +20');
  });
  it('maze exposes two directions, signs, asking and explored unknown nodes',()=>{

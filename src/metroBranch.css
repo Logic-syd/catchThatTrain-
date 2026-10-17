@@ -1,0 +1,40 @@
+.metro-branch-platform {
+ padding: 16px;
+ background: #fff8e7;
+ border-radius: 0 0 22px 22px;
+}
+.metro-train-options {display: grid; gap: 12px;}
+.metro-train-choice {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ width: 100%;
+ min-height: 90px;
+ padding: 12px;
+ border: 2px solid #c3aed9;
+ border-radius: 14px;
+ background: #f5eef8;
+ text-align: left;
+}
+.metro-train-choice > span {flex: 1; min-width: 0;}
+.metro-train-choice > span > strong {display: block; font-size: 18px; margin: 3px 0;}
+.metro-train-choice small {display: block; font-size: 12px; line-height: 1.5;}
+.metro-train-choice > b {flex: 0 0 4em; font-size: 12px; text-align: center;}
+.metro-train-choice .choice-time-cost {font-size: 14px; margin: 0; padding: 0 2px; white-space: nowrap;}
+.branch-exit .stop-announcement {color: #a15e44;}
+.route-option-main .route-branch-note {color: #886195; line-height: 1.4; white-space: normal;}
+@media (max-height: 700px) {
+ .phase-metro-platform .game-header {height: 52px;}
+ .phase-metro-platform .hud-wrap {margin: 2px 0 10px;}
+ .phase-metro-platform .scene-heading {margin-bottom: 10px;}
+ .phase-metro-platform .scene-heading > span {display: none;}
+ .phase-metro-platform .scene-heading h2 {font-size: 21px;}
+ .phase-metro-platform .play-footer {display: none;}
+ .metro-branch-platform {padding: 12px;}
+ .metro-train-choice {gap: 8px; min-height: 80px; padding: 10px;}
+ .metro-train-choice > span > strong {font-size: 16px;}
+}
+
+@media (max-width: 360px) {
+ .metro-train-choice > svg {display: none;}
+}

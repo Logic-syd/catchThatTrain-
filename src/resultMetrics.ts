@@ -10,6 +10,8 @@ export const normalizeCharacter=(id:string):CharacterId=>id==='mom'?'mother':id 
 const routeCost=(s:Run,r=s.route)=>r?routeTravelSeconds(s,r):0;
 export const remainingEstimate=secondsToGoal;
 export function impactCategory(id:string):ImpactCategory{
+ if(id==='metro-branch-wait')return 'environment';
+ if(id.startsWith('metro-branch-'))return 'navigation';
  if(id.startsWith('prepare-'))return 'decision';if(/identity/.test(id))return 'character';
  if(id==='student-breath')return 'movement';
  if(id==='tourist-maze')return 'navigation';
@@ -57,7 +59,7 @@ export function trackTransition(s:Run,n:Run,a:Action):Run{
    m.minEnergyRatio=Math.min(m.minEnergyRatio,v.stamina/Math.max(1,v.stats.energy));if(v.stamina/v.stats.energy<=.1)m.lowEnergySeconds+=a.dt;
    if(s.event){const budget=s.event.interaction?.kind==='choice'?5:Math.max(2,s.event.interaction?.required??5);const delta=Math.max(0,n.eventElapsed-budget)-Math.max(0,s.eventElapsed-budget);add('handling-'+event,event==='identity-search'?'身份证翻找超出基础操作时间':'处理「'+s.event.title+'」超出基础时间',delta*-1,impactCategory(event),true,{eventId:event,tag:event==='identity-search'?'身份证翻包':undefined,baseline:'基础操作预算 '+budget+' 秒'});}
    const wait=v.clockSpent.waiting-u.clockSpent.waiting;
-   if(wait>0&&['preparation','route','direction','station'].includes(s.phase))add('idle','选择前停留、休息与路障拦停',-wait,'operation',true,{tag:'停留过久'});
+   if(wait>0&&['preparation','route','direction','metro-platform','station'].includes(s.phase))add('idle','选择前停留、休息与路障拦停',-wait,'operation',true,{tag:'停留过久'});
    const margin=n.remaining-(n.gatePassed?0:STOP_BEFORE);if(!n.gatePassed&&margin<=60&&remainingEstimate(n)>60)m.lateFar=true;
   }
   if((!s.gatePassed&&n.gatePassed&&n.gateRemaining<=30)||(s.stage<4&&n.stage>=4&&n.remaining-STOP_BEFORE<=30))m.lateGateEntry=true;

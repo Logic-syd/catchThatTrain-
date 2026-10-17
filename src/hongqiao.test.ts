@@ -2,7 +2,7 @@ import {describe,expect,it} from 'vitest';
 import {createCharacterStationRun,reducer,type Run} from './engine';
 import {buildStationJourney,journeyPrompt} from './stationJourney';
 import {STUDENT_DISTRACTIONS} from './characterChallenges';
-import {roadsidePrompt} from './hongqiao';
+import {roadsidePrompt,updateRoadsideNotices} from './hongqiao';
 import {stationForecast} from './timeModel';
 import {STUDENT} from './studentConfig';
 import type {Choice} from './data';
@@ -11,11 +11,11 @@ function road(id:string,city='shanghai'):Run{
  const base=createCharacterStationRun(city,'student',false,()=>.5);
  const stationJourney=buildStationJourney(base),stationBeat=stationJourney.findIndex(b=>b.id===id);
  expect(stationBeat).toBeGreaterThanOrEqual(0);
- return {...base,phase:'station',event:null,stationJourney,stationBeat,stationProgress:.25,stage:stationJourney[stationBeat].stage,
-  student:{...base.student!,breakfast:true,runner:{...base.student!.runner,wave:99}}};
+ return updateRoadsideNotices({...base,phase:'station',event:null,stationJourney,stationBeat,stationProgress:.25,stage:stationJourney[stationBeat].stage,
+  student:{...base.student!,breakfast:true,runner:{...base.student!.runner,wave:99}}});
 }
 function start(s:Run){return reducer(s,{type:'RUN_INPUT',held:true});}
-function stop(s:Run){return reducer(s,{type:'ROADSIDE_STOP',id:s.stationJourney[s.stationBeat].id});}
+function stop(s:Run){return reducer(s,{type:'ROADSIDE_STOP',id:s.roadsideNotice?.id??s.stationJourney[s.stationBeat].id,revision:s.roadsideNotice?.revision??s.stationBeat});}
 function choose(s:Run,id:string){
  const choice=s.event!.choices.find(c=>c.id===id)!;expect(choice).toBeDefined();
  return reducer(s,{type:'CHOICE',choice,eventRevision:s.event!.revision});
@@ -33,12 +33,13 @@ describe('Hongqiao student roadside activities preserve the playable road',()=>{
   expect(n.student!.happiness).toBe(0);expect(n.student!.morality).toBe(0);
   expect(n.student!.distractions).toBe(0);expect(n.student!.distractionSeconds).toBe(0);
   expect(s.remaining-n.remaining).toBeCloseTo(.4,8);
-  expect(n.logs.filter(l=>l.eventId===activity.id)).toEqual([expect.objectContaining({seconds:0})]);
+  expect(n.logs.filter(l=>l.eventId===activity.id)).toEqual([]);
+  expect(roadsidePrompt(n)?.id).toBe(activity.id);
  });
 
  it('only the currently visible hotspot can be opened, and a duplicate stop cannot restart the hold',()=>{
   const s=start(road('student-cat'));
-  expect(reducer(s,{type:'ROADSIDE_STOP',id:'student-tea-shop'})).toBe(s);
+  expect(reducer(s,{type:'ROADSIDE_STOP',id:'student-tea-shop',revision:s.stationBeat})).toBe(s);
   const stopped=stop(s);
   expect(stopped.event!.id).toBe('student-cat');expect(stopped.roadsideActive).toBe('student-cat');
   expect(stopped.event!.interaction).toMatchObject({kind:'hold',required:1});
@@ -98,7 +99,7 @@ describe('Hongqiao student roadside activities preserve the playable road',()=>{
  it('a callback from an earlier activity cannot buy the next activity with the shared indulge option ID',()=>{
   const first=stop(start(road('student-cat'))),oldChoice=first.event!.choices[0],oldRevision=first.event!.revision;
   const completed=choose(first,'leave'),stationBeat=completed.stationJourney.findIndex(b=>b.id==='student-spectacle');
-  const later=stop({...completed,stationBeat,stationProgress:.2});
+  const later=stop(updateRoadsideNotices({...completed,stationBeat,stationProgress:.2}));
   expect(later.event!.id).toBe('student-spectacle');
   expect(dispatchChoice(later,oldChoice,oldRevision)).toBe(later);
  });
@@ -157,10 +158,12 @@ describe('Hongqiao ordinary walking resumes only with the player’s existing in
   expect(n.stationRunning).toBe(false);expect(n.stationProgress).toBe(s.stationProgress);
  });
 
- it('other student stations retain required distraction cards and manual movement',()=>{
-  const base=road('student-cat','beijing');expect(roadsidePrompt(base)).toBeUndefined();expect(stop(base)).toBe(base);
-  const s=arrive(base);expect(s.event!.id).toBe('student-cat');expect(s.roadsideActive).toBeUndefined();
-  const n=choose(s,'leave');expect(n.stationBeat).toBe(s.stationBeat+1);expect(n.stationRunning).toBe(false);
+ it('other student stations now share optional notices and automatic ordinary walking',()=>{
+  const base=road('student-cat','beijing');expect(roadsidePrompt(base)?.id).toBe('student-cat');
+  const stopped=stop(start(base)),n=choose(stopped,'leave');
+  expect(n.stationBeat).toBe(base.stationBeat);expect(n.stationProgress).toBe(base.stationProgress);
+  expect(n.stationRunning).toBe(true);expect(roadsidePrompt(n)).toBeUndefined();
+  const passed=arrive(n);expect(passed.event).toBeNull();expect(passed.stationRunning).toBe(true);
  });
 
  it.each(['worker','tourist','mom'] as const)('Hongqiao %s still stops after completing a mandatory task',character=>{
@@ -170,7 +173,7 @@ describe('Hongqiao ordinary walking resumes only with the player’s existing in
   s.event=journeyPrompt(s);
   const n=dispatchChoice(s,s.event.choices[0],s.event.revision);
   expect(n.gatePassed).toBe(true);expect(n.stationRunning).toBe(false);
-  expect(reducer(n,{type:'ROADSIDE_STOP',id:'student-cat'})).toBe(n);
+  expect(reducer(n,{type:'ROADSIDE_STOP',id:'student-cat',revision:0})).toBe(n);
  });
 });
 

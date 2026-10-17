@@ -17,6 +17,7 @@ import type {Choice} from '../src/data';
 import {difficultyPolicy,DIFFICULTY_TARGETS,DIFFICULTY_TARGET_RANGES} from '../src/difficulty';
 import {advanceSpatialMotion,buildSpatialScene,planSpatialPath,type SpatialScene} from '../src/spatialChoice';
 import {roadsidePrompt} from '../src/hongqiao';
+import {metroBoardingChoice,needsMetroBranchExit,type MetroTerminal} from '../src/metroBranch';
 
 type Character='student'|'worker'|'tourist'|'mom';
 type Skill='skilled'|'novice'|'error-prone';
@@ -57,12 +58,15 @@ const navigation=new Set(['station-sign','bj-entry','hz-fork','hz-zone','wh-floo
 const rows:{who:Character;station:string;mode:string;skill:Skill;plan:Plan;success:boolean;gateMargin:number|null;close:boolean}[]=[];
 let totalTransitions=0;
 
-console.log(JSON.stringify({type:'metadata',inputModelVersion:4,samples,offset,seedBase,characters,stations,modes,skills,plans,locomotion,profiles,sprintStart,sprintStop,closeMargin,targetSuccessRates:DIFFICULTY_TARGETS,targetSuccessRanges:DIFFICULTY_TARGET_RANGES,difficultyPolicies:Object.fromEntries(characters.map(who=>[who,Object.fromEntries(stations.map(station=>[station,difficultyPolicy(who,station)]))])),seedRule:'(seedBase ^ Math.imul(sample+1,0x85ebca6b)) >>> 0',notes:[
+console.log(JSON.stringify({type:'metadata',inputModelVersion:6,samples,offset,seedBase,characters,stations,modes,skills,plans,locomotion,profiles,sprintStart,sprintStop,closeMargin,targetSuccessRates:DIFFICULTY_TARGETS,targetSuccessRanges:DIFFICULTY_TARGET_RANGES,difficultyPolicies:Object.fromEntries(characters.map(who=>[who,Object.fromEntries(stations.map(station=>[station,difficultyPolicy(who,station)]))])),seedRule:'(seedBase ^ Math.imul(sample+1,0x85ebca6b)) >>> 0',notes:[
+ 'Input model v6 follows automatic ordinary walking after student tasks at all six stations. It starts movement only when the engine is actually stopped; finishing a task never injects a synthetic restart, sprint or extra time debit.',
+ 'All six student stations now offer optional five-real-second roadside notices. Ignoring a notice has no decline click or modal reading delay. Accepting uses the unchanged keyed distraction probability, advances actual TICK time for one tap reaction while movement continues, and only stops if the same notice remains available. The accepted event then uses actual modal reading and hold time. Expired notices are not recovered. The engine owns the absolute elapsed-time deadline and any queued notice; hiding a notice does not pause its deadline, and the simulator has no independent expiry clock.',
+ 'Input model v5 reads the visible Line 10 terminus and alights at Longxi Road when the train is bound for Hangzhong Road. Platform reading and tapping consume actual time; the same choiceError probability can cause one wrong-train choice, followed by recovery. Formal waiting/detour fees come only from BOARD_METRO. Historical v4 simulations did not include this branch task.',
  'Input model v4 adds student Hongqiao spatial entrances and optional roadside distractions. Other character/station input policies remain v3; historical v3 student results use the previous stop-and-choose journey.',
  'Spatial scenes use the same visible geometry and advanceSpatialMotion as the UI. Reading and pointer activation consume real time; travel advances only by actual eventElapsed TICK increments before the reached entrance is selected.',
  'Spatial obstacle misses use the existing obstacleMiss probability: initially point straight toward the selected entrance, then spend actual collisionRecovery time before routing around a blocked obstacle. No synthetic collision penalty is added.',
  'Hongqiao escalator entrances expose clear/steady/blocked queues before entry: choose the least congested visible entrance, with the unchanged choiceError probability. Other stations retain their prior unseen-escalator input policy.',
- 'Hongqiao roadside temptations use the same per-event distraction probability as v3. Declining continues ordinary movement without a modal/read surcharge; accepting first consumes one tap reaction while moving, then uses the actual stop action, modal reading and hold duration. An already-passed hotspot is not recovered.',
+ 'Roadside temptation probabilities still match v3; v4/v5 limited optional hotspots to Hongqiao, while v6 uses the actual visible notice at all six stations. Current notice identity and event revision are used so a late action cannot accept a later activity.',
  'Input model v3 models emotional distractions, repeated company demands, visible sign/ask maze choices and parent outburst handling. Historical v2 games used the earlier journeys and input policy.',
  'Input model v2 includes visible date-check mistakes for the revised old-ticket task. Historical v1 baselines retain the earlier forced-cost task and input policy.',
  'Profiles share game seeds and preparation plans, with keyed input noise independent of mode/skill.',
@@ -89,7 +93,7 @@ for(let sample=offset;sample<offset+samples;sample++)for(const station of statio
  const roadsideConsidered=new Set<string>();
  const mistakes:{kind:string;event:string;option?:string}[]=[];
  let transitions=0,sprintSeconds=0,movingSeconds=0,collisionSeconds=0,readSeconds=0,operationSeconds=0,identityAttempts=0,collisions=0,endPhase='',endEvent='',directionTried=false;
- let studentRecovering=false,parentRegrouping=false,sprintBurst=0,doorConsidered=-1;
+ let studentRecovering=false,parentRegrouping=false,sprintBurst=0,doorConsidered=-1,metroBoardAttempts=0;
  let waveKey='',waveVisibleAt=0,waveMissed=false;
  let routeInfo:{id:string;rank:number;seconds:number;lines:string[]}|null=null;
  let alarm:{reaction:number;success:boolean;extraSeconds:number}|null=null;
@@ -187,6 +191,17 @@ for(let sample=offset;sample<offset+samples;sample++)for(const station of statio
     if(wrong)mistakes.push({kind:'direction',event:'metro-direction'});
     act({type:'DIRECTION',correct:!wrong});
    }
+  }else if(s.phase==='metro-platform'&&!s.event){
+   const visit=s.metroBranch!.platformVisit;
+   tick(jitter(p.read,'metro-platform:'+visit),undefined,'read');
+   tick(p.tap,undefined,'operation');
+   if(s.phase!=='metro-platform'||s.metroBranch?.platformVisit!==visit)continue;
+   const wrong=metroBoardAttempts++===0&&random('metro-branch-board-error')<p.choiceError;
+   const terminal:MetroTerminal=wrong?'hangzhong':'hongqiao',choice=metroBoardingChoice(s,terminal);
+   if(!choice)throw Error('Missing visible metro boarding choice '+key);
+   choices.push({event:'metro-platform',option:terminal,seconds:choice.seconds,deviation:wrong});
+   if(wrong)mistakes.push({kind:'wrong-branch-train',event:'metro-platform',option:terminal});
+   act({type:'BOARD_METRO',terminal,visit});
   }else if(s.event){
    const id=s.event.id,visit=visits.get(id)??0;visits.set(id,visit+1);const eventKey=id+':'+visit;sprintBurst=0;
    if(id==='tourist-wake'){
@@ -262,7 +277,7 @@ for(let sample=offset;sample<offset+samples;sample++)for(const station of statio
   }else if(s.phase==='arrival'){
    const stop=s.metroStopIndex,visit=arrivals.get(stop)??0;arrivals.set(stop,visit+1);
    tick(jitter(p.arrival,'arrival:'+stop+':'+visit),undefined,'read');if(s.phase!=='arrival'||s.event)continue;
-   const target=stop===s.route!.stops.length-1||(!s.metroTransferred&&s.route!.stops[stop]===s.route!.via);
+   const target=needsMetroBranchExit(s)||stop===s.route!.stops.length-1||(!s.metroTransferred&&s.route!.stops[stop]===s.route!.via);
    const wrong=visit===0&&random('stop-error:'+stop)<p.choiceError;
    if(wrong)mistakes.push({kind:target?'missed-stop':'early-exit',event:'metro-stop-'+stop});
    act({type:target!==wrong?'ALIGHT':'CONTINUE_METRO'});
@@ -273,7 +288,7 @@ for(let sample=offset;sample<offset+samples;sample++)for(const station of statio
     const accepted=random(roadside.id+':0:temptation')<p.distraction;
     if(accepted){
      tick(p.tap,undefined,'operation');
-     if(roadsidePrompt(s)?.id===roadside.id)act({type:'ROADSIDE_STOP',id:roadside.id});
+     if(roadsidePrompt(s)?.id===roadside.id)act({type:'ROADSIDE_STOP',id:roadside.id,revision:roadside.revision!});
     }
     roadsideInteractions.push({event:roadside.id,accepted,stopped:s.roadsideActive===roadside.id});
     if(finished()||s.event)continue;
@@ -310,7 +325,7 @@ for(let sample=offset;sample<offset+samples;sample++)for(const station of statio
  const gateMargin=s.gatePassed?round(s.gateRemaining):null;
  const close=s.success&&gateMargin!==null&&gateMargin<=closeMargin;
  rows.push({who,station,mode,skill,plan,success:s.success,gateMargin,close});totalTransitions+=transitions;
- console.log(JSON.stringify({type:'game',sample,seed:gameSeed,station,who,mode,skill,plan,locomotion,spawn,initial,success:s.success,remaining:round(s.remaining),gatePassed:s.gatePassed,gateMargin,departureMargin:s.success?round(s.remaining):null,estimatedResultMargin:round(s.remaining-(s.gatePassed?0:STOP_BEFORE)-secondsToGoal(s)),close,endPhase,endEvent,preparation,route:routeInfo,choices,mistakes,identityAttempts,collisions,collisionSeconds:round(collisionSeconds),spatialOperations,roadsideInteractions,timeouts,alarm,metroMisses:s.metroMisses,distractions:s.student?.distractions,distractionSeconds:s.student?.distractionSeconds,workInterruptions:s.characterTime?.workInterruptions,maze:s.touristMaze,parentAnger:s.parent?.anger,parentOutbursts:s.parent?.outbursts,sprintSeconds:round(sprintSeconds),movingSeconds:round(movingSeconds),readSeconds:round(readSeconds),operationSeconds:round(operationSeconds),transitions}));
+ console.log(JSON.stringify({type:'game',sample,seed:gameSeed,station,who,mode,skill,plan,locomotion,spawn,initial,success:s.success,remaining:round(s.remaining),gatePassed:s.gatePassed,gateMargin,departureMargin:s.success?round(s.remaining):null,estimatedResultMargin:round(s.remaining-(s.gatePassed?0:STOP_BEFORE)-secondsToGoal(s)),close,endPhase,endEvent,preparation,route:routeInfo,choices,mistakes,identityAttempts,collisions,collisionSeconds:round(collisionSeconds),spatialOperations,roadsideInteractions,timeouts,alarm,metroMisses:s.metroMisses,metroBranch:s.metroBranch,distractions:s.student?.distractions,distractionSeconds:s.student?.distractionSeconds,workInterruptions:s.characterTime?.workInterruptions,maze:s.touristMaze,parentAnger:s.parent?.anger,parentOutbursts:s.parent?.outbursts,sprintSeconds:round(sprintSeconds),movingSeconds:round(movingSeconds),readSeconds:round(readSeconds),operationSeconds:round(operationSeconds),transitions}));
 }
 const quantile=(values:number[],fraction:number)=>values.length?round([...values].sort((a,b)=>a-b)[Math.floor((values.length-1)*fraction)]):null;
 const cells=[];

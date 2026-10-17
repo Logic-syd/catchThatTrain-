@@ -1,0 +1,15 @@
+.time-capsule .countdown-readout {
+ white-space: nowrap;
+ font-variant-numeric: tabular-nums;
+}
+
+.countdown-readout .countdown-fraction {
+ display: inline-block;
+ min-width: 2.5ch;
+ margin-left: .04em;
+ font-size: .44em;
+ line-height: 1;
+ letter-spacing: 0;
+ text-align: left;
+ opacity: .85;
+}

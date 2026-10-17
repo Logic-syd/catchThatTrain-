@@ -4,13 +4,20 @@ import {ArrowRight,Heart,Footprints} from 'lucide-react';
 import ChoiceDetail from './ChoiceDetail';
 import {parentPreparation,canParentSprint,PARENT_SPRINT} from './parent';
 import type {Action,Run} from './engine';
-import {LittleYou} from './Scenes';
-import {waitingFeedback} from './waiting';
+import {preparationTitle,preparationChoice} from './preparationCopy';
 
 export function ParentPreparation({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
- const p=run.parent!,step=parentPreparation[p.prepStep];
- const choices=waitingFeedback(run,{id:'parent-preparation',title:step.title,description:step.story,phase:'station',choices:step.options.map(o=>({...o,waitSeconds:o.seconds}))}).choices;
- return <section className="student-preparation parent-preparation"><span className="chapter-sticker">{localizeNode("出门前 · ")}{localizeNode(p.prepStep+1)} / 2</span><div className="parent-origin"><LittleYou characterId="mom" parentAppearance={p.appearance}/><span><b>{localizeNode("“行，还是我自己带。”")}</b><small>{localizeNode("孩子会自己走，所有事却都要你来处理。")}</small></span></div><div className="prep-art">{localizeNode(p.prepStep===0?'🚻':'🍪')}</div><h2>{localizeNode(step.title)}</h2><p>{localizeNode(step.story)}</p><div className="event-buttons">{localizeNode(choices.map(o=><button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PARENT_PREP',option:o.id!,step:p.prepStep})}><span><strong>{localizeNode(o.label)}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>))}</div><small>{localizeNode("现在的准备会改变后面孩子停不停、要不要绕路。")}</small></section>;
+ const p=run.parent!,step=parentPreparation[p.prepStep],taskId=`parent-${p.prepStep}`;
+ return <section className="student-preparation parent-preparation">
+  <span className="chapter-sticker">{localizeNode("出门前 · ")}{p.prepStep+1} / 2</span>
+  <div className="prep-art">{p.prepStep===0?'🚻':'🍪'}</div>
+  <h2>{localizeNode(preparationTitle(taskId,step.title))}</h2>
+  <div className="event-buttons">{step.options.map(option=>{
+   const o=preparationChoice(taskId,option);
+   return <button className="soft-action" key={o.id} onClick={()=>dispatch({type:'PARENT_PREP',option:o.id,step:p.prepStep})}><span><strong>{localizeNode(o.label)}</strong><ChoiceDetail text={o.detail}/></span><ArrowRight size={20}/></button>;
+  })}</div>
+  <small>{localizeNode("时间一直在走。")}</small>
+ </section>;
 }
 export function ParentStatus({run,dispatch}:{run:Run;dispatch:Dispatch<Action>}){
  const p=run.parent!,warning=p.anger>=80?'气到要爆发了':p.gap>=5?'孩子快跟不上了':p.toilet>=PARENT_SPRINT.toiletThreshold?'孩子尿急，暂不能冲刺':p.patience<=25?'孩子不想走了':p.childEnergy<=30?'孩子快走不动了':p.carrying?'抱着孩子赶路':'孩子牵着手跟上了';

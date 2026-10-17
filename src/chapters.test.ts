@@ -7,6 +7,7 @@ import {summarizeRun,targetDistance} from './outcomes';
 import {awardRun,freshProgress,persistRun,readProgress,ACHIEVEMENTS} from './achievements';
 import {eventHoldSeconds} from './eventTiming';
 import {focusWindow} from './studentConfig';
+import {needsMetroBranchExit} from './metroBranch';
 function rng(seed:number){return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
 function tick(s:Run,n:number,eventId?:string){while(n>1e-8&&s.phase!=='result'&&(!eventId||s.event?.id===eventId)){const dt=Math.min(.1,n);s=reducer(s,{type:'TICK',dt});n-=dt;}return s;}
 function at(city:string,id:string){let s=createStationRun(city);s={...s,phase:'station',remaining:1200,stationJourney:buildStationJourney(s)};s.stationBeat=s.stationJourney.findIndex(b=>b.id===id);s.event=journeyPrompt(s);return s;}
@@ -69,7 +70,10 @@ describe('six actual station chapters',()=>{
      s=tick(s,operation,id);if(s.event?.id===id)s=choose(s,index);
     }else if(s.phase==='arrival'){
      s=tick(s,.6+.18);
-     if(s.phase==='arrival'&&!s.event)s=reducer(s,{type:s.metroStopIndex===s.route!.stops.length-1||(!s.metroTransferred&&s.route!.stops[s.metroStopIndex]===s.route!.via)?'ALIGHT':'CONTINUE_METRO'});
+     if(s.phase==='arrival'&&!s.event)s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===s.route!.stops.length-1||(!s.metroTransferred&&s.route!.stops[s.metroStopIndex]===s.route!.via)?'ALIGHT':'CONTINUE_METRO'});
+    }else if(s.phase==='metro-platform'){
+     const visit=s.metroBranch!.platformVisit;
+     s=tick(s,1.2+.18);s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});
     }else if(s.phase==='station'){
      const r=s.student!.runner,w=runnerWave(s);
      if(r.blocked){s=tick(s,.5);if(s.phase==='station'&&!s.event)s=reducer(s,{type:'CHANGE_LANE',direction:r.lane===2?-1:1});continue;}

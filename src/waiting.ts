@@ -3,6 +3,7 @@ import type {Choice,EventConfig} from './data';
 import {STUDENT,teaRecoveryActive} from './studentConfig';
 import {advanceCharacterWait,characterWaitOverrides} from './characterTime';
 import {advanceParentWait,parentWaitOverrides} from './parent';
+import {metroBoardingChoice} from './metroBranch';
 
 export type WaitResource='energy'|'fatigue'|'childEnergy'|'patience';
 export type WaitPlan={seconds:number;excluded:readonly WaitResource[]};
@@ -76,6 +77,9 @@ export function settleWaiting(s:Run,n:Run,a:Action,moving:boolean):Run{
   if(s.event.id==='elder-block'&&n.event?.id==='elder-outcome'&&s.stationLuck.elderScam)seconds=spent;
  }else if(a.type==='PARENT_PREP'&&a.option==='toilet-first'&&s.parent?.prepStep!==n.parent?.prepStep){
   seconds=spent;
+ }else if(a.type==='BOARD_METRO'){
+  const c=metroBoardingChoice(s,a.terminal);
+  if(c&&s.metroBranch?.platformVisit===a.visit)seconds=Math.min(spent,fixedWaitPlan(s,c,'metro-branch-wait').seconds);
  }
  if(seconds<=0)return n;
  // Use the activity's starting phase and tea window even when it completes a beat.

@@ -9,6 +9,7 @@ import {difficultyPolicy,type PlayableDifficultyCharacter} from './difficulty';
 import {mazeForecastSeconds} from './touristMaze';
 import {isRoadsideBeat} from './hongqiao';
 import {buildSpatialScene,spatialOperationSeconds} from './spatialChoice';
+import {pendingMetroBranchSeconds} from './metroBranch';
 
 import {TIME_SCALE,STOP_BEFORE} from './gameClock';
 export {TIME_SCALE,STOP_BEFORE} from './gameClock';
@@ -26,7 +27,7 @@ export function remainingMetroSeconds(s:Run,route=s.route){
  if(s.phase==='station'||s.stationJourney.length||s.phase==='result'&&s.success)return 0;
  const selected=route&&s.route?.id===route.id&&s.metroDuration>0;
  const total=selected?s.metroDuration:route?routeTravelSeconds(s,route):fastestRouteSeconds(s);
- return total*(selected?Math.max(0,1-s.metroProgress):1);
+ return total*(selected?Math.max(0,1-s.metroProgress):1)+pendingMetroBranchSeconds(s,route);
 }
 export const stationWalkingSeconds=(s:Run)=>stationFor(s).walking/movementSpeed(s);
 export function arrivalMargin(s:Run,route=s.route){return s.remaining-(s.gatePassed?0:STOP_BEFORE)-remainingMetroSeconds(s,route);}
@@ -46,26 +47,33 @@ export function stationForecast(s:Run){
  const gate=beats.findIndex(b=>b.id==='gate-scan');
  const end=s.gatePassed?beats.length-1:gate<0?beats.length-1:gate;
  let walking=0,operations=0;
+ // An accepted notice can outlive its original road. Its handling is additional
+ // to the current road's required checkpoint, never a replacement for it.
+ const roadsideEvent=s.roadsideActive===s.event?.id?s.event:undefined;
+ if(roadsideEvent){
+  operations+=Math.max(0,eventHoldSeconds(s,roadsideEvent)-s.eventElapsed)+Math.min(...roadsideEvent.choices.map(c=>c.seconds));
+ }
  for(let index=start;index<=end;index++){
   const current=index===start&&s.stationJourney.length>0;
   const progress=current?s.stationProgress:0;
   const seconds=beats[index].seconds*Math.max(0,1-progress)/movementSpeed(s,false);
   walking+=seconds*TIME_SCALE;
   // Optional roadside activities can be passed without a prompt or handling fee.
-  if(isRoadsideBeat(s,beats[index].id)&&!(current&&s.roadsideActive===beats[index].id&&s.event))continue;
+  if(isRoadsideBeat(s,beats[index].id))continue;
   if(beats[index].id==='tourist-maze'&&s.touristMaze){operations+=Math.max(0,mazeForecastSeconds(s.touristMaze)-(current?Math.min(2,s.eventElapsed):0));continue;}
   // Freeze current resources, assume ordinary walking, 2s reading, fastest visible choice.
-  const event=current&&s.event?s.event:journeyPrompt({...s,stationJourney:beats,stationBeat:index},false);
+  const actualEvent=current&&!roadsideEvent?s.event:null;
+  const event=actualEvent??journeyPrompt({...s,stationJourney:beats,stationBeat:index},false);
   const scene=buildSpatialScene({...s,phase:'station',stationJourney:beats,stationBeat:index,event});
   if(scene){
-   const elapsed=current&&s.event?s.eventElapsed:0;
+   const elapsed=actualEvent?s.eventElapsed:0;
    // Estimate a real route to an entrance, using the same collision geometry as
    // the controls. Only the chosen event's canonical fixed fee is added.
    operations+=Math.min(...scene.exits.map(exit=>Math.max(0,2+spatialOperationSeconds(scene,exit.choiceIndex)-elapsed)+event.choices[exit.choiceIndex].seconds));
    continue;
   }
   const read=event.interaction?.kind==='hold'?eventHoldSeconds(s,event):event.interaction?.kind==='tap'?(event.interaction.required??1)*.2:2;
-  const remainingRead=current&&s.event?Math.max(0,read-s.eventElapsed):read;
+  const remainingRead=actualEvent?Math.max(0,read-s.eventElapsed):read;
   const cost=event.choices.length?Math.min(...event.choices.map(c=>c.seconds)):0;
   operations+=remainingRead+cost;
  }

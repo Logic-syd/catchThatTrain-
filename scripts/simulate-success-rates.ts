@@ -8,6 +8,8 @@ import {STATIONS} from '../src/stations';
 import {PREPARATIONS,focusWindow} from '../src/studentConfig';
 import {timedPrompt} from '../src/characterTime';
 import {eventHoldSeconds} from '../src/eventTiming';
+import {needsMetroBranchExit} from '../src/metroBranch';
+import {roadsidePrompt} from '../src/hongqiao';
 
 const args=Object.fromEntries(process.argv.slice(2).filter(a=>a.startsWith('--')).map(a=>a.slice(2).split('=')));
 const samples=Number(args.samples??20);
@@ -31,7 +33,7 @@ function reduce(s:Run,a:Action){
 }
 function tick(s:Run,seconds:number){while(seconds>1e-8&&s.phase!=='result'){const dt=Math.min(.1,seconds);s=reduce(s,{type:'TICK',dt});seconds-=dt;}return s;}
 function tickEvent(s:Run,seconds:number,id:string){while(seconds>1e-8&&s.phase!=='result'&&s.event?.id===id){const dt=Math.min(.1,seconds);s=reduce(s,{type:'TICK',dt});seconds-=dt;}return s;}
-console.log(JSON.stringify({type:'metadata',samples,characters:selectedCharacters,locomotions,readSeconds:2,arrivalDecisionSeconds:1,seedRule:'(0x9e3779b9 ^ Math.imul(sample+1,0x85ebca6b)) >>> 0',policies:[0,1,2],notes:'All current initial budgets; default spawn; perfect navigation, obstacle avoidance and identity/queue information; deterministic first options except specified policy choices.'}));
+console.log(JSON.stringify({type:'metadata',inputModelVersion:6,samples,characters:selectedCharacters,locomotions,readSeconds:2,arrivalDecisionSeconds:1,seedRule:'(0x9e3779b9 ^ Math.imul(sample+1,0x85ebca6b)) >>> 0',policies:[0,1,2],notes:'All current initial budgets; default spawn; perfect navigation, obstacle avoidance and identity/queue information; deterministic first options except specified policy choices. v6 follows student automatic ordinary walking at all six stations, with no synthetic restart after a task. Policy 1 accepts each visible optional roadside notice after a real 0.2-second tap reaction; policies 0 and 2 ignore notices without reading or decline clicks. The engine alone controls absolute five-real-second notice expiry, including time hidden behind an event or collision. Accepted activities use actual modal reading and hold time. v5 Line 10 branch exits and correct platform boarding remain, with two seconds of reading and one tap before the formal wait fee. This strategy audit is not a human success-rate estimate.'}));
 for(let sample=0;sample<samples;sample++)for(const station of STATIONS)for(const who of selectedCharacters)for(const hard of [false,true])for(const variant of [0,1,2])for(const locomotion of locomotions){
  const originalSeed=(0x9e3779b9^Math.imul(sample+1,0x85ebca6b))>>>0;
  let seed=originalSeed;const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
@@ -48,8 +50,12 @@ for(let sample=0;sample<samples;sample++)for(const station of STATIONS)for(const
  if(!route)throw Error('Missing route '+caseName);
  if(s.phase!=='result'){s=tick(s,2);s=reduce(s,{type:'ROUTE',route});s=tick(s,2);s=reduce(s,{type:'DIRECTION',correct:true});}
  let sprintBurst=0,sprintTime=0,parentRegrouping=false,studentRecovering=false;
+ const roadsideConsidered=new Set<string>();
  for(let i=0;i<20000&&s.phase!=='result';i++){
-  if(s.event){
+  if(s.phase==='metro-platform'&&!s.event){
+   const visit=s.metroBranch!.platformVisit;s=tick(s,2.2);
+   if(s.phase==='metro-platform'&&s.metroBranch?.platformVisit===visit)s=reduce(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});
+  }else if(s.event){
    const id=s.event.id;sprintBurst=0;
    s=tickEvent(s,2,id);if(s.phase==='result'||s.event?.id!==id)continue;
    const e=s.event;
@@ -66,10 +72,19 @@ for(let sample=0;sample<samples;sample++)for(const station of STATIONS)for(const
    else if(id==='gz-route')index=variant%2;
    const choice=e.choices[Math.max(0,index)];if(!choice)throw Error('Missing choice '+caseName+':'+id);
    const operation=e.interaction?.kind==='hold'?eventHoldSeconds(s,e):e.interaction?.kind==='tap'?(e.interaction.required??5)*.2:e.interaction?.kind==='swipe'?1:0;
-   s=tickEvent(s,operation,id);if(s.event?.id===id)s=reduce(s,{type:'CHOICE',choice});
+   s=tickEvent(s,operation,id);if(s.event?.id===id)s=reduce(s,{type:'CHOICE',choice,eventRevision:s.event.revision});
   }else if(s.phase==='arrival'){
-   s=tick(s,1);if(s.phase==='arrival')s=reduce(s,{type:s.metroStopIndex===route.stops.length-1||route.stops[s.metroStopIndex]===route.via?'ALIGHT':'CONTINUE_METRO'});
+   s=tick(s,1);if(s.phase==='arrival')s=reduce(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===route.stops.length-1||route.stops[s.metroStopIndex]===route.via?'ALIGHT':'CONTINUE_METRO'});
   }else if(s.phase==='station'){
+   const roadside=roadsidePrompt(s);
+   if(roadside&&!roadsideConsidered.has(roadside.id)){
+    roadsideConsidered.add(roadside.id);
+    if(variant===1){
+     s=tick(s,.2);
+     if(roadsidePrompt(s)?.id===roadside.id)s=reduce(s,{type:'ROADSIDE_STOP',id:roadside.id,revision:roadside.revision!});
+    }
+    if(s.phase==='result'||s.event)continue;
+   }
    const r=s.student?.runner??s.characterTime?.runner??s.parent!.runner,w=runnerWave(s);
    if(w&&w.lane===r.lane)s=reduce(s,{type:'CHANGE_LANE',direction:r.lane===2?-1:1});
    if(!s.stationRunning)s=reduce(s,{type:'RUN_INPUT',held:true});
@@ -97,6 +112,6 @@ for(let sample=0;sample<samples;sample++)for(const station of STATIONS)for(const
  }
  if(s.phase!=='result')throw Error('Traversal stuck '+caseName+':'+s.phase+':'+s.event?.id);
  finished++;if(s.success)wins++;
- console.log(JSON.stringify({type:'game',sample,seed:originalSeed,station:station.id,who,hard,variant,locomotion,spawn,initial,success:s.success,remaining:s.remaining,gateRemaining:s.gateRemaining,gatePassed:s.gatePassed,endPhase:lastPhase,endEvent:lastEvent,sprintSeconds:Math.round(sprintTime*10)/10,collisions:(s.student??s.characterTime??s.parent!).runner.collisions}));
+ console.log(JSON.stringify({type:'game',sample,seed:originalSeed,station:station.id,who,hard,variant,locomotion,spawn,initial,success:s.success,remaining:s.remaining,gateRemaining:s.gateRemaining,gatePassed:s.gatePassed,endPhase:lastPhase,endEvent:lastEvent,metroBranch:s.metroBranch,sprintSeconds:Math.round(sprintTime*10)/10,collisions:(s.student??s.characterTime??s.parent!).runner.collisions}));
 }
 console.log(JSON.stringify({type:'summary',finished,wins,losses:finished-wins,transitions,resourceBounds:'passed'}));

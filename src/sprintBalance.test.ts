@@ -3,6 +3,7 @@ import {createStationRun,reducer,type Run} from './engine';
 import {STATIONS} from './stations';
 import {runnerWave} from './runner';
 import {summarizeRun} from './outcomes';
+import {needsMetroBranchExit} from './metroBranch';
 
 function rng(seed:number){return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
 function tick(s:Run,n:number){for(let i=0;i<Math.round(n*10)&&s.phase!=='result';i++)s=reducer(s,{type:'TICK',dt:.1});return s;}
@@ -16,7 +17,8 @@ function play(city:string,mode:'walk'|'sprint'|'paced',seed=921,preparation=['sk
    if(e.id==='identity-search'){s=reducer(s,{type:'POCKET_PICK',pocket:s.student!.pocket});continue;}
    let index=0;if(e.choices.some(c=>c.id==='leave')&&e.id.startsWith('student-'))index=e.choices.findIndex(c=>c.id==='leave');if(e.id==='vertical-choice')index=1;if(e.id==='escalator-choice')index=s.stationLuck.escalators.indexOf('clear');if(e.id==='security-queue'||e.id==='gates')index=e.choices.findIndex(c=>c.seconds===Math.min(...e.choices.map(c=>c.seconds)));if(e.id==='zz-number')index=e.choices.findIndex(c=>c.label===s.gate);
    s=reducer(s,{type:'CHOICE',choice:e.choices[Math.max(0,index)]});
-  }else if(s.phase==='arrival')s=reducer(s,{type:s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+  }else if(s.phase==='arrival')s=reducer(s,{type:needsMetroBranchExit(s)||s.metroStopIndex===s.route!.stops.length-1||s.route!.stops[s.metroStopIndex]===s.route!.via?'ALIGHT':'CONTINUE_METRO'});
+  else if(s.phase==='metro-platform'){const visit=s.metroBranch!.platformVisit;s=tick(s,.8+.2);s=reducer(s,{type:'BOARD_METRO',terminal:'hongqiao',visit});}
   else if(s.phase==='station'){const w=runnerWave(s);if(w&&w.lane===s.student!.runner.lane)s=reducer(s,{type:'CHANGE_LANE',direction:w.lane===2?-1:1});const sprint=mode==='sprint'||mode==='paced'&&s.student!.sprintStrain<4.8&&s.student!.stamina>30;s=reducer(s,{type:sprint?'SPRINT_INPUT':'RUN_INPUT',held:true});s=tick(s,.1);}
   else{s=reducer(s,{type:'PREPARE_DOOR'});s=tick(s,.1);}
  }
